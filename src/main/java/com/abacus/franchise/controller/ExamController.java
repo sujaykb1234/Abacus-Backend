@@ -140,17 +140,17 @@ public class ExamController {
 		return examService.getExamAssignedStudents(examId, franchiseId);
 	}
 
-	@PostMapping("/updateExamTime/{franchiseId}")
-	public ResponseEntity<?> updateExamTime(@PathVariable Long franchiseId,
-			@RequestBody ExamTimeUpdateRequest request) {
-		try {
-			SuccessResponse response = examService.updateExamTime(franchiseId, request);
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(new SuccessResponse("Failed to update exam time.", null, null, null),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+//	@PostMapping("/updateExamTime/{franchiseId}")
+//	public ResponseEntity<?> updateExamTime(@PathVariable Long franchiseId,
+//			@RequestBody ExamTimeUpdateRequest request) {
+//		try {
+//			SuccessResponse response = examService.updateExamTime(franchiseId, request);
+//			return new ResponseEntity<>(response, HttpStatus.OK);
+//		} catch (Exception e) {
+//			return new ResponseEntity<>(new SuccessResponse("Failed to update exam time.", null, null, null),
+//					HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
 
 	@PostMapping("/request-reattempt")
 	public SuccessResponse requestReattempt(@RequestBody ReattemptRequestDTO reattemptRequestDTO) {

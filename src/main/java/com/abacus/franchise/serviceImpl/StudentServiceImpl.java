@@ -315,7 +315,7 @@ public class StudentServiceImpl implements StudentService {
 		}
 		return response;
 	}
-
+	
 //-------------------------------------------------------------------------------------------------------------------------------	
 
 	public SuccessResponse getTheAllStudent(int pageNo, int pageSize, String sortBy, String orderBy) {
@@ -410,6 +410,7 @@ public class StudentServiceImpl implements StudentService {
 						courseMap.put(course.getCourse_id(), courseDTO);
 					}
 				}
+				
 				List<StudentExam> studentExams = studentExamRepo.findByStudentId(id);
 				if (!studentExams.isEmpty()) {
 					StudentExam latestExam = studentExams.get(studentExams.size() - 1);

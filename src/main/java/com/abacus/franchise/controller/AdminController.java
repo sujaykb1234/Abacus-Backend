@@ -3,6 +3,8 @@
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,8 @@ import com.abacus.franchise.model.FranchiseKitRequest;
 import com.abacus.franchise.model.Mail;
 import com.abacus.franchise.model.Products;
 import com.abacus.franchise.repo.AdminRepo;
+import com.abacus.franchise.repo.OfflineExamRepo;
+import com.abacus.franchise.repo.OfflineExamUploadRepo;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.AdminService;
 import com.abacus.franchise.service.MailService;
@@ -38,6 +42,9 @@ public class AdminController {
 
 	@Autowired
 	MailService mailService;
+	
+	@Autowired
+	OfflineExamUploadRepo examUploadRepo;
 //-----------------------------------------------------------------------------------------------------	
     @GetMapping("/test")
 	public String getMessage() {
@@ -152,4 +159,29 @@ public class AdminController {
 	public SuccessResponse dispatchProducts(@RequestBody AdminProductDispachedDTO dispatchDTO) {
 	    return adminService.dispatchProducts(dispatchDTO); 
 	}
+	
+	
+	@GetMapping("getOfflineExamPdfByCourseId")
+	public SuccessResponse getOfflineExamPdfByCourseId(@RequestParam Long courseId) {
+		
+		SuccessResponse response = new SuccessResponse();
+		
+		Optional<String> offlineExamPdfByCourseId = examUploadRepo.getOfflineExamPdfByCourseId(courseId);
+		
+		if(offlineExamPdfByCourseId.isEmpty()) {
+			response.setMessage("PDF NOT FOUND");
+			response.setStatus(false);
+			response.setStatusCode(HttpStatus.NOT_FOUND );
+			response.setResponse(null);
+			return response;
+		}
+		
+		response.setMessage("PDF FOUND SUCCESSFULLY");
+		response.setStatus(true);
+		response.setStatusCode(HttpStatus.FOUND );
+		response.setResponse(offlineExamPdfByCourseId);
+		return response;
+		
+	}
+	
 }

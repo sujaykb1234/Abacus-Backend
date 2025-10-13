@@ -72,9 +72,8 @@ public class OfflineExamServiceImpl implements OfflineExamService {
 			LocalDateTime now = LocalDateTime.now();
 
 			offlineExam.setCreation_time(formatter.format(now));
-
 			offlineExamRepo.save(offlineExam);
-			
+            studentRepo.offlineExamCompleted(offlineExam.getStudent_id());			
 			
 			
 			studentExamRepository.changeExamStatus(offlineExamDTO.getStudent_id(),offlineExamDTO.getCourse_id(),offlineExamDTO.getFranchise_id(),offlineExamDTO.getMarks().intValue());

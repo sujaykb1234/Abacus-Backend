@@ -38,7 +38,9 @@ public class SliderServiceImple implements SliderService {
 			response.imageNotFound();
 			return response;
 		}
+		
 		StoredImages storedImage;
+		
 		try {
 			 storedImage = s3Storage.storeFile(sliderImageFile.getOriginalFilename(), sliderImageFile.getInputStream(),
 					sliderImageFile.getSize(), 1);

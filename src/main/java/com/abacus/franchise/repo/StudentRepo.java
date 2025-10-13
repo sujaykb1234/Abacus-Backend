@@ -19,19 +19,19 @@ import jakarta.transaction.Transactional;
 @Repository
 public interface StudentRepo extends JpaRepository<Student, Long> {
 
-	@Query(value = "select * from student where email = ? and status = true", nativeQuery = true)
+	@Query(value = "select * from student where email = ? and status = true  order by student_id desc limit 1", nativeQuery = true)
 	Optional<Student> findByEmial(String email);
 
-	@Query(value = "select * from student where mobile_no = ? and status = true", nativeQuery = true)
+	@Query(value = "select * from student where mobile_no = ? and status = true  order by student_id desc limit 1", nativeQuery = true)
 	Optional<Student> findByMobileNumber(String mobile_no);
 
-	@Query(value = "select * from student where mobile_no = ? and status = true", nativeQuery = true)
+	@Query(value = "select * from student where mobile_no = ? and status = true  order by student_id desc limit 1", nativeQuery = true)
 	Optional<Student> findByusername(String studentUsername);
 
-	@Query(value = "select * from student where email = ? and status = true", nativeQuery = true)
+	@Query(value = "select * from student where email = ? and status = true  order by student_id desc limit 1", nativeQuery = true)
 	Optional<Student> findByEmail(String mailTo);
 
-	@Query(value = "select * from student where email = ? and status = true", nativeQuery = true)
+	@Query(value = "select * from student where email = ? and status = true  order by student_id desc limit 1", nativeQuery = true)
 	Optional<Student> findByusernameForPassword(String loginusername);
 
 	@Query(value = "SELECT COUNT(*) FROM student", nativeQuery = true)
@@ -50,9 +50,13 @@ public interface StudentRepo extends JpaRepository<Student, Long> {
 	@Query(value = "select * from student where franchise_id = ? and status = true", nativeQuery = true)
 	List<Student> findByFranchiseId(Long franchise_id);
 
-	@Query(value = "select * from student where franchise_id = ? and status = true", nativeQuery = true)
-	Page<Student> findByFranchiseId(Long franchise_id, PageRequest pageRequest);
+//	@Query(value = "select * from student where franchise_id = ? and status = true and order by student_id desc", nativeQuery = true)
+//	Page<Student> findByFranchiseId(Long franchise_id, PageRequest pageRequest);
 
+	@Query(value = "select * from student where franchise_id = ?1 and status = true order by student_id desc, creation_time desc", nativeQuery = true)
+	Page<Student> findByFranchiseId(Long franchise_id, Pageable pageable);
+
+	
 	@Query(value = "SELECT COUNT(*) FROM student  WHERE franchise_id = ?", nativeQuery = true)
 	long countByFranchiseId(Long franchiseId);
 
@@ -121,4 +125,10 @@ public interface StudentRepo extends JpaRepository<Student, Long> {
 
 	@Query(value = "select * from student where status = 1",nativeQuery = true)
 	List<Student> findAllActive();
+	
+	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE student SET exam_status = 2 where student_id = ?",nativeQuery = true)
+	public void offlineExamCompleted(Long studentId);
 }

@@ -13,5 +13,9 @@ public interface OfflineExamUploadRepo extends JpaRepository<OfflineExamUpload, 
 
 	@Query(value = "select * from offline_exam_upload where course_id = :courseId", nativeQuery = true)
 	Optional<OfflineExamUpload> findByCourseId(Long courseId);
-
+	
+	
+	@Query(value = "select pdf_image_link from offline_exam_upload where course_id = ?",nativeQuery = true)
+    Optional<String> getOfflineExamPdfByCourseId(Long courseId);
+	
 }
