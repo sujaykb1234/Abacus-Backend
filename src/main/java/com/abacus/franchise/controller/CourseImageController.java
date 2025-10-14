@@ -1,7 +1,6 @@
 package com.abacus.franchise.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,11 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.abacus.franchise.model.CourseImage;
-import com.abacus.franchise.model.SliderImage;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.CourseImageService;
-import com.abacus.franchise.service.CourseService;
-import com.abacus.franchise.service.SliderService;
 
 @RestController
 @RequestMapping("abacus/v1/courseImage")

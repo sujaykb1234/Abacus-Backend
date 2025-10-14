@@ -1,7 +1,6 @@
 package com.abacus.franchise.serviceImpl;
 
 import java.io.IOException;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -10,17 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.abacus.franchise.model.Course;
 import com.abacus.franchise.model.CourseImage;
-import com.abacus.franchise.model.SliderImage;
 import com.abacus.franchise.model.StoredImages;
 import com.abacus.franchise.repo.CourseImageRepository;
 import com.abacus.franchise.repo.CourseRepo;
-import com.abacus.franchise.repo.SliderRepository;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.CourseImageService;
 import com.abacus.franchise.service.S3BucketService;
-import com.abacus.franchise.service.SliderService;
 
 @Service
 public class CourseImageServiceImple implements CourseImageService {
@@ -31,6 +26,7 @@ public class CourseImageServiceImple implements CourseImageService {
 	
 	@Autowired
 	private CourseRepo courseRepo;
+	
 	@Autowired
 	private S3BucketService s3Storage;
 

@@ -10,7 +10,6 @@ import com.abacus.franchise.dto.ExamTimeUpdateRequest;
 import com.abacus.franchise.dto.ReattemptRequestDTO;
 import com.abacus.franchise.dto.StudentExamResultDTO;
 import com.abacus.franchise.response.SuccessResponse;
-import com.abacus.franchise.utility.ExamType;
 
 @Service
 public interface ExamService {

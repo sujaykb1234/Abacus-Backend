@@ -2,7 +2,6 @@ package com.abacus.franchise.response;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -16,7 +15,6 @@ import com.abacus.franchise.dto.StudentDTO;
 import com.abacus.franchise.model.Course;
 import com.abacus.franchise.model.ExamAttempt;
 import com.abacus.franchise.model.Messages;
-import com.abacus.franchise.model.OfflineExamUpload;
 
 public class SuccessResponse {
 

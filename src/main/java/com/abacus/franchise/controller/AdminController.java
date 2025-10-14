@@ -4,8 +4,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,7 +21,6 @@ import com.abacus.franchise.model.FranchiseKitRequest;
 import com.abacus.franchise.model.Mail;
 import com.abacus.franchise.model.Products;
 import com.abacus.franchise.repo.AdminRepo;
-import com.abacus.franchise.repo.OfflineExamRepo;
 import com.abacus.franchise.repo.OfflineExamUploadRepo;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.AdminService;

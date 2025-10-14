@@ -16,11 +16,14 @@ public interface QuestionsRepo extends JpaRepository<Questions, Long> {
 
 	@Query(value = "select * from questions where course_id =? and status = true", nativeQuery = true)
 	List<Questions> findByCourse_Id(Long courseId);
+	
+	@Query(value = "select * from questions where que_id =? and status = true", nativeQuery = true)
+	Optional<Questions> findByQue_Id(Long que_id);
 
-	@Query(value = "SELECT * FROM questions q WHERE course_id = :courseId AND (question_type = 'TEXT' OR question_type = 'NUMBER') ORDER BY RAND() LIMIT :count", nativeQuery = true)
+	@Query(value = "SELECT * FROM questions q WHERE status = true and course_id = :courseId AND (question_type = 'TEXT' OR question_type = 'NUMBER') ORDER BY RAND() LIMIT :count", nativeQuery = true)
 	List<Questions> findRandomTextQuestions(Long courseId, Integer count);
 
-	@Query(value = "SELECT * FROM questions WHERE course_id = :courseId AND question_type = 'IMAGE' ORDER BY RAND() LIMIT :count", nativeQuery = true)
+	@Query(value = "SELECT * FROM questions WHERE status = true and course_id = :courseId AND question_type = 'IMAGE' ORDER BY RAND() LIMIT :count", nativeQuery = true)
 	List<Questions> findRandomImageQuestions(Long courseId, Integer count);
 
 	@Query(value = "SELECT * FROM questions WHERE que_id = ? and status = true",nativeQuery = true)

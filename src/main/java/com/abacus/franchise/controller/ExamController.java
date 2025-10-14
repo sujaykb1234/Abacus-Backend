@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.abacus.franchise.dto.AnswerDTO;
 import com.abacus.franchise.dto.AssignExamDTO;
-import com.abacus.franchise.dto.ExamTimeUpdateRequest;
 import com.abacus.franchise.dto.ReattemptRequestDTO;
 import com.abacus.franchise.dto.StudentExamResultDTO;
 import com.abacus.franchise.model.StudentExam;
@@ -25,7 +24,6 @@ import com.abacus.franchise.repo.StudentExamRepository;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.ExamService;
 import com.abacus.franchise.serviceImpl.CourseserviceImpl;
-import com.abacus.franchise.utility.ExamType;
 
 @RestController
 @RequestMapping("abacus/v1/exam")

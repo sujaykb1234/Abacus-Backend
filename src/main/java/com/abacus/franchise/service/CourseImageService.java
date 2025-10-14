@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.abacus.franchise.model.CourseImage;
-import com.abacus.franchise.model.SliderImage;
 import com.abacus.franchise.response.SuccessResponse;
 
 

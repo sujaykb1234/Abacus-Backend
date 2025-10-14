@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.abacus.franchise.model.District;
-import com.abacus.franchise.model.State;
 
 @Repository
 public interface DistrictRepository extends JpaRepository<District, Long> {

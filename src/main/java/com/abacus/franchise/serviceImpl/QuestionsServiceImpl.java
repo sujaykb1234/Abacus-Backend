@@ -9,14 +9,12 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.abacus.franchise.dto.CourseResponseDTO;
 import com.abacus.franchise.dto.ExamResponse;
 import com.abacus.franchise.dto.QuestionsDTO;
-import com.abacus.franchise.model.Course;
 import com.abacus.franchise.model.Questions;
 import com.abacus.franchise.model.StoredImages;
 import com.abacus.franchise.repo.CourseRepo;
@@ -84,7 +82,7 @@ public class QuestionsServiceImpl implements QuestionsService {
 			response.nullData();
 		}
 		if (id != null) {
-			Optional<Questions> byId = questionsRepo.findById(id);
+			Optional<Questions> byId = questionsRepo.findByQue_Id(id);
 			if (byId.isPresent()) {
 				Questions questions = byId.get();
 				response.questionsFound(questions);

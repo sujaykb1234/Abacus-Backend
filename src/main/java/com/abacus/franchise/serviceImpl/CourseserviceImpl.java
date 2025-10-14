@@ -19,7 +19,6 @@ import com.abacus.franchise.repo.FranchiseRepo;
 import com.abacus.franchise.repo.StudentRepo;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.CourseService;
-import com.abacus.franchise.utility.CourseType;
 
 import jakarta.transaction.Transactional;
 
