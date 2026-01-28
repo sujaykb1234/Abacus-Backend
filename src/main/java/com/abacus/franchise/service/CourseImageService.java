@@ -6,11 +6,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.abacus.franchise.model.CourseImage;
 import com.abacus.franchise.response.SuccessResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 
 @Service
 public interface CourseImageService {
 	
-	public SuccessResponse saveImage(CourseImage courseImage, MultipartFile listImages);
+	public SuccessResponse saveImage(CourseImage courseImage, MultipartFile listImages,HttpServletRequest request);
 	
 	public SuccessResponse getAllImages();
 

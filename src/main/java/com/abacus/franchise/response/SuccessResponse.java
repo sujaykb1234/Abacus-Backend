@@ -195,8 +195,8 @@ public class SuccessResponse {
 
 	}
 
-	public void passwordUpdateSuccesfully(Object newPassword) {
-		this.response = newPassword;
+	public void passwordUpdateSuccesfully() {
+		this.response = null;
 		this.status = true;
 		this.statusCode = HttpStatus.OK;
 		this.message = Messages.passwordUpdateSuccesfully;
@@ -232,8 +232,8 @@ public class SuccessResponse {
 
 	}
 
-	public void frinchiesLoginSuccessfully(Object fDto) {
-		this.response = fDto;
+	public void frinchiesLoginSuccessfully(String val) {
+		this.response = val;
 		this.status = true;
 		this.statusCode = HttpStatus.OK;
 		this.message = Messages.franchiseLogin;
@@ -254,8 +254,8 @@ public class SuccessResponse {
 		this.message = Messages.studentSave;
 	}
 
-	public void StudentloginSuccessfully(StudentDTO studentDto) {
-		this.response = studentDto;
+	public void StudentloginSuccessfully(String token) {
+		this.response = token;
 		this.status = true;
 		this.statusCode = HttpStatus.OK;
 		this.message = Messages.studentLoginSuccesfully;
@@ -1222,6 +1222,55 @@ public class SuccessResponse {
 		this.status = false;
 		this.message = "no Questions Found For Course";
 		this.statusCode = HttpStatus.BAD_GATEWAY;
+		this.response = null;		
+	}
+
+	public void basicDetailsIsNull() {
+		this.status = false;
+		this.message = "BASIC DETAIL IS NULL";
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;		
+	}
+
+	public void addressDetailIsNull() {
+		this.status = false;
+		this.message = "ADDRESS IS NULL";
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;		
+	}
+
+	public void rolesNotFound() {
+		this.status = false;
+		this.message = "ROLE NOT FOUND";
+		this.statusCode = HttpStatus.NOT_FOUND;
+		this.response = null;	
+	}
+
+	public void saveUserResponse(String accessToken) {
+		this.status = true;
+		this.message = "SAVE USER SUCCESSFULLY";
+		this.statusCode = HttpStatus.CREATED;
+		this.response = accessToken;		
+	}
+
+	public void loginCredentialIsNull() {
+		this.status = false;
+		this.message = "USERNAME AND PASSWORD IS NULL";
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;			
+	}
+
+	public void usernameIncorrect() {
+		this.status = false;
+		this.message = "ENTER CORRECT USERNAME";
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;		
+	}
+
+	public void userIsDeactivate() {
+		this.status = false;
+		this.message = "ACCOUNT IS DEACTIVATE";
+		this.statusCode = HttpStatus.BAD_REQUEST;
 		this.response = null;		
 	}
 }

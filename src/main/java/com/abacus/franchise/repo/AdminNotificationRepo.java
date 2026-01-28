@@ -12,7 +12,7 @@ import com.abacus.franchise.notifications.AdminNotifications;
 @Repository
 public interface AdminNotificationRepo extends JpaRepository<AdminNotifications, Long> {
 
-	@Query(value = "select * from admin_notifications where seen_time < :time and is_viewed = true", nativeQuery = true)
+	@Query(value = "select * from admin_notifications where seen_time < ? and is_viewed = true", nativeQuery = true)
 	List<AdminNotifications> findExpiredNofifications(LocalDateTime time);
 
 }

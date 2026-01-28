@@ -21,11 +21,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.abacus.franchise.dto.FranchiseDTO;
-import com.abacus.franchise.dto.FranchiseLoginRequest;
 import com.abacus.franchise.dto.FranchiseOrderDTO;
 import com.abacus.franchise.dto.KitOrderResponseDTO;
 import com.abacus.franchise.dto.ProductRequestDTO;
@@ -41,8 +41,8 @@ import com.abacus.franchise.model.FranchiseOrder;
 import com.abacus.franchise.model.KitRequest;
 import com.abacus.franchise.model.ProductOrderRequest;
 import com.abacus.franchise.model.Products;
-import com.abacus.franchise.model.StoredImages;
 import com.abacus.franchise.model.Student;
+import com.abacus.franchise.model.TokenDetail;
 import com.abacus.franchise.repo.CourseRepo;
 import com.abacus.franchise.repo.DiffrentAddKitReqRepo;
 import com.abacus.franchise.repo.FranchiseKitRequestRepo;
@@ -52,12 +52,16 @@ import com.abacus.franchise.repo.FranchiseRepo;
 import com.abacus.franchise.repo.ProductOrderRequestRepo;
 import com.abacus.franchise.repo.ProductsRepo;
 import com.abacus.franchise.repo.StudentRepo;
+import com.abacus.franchise.repo.TokenDetailRepo;
 import com.abacus.franchise.response.SuccessResponse;
+import com.abacus.franchise.security.JwtUtil;
 import com.abacus.franchise.service.FranchiseService;
-import com.abacus.franchise.service.S3BucketService;
 import com.abacus.franchise.utility.FranchiseStatus;
+import com.abacus.franchise.utility.ImageStoreProcess;
 import com.abacus.franchise.utility.KitOrderStatus;
+import com.abacus.franchise.utility.TokenOnly;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -66,8 +70,8 @@ public class FranchiseServiceImpl implements FranchiseService {
 	@Autowired
 	ModelMapper modelMapper;
 
-	@Autowired
-	S3BucketService s3BucketService;
+//	@Autowired
+//	S3BucketService s3BucketService;
 
 	@Autowired
 	StudentRepo studentRepo;
@@ -98,7 +102,16 @@ public class FranchiseServiceImpl implements FranchiseService {
 
 	@Autowired
 	FranchiseKitRequestsLogsRepo requestsLogsRepo;
-
+	
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
+    @Autowired
+    JwtUtil jwtUtil;
+	
+	@Autowired
+    TokenDetailRepo tokenDetailRepo;
+	
 	// Method to generate and assign a unique franchise number
 	public String generateUniqueFranchiseNumber() {
 		String prefix = "FRID";
@@ -117,20 +130,23 @@ public class FranchiseServiceImpl implements FranchiseService {
 //-------------------------------------------------------------------------------------------------------------------------	
 	@Override
 	public SuccessResponse registerAndUpdateTheFrinchise(Franchise franchise, MultipartFile franchiseOwnerPic,
-			MultipartFile franchiseOwnerIdPhoto) {
+			MultipartFile franchiseOwnerIdPhoto,HttpServletRequest request) {
 		SuccessResponse response = new SuccessResponse();
+		
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
 		try {
 			if (franchise.getFranchise_name() == null || franchise.getFranchise_owner() == null
 					|| franchise.getFranchise_email() == null
 					|| !franchise.getFranchise_email()
 							.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(com|org|in|edu|gov|net)")
-					|| franchise.getFranchise_address().getLine1() == null
-					|| franchise.getFranchise_address().getCity() == null) {
+                 ) {
 				response.missingFieldResponse(franchise);
 				return response;
 			}
+			
+			
 			Optional<Franchise> existingFranchiseWithEmail = franchiseRepo.findByEmail(franchise.getFranchise_email());
 			if (existingFranchiseWithEmail.isPresent()
 					&& !existingFranchiseWithEmail.get().getFranchise_id().equals(franchise.getFranchise_id())) {
@@ -157,21 +173,34 @@ public class FranchiseServiceImpl implements FranchiseService {
 					franchise.setModification_time(sdf.format(date));
 
 					if (franchiseOwnerPic != null) {
-						StoredImages storedOwnerPic = s3BucketService.storeFile(franchiseOwnerPic.getOriginalFilename(),
-								franchiseOwnerPic.getInputStream(), franchiseOwnerPic.getSize(), 3);
-
-						franchise.setProfile_image_name(storedOwnerPic.getProfile_image_name());
-						franchise.setProfile_image_link(storedOwnerPic.getProfile_image_link());
+//						StoredImages storedOwnerPic = s3BucketService.storeFile(franchiseOwnerPic.getOriginalFilename(),
+//								franchiseOwnerPic.getInputStream(), franchiseOwnerPic.getSize(), 3);
+//
+//						franchise.setProfile_image_name(storedOwnerPic.getProfile_image_name());
+//						franchise.setProfile_image_link(storedOwnerPic.getProfile_image_link());
+						
+						List<String> saveFile = ImageStoreProcess.saveFile(franchiseOwnerPic, request);
+						
+						if(saveFile != null) {
+							franchise.setProfile_image_name(saveFile.get(0));
+							franchise.setProfile_image_link(saveFile.get(1));	
+						}
 					} else {
 						franchise.setProfile_image_name(franchiseToUpdate.getProfile_image_name());
 						franchise.setProfile_image_link(franchiseToUpdate.getProfile_image_link());
 					}
 					if (franchiseOwnerIdPhoto != null) {
-						StoredImages storedOwnerIdPhoto = s3BucketService.storeFile(
-								franchiseOwnerIdPhoto.getOriginalFilename(), franchiseOwnerIdPhoto.getInputStream(),
-								franchiseOwnerIdPhoto.getSize(), 4);
-						franchise.setDocument_image_name(storedOwnerIdPhoto.getId_proof_image_link());
-						franchise.setDocument_image_link(storedOwnerIdPhoto.getId_proof_image_link());
+//						StoredImages storedOwnerIdPhoto = s3BucketService.storeFile(
+//								franchiseOwnerIdPhoto.getOriginalFilename(), franchiseOwnerIdPhoto.getInputStream(),
+//								franchiseOwnerIdPhoto.getSize(), 4);
+//						franchise.setDocument_image_name(storedOwnerIdPhoto.getId_proof_image_link());
+//						franchise.setDocument_image_link(storedOwnerIdPhoto.getId_proof_image_link());
+
+						List<String> saveFile = ImageStoreProcess.saveFile(franchiseOwnerIdPhoto, request);
+						if(saveFile != null) {
+								franchise.setDocument_image_name(saveFile.get(0));
+								franchise.setDocument_image_link(saveFile.get(1));
+						}
 					} else {
 						franchise.setDocument_image_name(franchiseToUpdate.getDocument_image_name());
 						franchise.setDocument_image_link(franchiseToUpdate.getDocument_image_link());
@@ -179,8 +208,8 @@ public class FranchiseServiceImpl implements FranchiseService {
 					modelMapper.map(franchise, franchiseToUpdate);
 
 					franchiseRepo.save(franchiseToUpdate);
-					FranchiseDTO franchiseDto = modelMapper.map(franchiseToUpdate, FranchiseDTO.class);
-					response.franchiseUpdated(franchiseDto);
+//					FranchiseDTO franchiseDto = modelMapper.map(franchiseToUpdate, FranchiseDTO.class);
+					response.franchiseUpdated(null);
 					return response;
 				} else {
 					response.idNotFound();
@@ -193,21 +222,35 @@ public class FranchiseServiceImpl implements FranchiseService {
 					return response;
 				}
 				// Store owner picture
-				StoredImages storedOwnerPic = s3BucketService.storeFile(franchiseOwnerPic.getOriginalFilename(),
-						franchiseOwnerPic.getInputStream(), franchiseOwnerPic.getSize(), 3);
+//				StoredImages storedOwnerPic = s3BucketService.storeFile(franchiseOwnerPic.getOriginalFilename(),
+//						franchiseOwnerPic.getInputStream(), franchiseOwnerPic.getSize(), 3);
+				
+				List<String> saveFile = ImageStoreProcess.saveFile(franchiseOwnerPic, request);
+				if(saveFile != null) {
+					franchise.setProfile_image_name(saveFile.get(0));
+					franchise.setProfile_image_link(saveFile.get(1));
+				}
+				
 				notificationsServiceImple.generateNotificationAfterAddFranchise(franchise);
-				franchise.setProfile_image_name(storedOwnerPic.getProfile_image_name());
-				franchise.setProfile_image_link(storedOwnerPic.getProfile_image_link());
 				franchise.setFranchise_number(generateUniqueFranchiseNumber());
 				franchise.setFranchise_password(null);
-				StoredImages storedOwnerIdPhoto = s3BucketService.storeFile(franchiseOwnerIdPhoto.getOriginalFilename(),
-						franchiseOwnerIdPhoto.getInputStream(), franchiseOwnerIdPhoto.getSize(), 4);
-				franchise.setDocument_image_name(storedOwnerIdPhoto.getId_proof_image_name());
-				franchise.setDocument_image_link(storedOwnerIdPhoto.getId_proof_image_link());
+				
+//				StoredImages storedOwnerIdPhoto = s3BucketService.storeFile(franchiseOwnerIdPhoto.getOriginalFilename(),
+//						franchiseOwnerIdPhoto.getInputStream(), franchiseOwnerIdPhoto.getSize(), 4);
+				
+				List<String> saveFile2 = ImageStoreProcess.saveFile(franchiseOwnerIdPhoto, request);
+				
+				if(saveFile2 != null) {
+				
+					franchise.setDocument_image_name(saveFile2.get(0));
+					franchise.setDocument_image_link(saveFile2.get(1));
+				}
+				
 				franchise.setCreation_time(sdf.format(date));
 				franchiseRepo.save(franchise);
-				FranchiseDTO franchiseDto = modelMapper.map(franchise, FranchiseDTO.class);
-				response.saveTheFranchise(franchiseDto);
+				
+//				FranchiseDTO franchiseDto = modelMapper.map(franchise, FranchiseDTO.class);
+				response.saveTheFranchise(null);
 				return response;
 			}
 		} catch (Exception e) {
@@ -245,26 +288,32 @@ public class FranchiseServiceImpl implements FranchiseService {
 		SuccessResponse response = new SuccessResponse();
 		String username = franchise.getMobile_no();
 		String password = franchise.getFranchise_password();
-		System.out.println("mobile no " + username);
-		System.out.println("Password " + password);
+		
+//		System.out.println("mobile no " + username);
+//		System.out.println("Password " + password);
 
 		if (username == null || password == null) {
 			response.nullAdminnameAndPass();
 			return response;
 		}
 		Optional<Franchise> optionalFranchise = franchiseRepo.findByusername(username);
+		
 		if (optionalFranchise.isPresent()) {
+			
 			Franchise franchiseFromDb = optionalFranchise.get();
-			if (!password.equals(franchiseFromDb.getFranchise_password())) {
+			
+			
+			
+		    if (!passwordEncoder.matches(password, franchiseFromDb.getFranchise_password())) {
 				response.wrongPassword();
 				return response;
 			}
-			if (franchiseFromDb.getFranchiseStatus() != FranchiseStatus.ACCEPTED) {
-				response.franchiseNotAuthorized();
-				return response;
-			}
-			FranchiseLoginRequest franchiseLoginRequest = modelMapper.map(franchiseFromDb, FranchiseLoginRequest.class);
-			response.frinchiesLoginSuccessfully(franchiseLoginRequest);
+			
+		    Optional<TokenOnly> byMobileNoAndRoles = tokenDetailRepo.findByMobileNoAndRoles(franchiseFromDb.getMobile_no(), franchiseFromDb.getRoles());
+		    
+	     			
+			response.frinchiesLoginSuccessfully(byMobileNoAndRoles.get().getToken());
+			
 		} else {
 			response.userNotFound();
 		}
@@ -279,9 +328,11 @@ public class FranchiseServiceImpl implements FranchiseService {
 			response.emailNotFound();
 			return response;
 		}
+		
 		String franchiesUsername = franchise.getFranchise_email();
 		String franchiesPassword = franchise.getFranchise_password();
 		Optional<Franchise> byUsername = franchiseRepo.getbyuserName(franchiesUsername);
+		
 		if (byUsername.isPresent()) {
 			if (franchiesPassword == null) {
 				response.passwordNull();
@@ -292,11 +343,29 @@ public class FranchiseServiceImpl implements FranchiseService {
 				return response;
 			}
 			Franchise getByusername = byUsername.get();
-			getByusername.setFranchise_password(franchiesPassword);
+			
+			
+			
+			getByusername.setFranchise_password(passwordEncoder.encode(franchiesPassword));
 			getByusername.setCreation_time(byUsername.get().getCreation_time());
+			
 			franchiseRepo.save(getByusername);
-			FranchiseDTO newPassword = modelMapper.map(getByusername, FranchiseDTO.class);
-			response.passwordUpdateSuccesfully(newPassword);
+
+			 String accessToken = jwtUtil.generateAccessToken(
+					 getByusername.getMobile_no(),
+		                getByusername.getRoles().toString()
+		        );
+			
+		    TokenDetail tokenEntity = new TokenDetail();
+		    tokenEntity.setToken(accessToken);
+		    tokenEntity.setCreatedAt(LocalDateTime.now());
+		    tokenEntity.setRoles(getByusername.getRoles());
+		    tokenEntity.setMobileNo(getByusername.getMobile_no());
+
+		    tokenDetailRepo.save(tokenEntity);
+
+			
+			response.passwordUpdateSuccesfully();
 			return response;
 		} else {
 			response.incorrectUserName();
@@ -1034,7 +1103,7 @@ public class FranchiseServiceImpl implements FranchiseService {
 	}
 
 	@Override
-	public SuccessResponse addStudentWithKitRequestOnDiffrentAdd(Student student, MultipartFile studentPhoto)
+	public SuccessResponse addStudentWithKitRequestOnDiffrentAdd(Student student, MultipartFile studentPhoto,HttpServletRequest request)
 			throws IOException {
 		SuccessResponse response = new SuccessResponse();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -1120,12 +1189,25 @@ public class FranchiseServiceImpl implements FranchiseService {
 				}
 				if (studentPhoto != null && !studentPhoto.isEmpty()) {
 					if (existingStudent.getProfile_image_name() != null) {
-						s3BucketService.deleteFile(existingStudent.getProfile_image_name());
+//						s3BucketService.deleteFile(existingStudent.getProfile_image_name());
+						ImageStoreProcess.deleteFile(existingStudent.getProfile_image_link(), existingStudent.getProfile_image_name());
+						
 					}
-					StoredImages storedImages = s3BucketService.storeFile(studentPhoto.getOriginalFilename(),
-							studentPhoto.getInputStream(), studentPhoto.getSize(), 1);
-					existingStudent.setProfile_image_link(storedImages.getProfile_image_link());
-					existingStudent.setProfile_image_name(storedImages.getProfile_image_name());
+					
+//					StoredImages storedImages = s3BucketService.storeFile(studentPhoto.getOriginalFilename(),
+//							studentPhoto.getInputStream(), studentPhoto.getSize(), 1);
+//					existingStudent.setProfile_image_link(storedImages.getProfile_image_link());
+//					existingStudent.setProfile_image_name(storedImages.getProfile_image_name());
+					
+					List<String> saveFile = ImageStoreProcess.saveFile(studentPhoto, request);
+
+					if(saveFile != null) {
+						existingStudent.setProfile_image_link(saveFile.get(1));
+						existingStudent.setProfile_image_name(saveFile.get(0));
+					}
+						
+					
+					
 				}
 				existingStudent.setModification_time(formatter.format(now));
 				existingStudent.getCourses().addAll(attachedCourses);
@@ -1150,16 +1232,11 @@ public class FranchiseServiceImpl implements FranchiseService {
 			response.nullFile();
 			return response;
 		}
-		try {
-			StoredImages storedProfileImage = s3BucketService.storeFile(studentPhoto.getOriginalFilename(),
-					studentPhoto.getInputStream(), studentPhoto.getSize(), 1);
-			student.setProfile_image_name(storedProfileImage.getProfile_image_name());
-			student.setProfile_image_link(storedProfileImage.getProfile_image_link());
-		} catch (IOException e) {
-			e.printStackTrace();
-			response.ExceptionForImg(studentPhoto.getName());
-			return response;
-		}
+		List<String> saveFile = ImageStoreProcess.saveFile(studentPhoto, request);
+		
+		student.setProfile_image_name(saveFile.get(0));
+		student.setProfile_image_link(saveFile.get(1));
+		
 		student.setCreation_time(formatter.format(now));
 		student.setCourses(attachedCourses);
 		student.setCurrentCourseId(attachedCourses.get(0).getCourse_id());

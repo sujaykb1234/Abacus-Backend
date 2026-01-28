@@ -19,6 +19,7 @@ import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.OfflineExamService;
 import com.abacus.franchise.serviceImpl.OfflineExamServiceImpl;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -35,8 +36,9 @@ public class OfflineExamController {
 	
 	@PostMapping("/saveOfflineExam")
 	public SuccessResponse saveOfflineExam(@Valid @ModelAttribute OfflineExamDTO offlineExam,
-			@RequestParam(value = "pdf", required = false) List<MultipartFile> pdf) {
-				return offlineExamService.saveOfflineExams(offlineExam, pdf);
+			@RequestParam(value = "pdf", required = false) List<MultipartFile> pdf
+			,HttpServletRequest request) {
+				return offlineExamService.saveOfflineExams(offlineExam, pdf,request);
 	}
 	@GetMapping("/getAllTheOfflineExam")
 	public SuccessResponse getAllTheOfflineExam() {

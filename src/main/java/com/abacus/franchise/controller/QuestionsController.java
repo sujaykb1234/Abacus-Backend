@@ -17,6 +17,7 @@ import com.abacus.franchise.dto.QuestionsDTO;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.QuestionsService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -41,8 +42,8 @@ public class QuestionsController {
 
 	@PostMapping("/saveImageQue")
 	public SuccessResponse saveImageQuestion(@ModelAttribute QuestionsDTO questionsDTO,
-			@RequestParam("que_img") MultipartFile que_img) {
-		return questionsService.saveImageQuestion(questionsDTO, que_img);
+			@RequestParam("que_img") MultipartFile que_img,HttpServletRequest request) {
+		return questionsService.saveImageQuestion(questionsDTO, que_img,request);
 	}
 
 //----------------------------------------------------------------------------------------------------------------------	
@@ -76,8 +77,9 @@ public class QuestionsController {
 
 	@PostMapping("updateImageQuestion/{id}")
 	public SuccessResponse updateQuestion(@PathVariable Long id, @Valid @RequestBody QuestionsDTO questionsDTO,
-			@RequestParam(value = "imageFile", required = false) MultipartFile imageFile) {
-		return questionsService.updateQuestion(id, questionsDTO, imageFile);
+			@RequestParam(value = "imageFile", required = false) MultipartFile imageFile
+			,HttpServletRequest request) {
+		return questionsService.updateQuestion(id, questionsDTO, imageFile,request);
 	}
 
 }

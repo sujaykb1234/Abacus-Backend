@@ -1,10 +1,11 @@
- package com.abacus.franchise;
+package com.abacus.franchise;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 @EnableScheduling
@@ -19,5 +20,7 @@ public class FranchiseApplication {
 	ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
+
+
 
 }

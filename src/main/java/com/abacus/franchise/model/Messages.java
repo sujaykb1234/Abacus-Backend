@@ -10,11 +10,11 @@ public class Messages {
 
 	public static String EmailSendSuccesfully = "EMAIL SEND SUCCESFULLY..!";
 
-	public static String admilogin = "ADMIN LOGIN SUCCESFULLY..!";
+	public static String admilogin = "LOGIN SUCCESSFULLY";
 
-	public static String nullUserNamePass = "YOU ENTER NULL  USERNAME OR PASSWORD PLZ CHECK..!";
+	public static String nullUserNamePass = "YOU ENTER NULL USERNAME OR PASSWORD PLZ CHECK..!";
 
-	public static String wrongPassword = "YOU ENTER THE WRONG PASSWORD PLZ CHECK..!";
+	public static final String wrongPassword = "ENTER CORRECT PASSWORD";
 
 	public static String userNotFound = "USER NOT FOUND TRY AGAIN..!";
 

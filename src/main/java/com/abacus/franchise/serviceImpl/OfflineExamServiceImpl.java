@@ -1,6 +1,5 @@
 package com.abacus.franchise.serviceImpl;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -23,8 +22,11 @@ import com.abacus.franchise.repo.StudentExamRepository;
 import com.abacus.franchise.repo.StudentRepo;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.OfflineExamService;
-import com.abacus.franchise.service.S3BucketService;
+//import com.abacus.franchise.service.S3BucketService;
 import com.abacus.franchise.utility.ExamType;
+import com.abacus.franchise.utility.ImageStoreProcess;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class OfflineExamServiceImpl implements OfflineExamService {
@@ -46,44 +48,42 @@ public class OfflineExamServiceImpl implements OfflineExamService {
 
 	private SuccessResponse response = new SuccessResponse();
 
-	@Autowired
-	S3BucketService s3BucketService;
+//	@Autowired
+//	S3BucketService s3BucketService;
 
 	@Override
-	public SuccessResponse saveOfflineExams(OfflineExamDTO offlineExamDTO, List<MultipartFile> pdf) {
-		try {
-			OfflineExam offlineExam = modelMapper.map(offlineExamDTO, OfflineExam.class);
-			if (offlineExam.getExamType() == ExamType.OFFLINE) {
-				List<StoredImages> pdfImages = new ArrayList<>();
-				for (MultipartFile storedImages : pdf) {
-					if (pdf != null && !pdf.isEmpty()) {
-						StoredImages image = s3BucketService.storeFile(storedImages.getOriginalFilename(),
-								storedImages.getInputStream(), storedImages.getSize(), 1);
-
-						pdfImages.add(image);
+	public SuccessResponse saveOfflineExams(OfflineExamDTO offlineExamDTO, List<MultipartFile> pdf,HttpServletRequest request) {
+		OfflineExam offlineExam = modelMapper.map(offlineExamDTO, OfflineExam.class);
+		if (offlineExam.getExamType() == ExamType.OFFLINE) {
+			List<StoredImages> pdfImages = new ArrayList<>();
+			for (MultipartFile storedImages : pdf) {
+				if (pdf != null && !pdf.isEmpty()) {
+					StoredImages image = new StoredImages();
+					List<String> saveFile = ImageStoreProcess.saveFile(storedImages, request);
+					
+					if(saveFile != null) {
+						image.setPdfLink(saveFile.get(1));
+						image.setPdfName(saveFile.get(0));
 					}
+					pdfImages.add(image);
 				}
-				offlineExam.setPdf_images(pdfImages);
-			} else if (offlineExam.getExamType() == ExamType.ONLINE) {
-				offlineExam.setPdf_images(null);
 			}
-
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-			LocalDateTime now = LocalDateTime.now();
-
-			offlineExam.setCreation_time(formatter.format(now));
-			offlineExamRepo.save(offlineExam);
-            studentRepo.offlineExamCompleted(offlineExam.getStudent_id());			
-			
-			
-			studentExamRepository.changeExamStatus(offlineExamDTO.getStudent_id(),offlineExamDTO.getCourse_id(),offlineExamDTO.getFranchise_id(),offlineExamDTO.getMarks().intValue());
-//			modelMapper.map(offlineExam, offlineExamDTO);
-			response.saveOfflineExamSuccess(offlineExam);
-
-		} catch (IOException e) {
-
-			response.nullFile();
+			offlineExam.setPdf_images(pdfImages);
+		} else if (offlineExam.getExamType() == ExamType.ONLINE) {
+			offlineExam.setPdf_images(null);
 		}
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+
+		offlineExam.setCreation_time(formatter.format(now));
+		offlineExamRepo.save(offlineExam);
+		studentRepo.offlineExamCompleted(offlineExam.getStudent_id());			
+		
+		
+		studentExamRepository.changeExamStatus(offlineExamDTO.getStudent_id(),offlineExamDTO.getCourse_id(),offlineExamDTO.getFranchise_id(),offlineExamDTO.getMarks().intValue());
+//			modelMapper.map(offlineExam, offlineExamDTO);
+		response.saveOfflineExamSuccess(offlineExam);
 
 		return response;
 	}

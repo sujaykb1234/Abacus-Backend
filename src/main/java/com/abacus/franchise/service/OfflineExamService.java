@@ -8,10 +8,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.abacus.franchise.dto.OfflineExamDTO;
 import com.abacus.franchise.response.SuccessResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public interface OfflineExamService {
 
-	public SuccessResponse saveOfflineExams(OfflineExamDTO offlineExam, List<MultipartFile> pdf);
+	public SuccessResponse saveOfflineExams(OfflineExamDTO offlineExam, List<MultipartFile> pdf,HttpServletRequest request);
 	
 	public SuccessResponse getAllTheOfflineExam();
 	

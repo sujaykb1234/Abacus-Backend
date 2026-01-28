@@ -10,10 +10,12 @@ import com.abacus.franchise.model.PracticeStudent;
 import com.abacus.franchise.model.Student;
 import com.abacus.franchise.response.SuccessResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public interface StudentService {
 
-	public SuccessResponse registerAndUpdateTheStudent(Student student, MultipartFile studentPhoto)
+	public SuccessResponse registerAndUpdateTheStudent(Student student, MultipartFile studentPhoto,HttpServletRequest request)
 			throws DataNotValidException, IOException;// MultipartFile studentDocPhoto
 
 	public SuccessResponse loginTheStudent(Student student);
@@ -48,7 +50,7 @@ public interface StudentService {
 
 	public SuccessResponse switchCourse(Long newCourseId, Long studentId);
 
-	public SuccessResponse registerAndUpdateTheStudentDemo(PracticeStudent student, MultipartFile studentPhoto)
+	public SuccessResponse registerAndUpdateTheStudentDemo(PracticeStudent student, MultipartFile studentPhoto,HttpServletRequest request)
 			throws DataNotValidException, IOException;
 
 	public SuccessResponse getDemoStudentById(Long studentId);;

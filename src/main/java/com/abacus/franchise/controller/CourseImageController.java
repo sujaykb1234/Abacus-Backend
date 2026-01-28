@@ -15,6 +15,8 @@ import com.abacus.franchise.model.CourseImage;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.CourseImageService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("abacus/v1/courseImage")
 public class CourseImageController {
@@ -24,8 +26,8 @@ public class CourseImageController {
 
 	@PostMapping("/saveImage")
 	public SuccessResponse saveSliderImage(@ModelAttribute CourseImage sliderImage,
-			@RequestParam("image") MultipartFile sliderImages) {
-		return service.saveImage(sliderImage, sliderImages);
+			@RequestParam("image") MultipartFile sliderImages,HttpServletRequest request) {
+		return service.saveImage(sliderImage, sliderImages,request);
 	}
 
 	@GetMapping("/getImageById/{sliderImageId}")

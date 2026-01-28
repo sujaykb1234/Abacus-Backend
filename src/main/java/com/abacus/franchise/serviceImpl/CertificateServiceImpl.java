@@ -26,7 +26,7 @@ import com.abacus.franchise.repo.StudentExamRepository;
 import com.abacus.franchise.repo.StudentRepo;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.CertificateService;
-import com.abacus.franchise.service.S3BucketService;
+//import com.abacus.franchise.service.S3BucketService;
 
 @Component
 public class CertificateServiceImpl implements CertificateService {
@@ -37,8 +37,8 @@ public class CertificateServiceImpl implements CertificateService {
 	@Autowired
 	private CertificateRepo certificateRepository;
 
-	@Autowired
-	S3BucketService s3BucketService;
+//	@Autowired
+//	S3BucketService s3BucketService;
 
 	@Autowired
 	StudentRepo studentRepo;

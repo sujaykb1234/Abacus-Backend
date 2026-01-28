@@ -44,8 +44,6 @@ public class Student {
 	private String profile_image_link;
 	private String education;
 	private String board;
-	private String document_image_link;
-	private String document_image_name;
 	private String creation_time;
 	private String modification_time;
 	private String exam_password;
@@ -83,7 +81,6 @@ public class Student {
 	public void removeCourse(Course course) {
 		if (this.courses != null && this.courses.contains(course)) {
 			this.courses.remove(course);
-// 	        course.getStudents().remove(this);  // Maintain consistency on the course side of the relationship
 		}
 	}
 
@@ -231,21 +228,6 @@ public class Student {
 		this.board = board;
 	}
 
-	public String getDocument_image_link() {
-		return document_image_link;
-	}
-
-	public void setDocument_image_link(String document_image_link) {
-		this.document_image_link = document_image_link;
-	}
-
-	public String getDocument_image_name() {
-		return document_image_name;
-	}
-
-	public void setDocument_image_name(String document_image_name) {
-		this.document_image_name = document_image_name;
-	}
 
 	public String getCreation_time() {
 		return creation_time;
@@ -302,11 +284,10 @@ public class Student {
 	public void setExamType(ExamType examType) {
 		this.examType = examType;
 	}
-
 	public Student(Long student_id, String first_name, String last_name, String mobile_no, String email,
 			String password, String name_on_certificate, String gender, String dob, Address address, Long currentExamId,
 			List<Course> courses, String profile_image_name, String profile_image_link, String education, String board,
-			String document_image_link, String document_image_name, String creation_time, String modification_time,
+			 String creation_time, String modification_time,
 			String exam_password, Long currentCourseId, String currentCourseName, ExamStatus examStatus, boolean status,
 			Franchise franchise, ExamType examType, List<StudentExam> studentExams) {
 		super();
@@ -326,8 +307,6 @@ public class Student {
 		this.profile_image_link = profile_image_link;
 		this.education = education;
 		this.board = board;
-		this.document_image_link = document_image_link;
-		this.document_image_name = document_image_name;
 		this.creation_time = creation_time;
 		this.modification_time = modification_time;
 		this.exam_password = exam_password;

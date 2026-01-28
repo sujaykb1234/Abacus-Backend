@@ -1,7 +1,5 @@
 package com.abacus.franchise.serviceImpl;
 
-import java.io.IOException;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -14,8 +12,11 @@ import com.abacus.franchise.model.SliderImage;
 import com.abacus.franchise.model.StoredImages;
 import com.abacus.franchise.repo.SliderRepository;
 import com.abacus.franchise.response.SuccessResponse;
-import com.abacus.franchise.service.S3BucketService;
+//import com.abacus.franchise.service.S3BucketService;
 import com.abacus.franchise.service.SliderService;
+import com.abacus.franchise.utility.ImageStoreProcess;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class SliderServiceImple implements SliderService {
@@ -23,8 +24,8 @@ public class SliderServiceImple implements SliderService {
 	@Autowired
 	private SliderRepository sliderRepository;
 
-	@Autowired
-	private S3BucketService s3Storage;
+//	@Autowired
+//	private S3BucketService s3Storage;
 
 	@Autowired
 	ModelMapper modelMapper;
@@ -32,7 +33,7 @@ public class SliderServiceImple implements SliderService {
 	SuccessResponse response = new SuccessResponse();
 
 	@Override
-	public SuccessResponse saveSliderImage(SliderImage sliderImage, MultipartFile sliderImageFile) {
+	public SuccessResponse saveSliderImage(SliderImage sliderImage, MultipartFile sliderImageFile,HttpServletRequest request) {
 
 		if (sliderImageFile == null || sliderImageFile.isEmpty()) {
 			response.imageNotFound();
@@ -41,17 +42,12 @@ public class SliderServiceImple implements SliderService {
 		
 		StoredImages storedImage;
 		
-		try {
-			 storedImage = s3Storage.storeFile(sliderImageFile.getOriginalFilename(), sliderImageFile.getInputStream(),
-					sliderImageFile.getSize(), 1);
+		List<String> saveFile = ImageStoreProcess.saveFile(sliderImageFile, request);
 
-			sliderImage.setSlider_image_link(storedImage.getProfile_image_link());
+		if(saveFile != null) {
+			sliderImage.setSlider_image_link(saveFile.get(1));
 			
-			sliderImage.setSlider_image_name(storedImage.getProfile_image_name());
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			return response;
+			sliderImage.setSlider_image_name(saveFile.get(0));
 		}
 
 		sliderRepository.save(sliderImage);
@@ -96,8 +92,10 @@ public class SliderServiceImple implements SliderService {
 		SliderImage sliderImage = optionalSliderImage.get();
 
 		// Delete the image from S3
-		s3Storage.deleteFile(sliderImage.getSlider_image_link());
+//		s3Storage.deleteFile(sliderImage.getSlider_image_link());
 
+		ImageStoreProcess.deleteFile(sliderImage.getSlider_image_link(), sliderImage.getSlider_image_name());
+		
 		// Delete the image record from the database
 		sliderRepository.deleteById(sliderImageId);
 
