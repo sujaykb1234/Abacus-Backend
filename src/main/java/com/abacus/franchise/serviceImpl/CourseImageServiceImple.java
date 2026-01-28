@@ -15,7 +15,9 @@ import com.abacus.franchise.repo.CourseImageRepository;
 import com.abacus.franchise.repo.CourseRepo;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.CourseImageService;
-import com.abacus.franchise.service.S3BucketService;
+import com.abacus.franchise.utility.ImageStoreProcess;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class CourseImageServiceImple implements CourseImageService {
@@ -27,8 +29,8 @@ public class CourseImageServiceImple implements CourseImageService {
 	@Autowired
 	private CourseRepo courseRepo;
 	
-	@Autowired
-	private S3BucketService s3Storage;
+//	@Autowired
+//	private S3BucketService s3Storage;
 
 	@Autowired
 	ModelMapper modelMapper;
@@ -36,7 +38,7 @@ public class CourseImageServiceImple implements CourseImageService {
 	SuccessResponse response = new SuccessResponse();
 
 	@Override
-	public SuccessResponse saveImage(CourseImage sliderImage, MultipartFile imageFile) {
+	public SuccessResponse saveImage(CourseImage sliderImage, MultipartFile imageFile,HttpServletRequest request) {
 
 		if (imageFile == null || imageFile.isEmpty()) {
 			response.imageNotFound();
@@ -53,16 +55,25 @@ public class CourseImageServiceImple implements CourseImageService {
 //		}
 		
 		StoredImages storedImage;
-		try {
-			 storedImage = s3Storage.storeFile(imageFile.getOriginalFilename(), imageFile.getInputStream(),
-					 imageFile.getSize(), 7);
-
-			sliderImage.setImage_link(storedImage.getPdfLink());
-			sliderImage.setImage_name(storedImage.getPdfName());
+//		try {
+//			 storedImage = s3Storage.storeFile(imageFile.getOriginalFilename(), imageFile.getInputStream(),
+//					 imageFile.getSize(), 7);
+//
+//			sliderImage.setImage_link(storedImage.getPdfLink());
+//			sliderImage.setImage_name(storedImage.getPdfName());
+//			
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			return response;
+//		}
+		
+		if(!imageFile.isEmpty()) {
+			List<String> saveFile = ImageStoreProcess.saveFile(imageFile,request);
 			
-		} catch (IOException e) {
-			e.printStackTrace();
-			return response;
+			if(saveFile != null) {
+				sliderImage.setImage_link(saveFile.get(1));
+				sliderImage.setImage_name(saveFile.get(0));
+			}
 		}
 
 		sliderRepository.save(sliderImage);
@@ -116,7 +127,8 @@ public class CourseImageServiceImple implements CourseImageService {
 			return response;
 		}
 		CourseImage sliderImage = optionalSliderImage.get();
-		s3Storage.deleteFile(sliderImage.getImage_link());
+//		s3Storage.deleteFile(sliderImage.getImage_link());
+		ImageStoreProcess.deleteFile(sliderImage.getImage_link(), sliderImage.getImage_name());
 		sliderRepository.deleteById(sliderImageId);
 		response.imageDelete(sliderImage);
 		return response;

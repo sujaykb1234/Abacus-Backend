@@ -21,7 +21,10 @@ import com.abacus.franchise.repo.CourseRepo;
 import com.abacus.franchise.repo.QuestionsRepo;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.QuestionsService;
-import com.abacus.franchise.service.S3BucketService;
+//import com.abacus.franchise.service.S3BucketService;
+import com.abacus.franchise.utility.ImageStoreProcess;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class QuestionsServiceImpl implements QuestionsService {
@@ -35,8 +38,8 @@ public class QuestionsServiceImpl implements QuestionsService {
 	@Autowired
 	ModelMapper mapper;
 
-	@Autowired
-	S3BucketService s3BucketService;
+//	@Autowired
+//	S3BucketService s3BucketService;
 
 	SuccessResponse response = new SuccessResponse();
 
@@ -227,7 +230,7 @@ public class QuestionsServiceImpl implements QuestionsService {
 	}
 
 	@Override
-	public SuccessResponse saveImageQuestion(QuestionsDTO questionsDTO, MultipartFile que_img) {
+	public SuccessResponse saveImageQuestion(QuestionsDTO questionsDTO, MultipartFile que_img,HttpServletRequest request) {
 		SuccessResponse response = new SuccessResponse();
 
 		if (questionsDTO.getCorrect_answer() == null || questionsDTO.getOptions() == null || que_img == null) {
@@ -235,16 +238,20 @@ public class QuestionsServiceImpl implements QuestionsService {
 			return response;
 		}
 		try {
-			StoredImages storedImage = s3BucketService.storeFile(que_img.getOriginalFilename(),
-					que_img.getInputStream(), que_img.getSize(), 5);
+//			StoredImages storedImage = s3BucketService.storeFile(que_img.getOriginalFilename(),
+//					que_img.getInputStream(), que_img.getSize(), 5);
 
+			List<String> saveFile = ImageStoreProcess.saveFile(que_img, request);
+			
 			if (questionsDTO.getQue_id() == null) {
 				// Creating a new image question
 				Questions question = mapper.map(questionsDTO, Questions.class);
 				question.setQuestion_type("IMAGE");
 				question.setIsImageQuestion(true);
-				question.setQuestion_name(storedImage.getProfile_image_name());
-				question.setQuestion_link(storedImage.getProfile_image_link());
+				if(saveFile != null) {
+					question.setQuestion_name(saveFile.get(0));
+					question.setQuestion_link(saveFile.get(1));
+				}
 				questionsRepo.save(question);
 				response.saveQuestions(question);
 			} else {
@@ -256,8 +263,10 @@ public class QuestionsServiceImpl implements QuestionsService {
 					existingQuestion.setCorrect_answer(questionsDTO.getCorrect_answer());
 					existingQuestion.setQuestion_type("IMAGE");
 					existingQuestion.setIsImageQuestion(true);
-					existingQuestion.setQuestion_name(storedImage.getProfile_image_name());
-					existingQuestion.setQuestion_link(storedImage.getProfile_image_link());
+					if(saveFile != null) {
+						existingQuestion.setQuestion_name(saveFile.get(0));
+						existingQuestion.setQuestion_link(saveFile.get(1));
+					}
 					questionsRepo.save(existingQuestion);
 					response.updateQuestions(existingQuestion);
 				} else {
@@ -312,7 +321,7 @@ public class QuestionsServiceImpl implements QuestionsService {
 	}
 
 	@Override
-	public SuccessResponse updateQuestion(Long id, QuestionsDTO questionsDTO, MultipartFile newImageFile) {
+	public SuccessResponse updateQuestion(Long id, QuestionsDTO questionsDTO, MultipartFile newImageFile,HttpServletRequest request) {
 		SuccessResponse response = new SuccessResponse();
 		Optional<Questions> existingQuestionOpt = questionsRepo.findById(id);
 
@@ -326,15 +335,20 @@ public class QuestionsServiceImpl implements QuestionsService {
 
 			if (existingQuestion.getIsImageQuestion() && newImageFile != null && !newImageFile.isEmpty()) {
 				if (existingQuestion.getQuestion_link() != null) {
-					s3BucketService.deleteFile(existingQuestion.getQuestion_link());
+//					s3BucketService.deleteFile(existingQuestion.getQuestion_link());
+                    ImageStoreProcess.deleteFile(existingQuestion.getQuestion_link(),existingQuestion.getQuestion_name());
 				}
 
 				try (InputStream imageInputStream = newImageFile.getInputStream()) {
-					StoredImages storedImage = s3BucketService.storeFile(newImageFile.getOriginalFilename(),
-							imageInputStream, newImageFile.getSize(), 1 // Assuming recordId 1 is used for questions
-					);
-					existingQuestion.setQuestion_name(storedImage.getProfile_image_name());
-					existingQuestion.setQuestion_link(storedImage.getProfile_image_link());
+//					StoredImages storedImage = s3BucketService.storeFile(newImageFile.getOriginalFilename(),
+//							imageInputStream, newImageFile.getSize(), 1 // Assuming recordId 1 is used for questions
+//					);
+					
+					List<String> saveFile = ImageStoreProcess.saveFile(newImageFile, request);
+					if(saveFile != null) {
+						existingQuestion.setQuestion_name(saveFile.get(0));
+						existingQuestion.setQuestion_link(saveFile.get(1));
+					}
 				} catch (Exception e) {
 					response.setMessage("Error updating image for question.");
 					return response;

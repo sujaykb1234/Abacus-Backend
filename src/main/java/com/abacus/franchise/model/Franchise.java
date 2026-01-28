@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.abacus.franchise.utility.FranchiseStatus;
+import com.abacus.franchise.utility.Roles;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -27,7 +28,6 @@ public class Franchise {
 	private String mobile_no;
 	private String gender;
 	private String owner_DOB;
-	private String userName; // for login franchise
 	private String franchise_email;
 	private String franchise_password;
 
@@ -43,13 +43,19 @@ public class Franchise {
 	private String creation_time;
 	private String modification_time;
 	private FranchiseStatus franchiseStatus = FranchiseStatus.PENDING;
-
+	
+	private Roles roles;
+	
+	
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Set<Course> courses = new HashSet<>();
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "franchise_exam_attempt", joinColumns = @JoinColumn(name = "franchise_id"), inverseJoinColumns = @JoinColumn(name = "attempt_id"))
 	private Set<ExamAttempt> examAttempts = new HashSet<>();
+	
+
+	
 
 	public Long getFranchise_id() {
 		return franchise_id;
@@ -57,6 +63,14 @@ public class Franchise {
 
 	public void setFranchise_id(Long franchise_id) {
 		this.franchise_id = franchise_id;
+	}
+
+	public Roles getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Roles roles) {
+		this.roles = roles;
 	}
 
 	public String getFranchise_number() {
@@ -107,14 +121,7 @@ public class Franchise {
 		this.owner_DOB = owner_DOB;
 	}
 
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
+	
 	public String getFranchise_email() {
 		return franchise_email;
 	}
@@ -236,7 +243,7 @@ public class Franchise {
 	}
 
 	public Franchise(Long franchise_id, String franchise_number, String franchise_name, String franchise_owner,
-			String mobile_no, String gender, String owner_DOB, String userName, String franchise_email,
+			String mobile_no, String gender, String owner_DOB, String franchise_email,
 			String franchise_password, Address franchise_address, String profile_image_name, String profile_image_link,
 			String document_type, String document_number, String document_image_link, String document_image_name,
 			String creation_time, String modification_time, FranchiseStatus franchiseStatus, Set<Course> courses,
@@ -249,7 +256,6 @@ public class Franchise {
 		this.mobile_no = mobile_no;
 		this.gender = gender;
 		this.owner_DOB = owner_DOB;
-		this.userName = userName;
 		this.franchise_email = franchise_email;
 		this.franchise_password = franchise_password;
 		this.franchise_address = franchise_address;

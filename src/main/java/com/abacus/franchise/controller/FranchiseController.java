@@ -28,6 +28,9 @@ import com.abacus.franchise.repo.FranchiseRepo;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.FranchiseService;
 import com.abacus.franchise.service.MailService;
+import com.abacus.franchise.service.StudentService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("abacus/v1/franchise/")
@@ -41,25 +44,22 @@ public class FranchiseController {
 
 	@Autowired
 	MailService mailService;
-
-//	Register and update frinchise  //DB
-	@PostMapping("registerAndUpdateTheFrinchise")
-	public SuccessResponse registerAndUpdateTheFrinchise(@ModelAttribute Franchise franchise,
-			@RequestParam(value = "franchies_owner_pic", required = false) MultipartFile franchies_owner_pic,
-			@RequestParam(value = "franchies_owner_id_photo", required = false) MultipartFile franchies_owner_id_photo) {
-		return franchiseService.registerAndUpdateTheFrinchise(franchise, franchies_owner_pic, franchies_owner_id_photo);
+	
+	@Autowired
+	StudentService studentService;
+	
+	@GetMapping("test")
+	public String getMessage() {
+		return "Welcome To Franchise";
 	}
 
-//-----------------------------------------------------------------------------------------------------------------------
-//Login Using Email and password  //DB
-	// login the frinchise
-	@PostMapping("loginTheFrinchise")
+
+	@PostMapping("loginFranchies")
 	public SuccessResponse loginTheFrinchise(@RequestBody Franchise franchise) {
 		return franchiseService.loginTheFranchise(franchise);
 	}
-
-//----------------------------------------------------------------------------------------------------------------------------
-
+	
+	
 //	send Email(otp send)    //DB
 	@PostMapping("/sendEmailForFranchies")
 	public SuccessResponse sendEmail(@RequestBody Mail info) {
@@ -81,17 +81,7 @@ public class FranchiseController {
 			return response;
 		}
 	}
-
-//---------------------------------------------------------------------------------------------------------------------------	
-
-//	Set the new Password  //DB
-	@PostMapping("setTheNewpasswordForFranchies")
-	public SuccessResponse setTheNewPasswordForFranchies(@RequestBody Franchise franchise) {
-		return franchiseService.setTheNewPasswordForFranchies(franchise);
-	}
-
-//----------------------------------------------------------------------------------------------------------------------------	
-
+	
 //	get the franchies using the franchies ID   //DB
 	@GetMapping("getTheFranchiesUsingTheID/{id}")
 	public SuccessResponse getThefranchiesUsingTheID(@PathVariable Long id) {
@@ -262,11 +252,12 @@ public class FranchiseController {
 	}
 
 	@PostMapping("diffrentAddressStudentAddWithKitRequest")
-	public ResponseEntity<SuccessResponse> registerAndUpdateTheStudent(@ModelAttribute Student student,
+	public ResponseEntity<SuccessResponse> diffrentAddressStudentAddWithKitRequest(@ModelAttribute Student student,
 			@RequestParam(value = "studentPhoto", required = false) MultipartFile studentPhoto,
-			@RequestParam(value = "studentDocPhoto", required = false) MultipartFile studentDocPhoto)
+			@RequestParam(value = "studentDocPhoto", required = false) MultipartFile studentDocPhoto
+			,HttpServletRequest request)
 			throws DataNotValidException, IOException {
-		SuccessResponse response = franchiseService.addStudentWithKitRequestOnDiffrentAdd(student, studentPhoto); // studentDocPhoto
+		SuccessResponse response = franchiseService.addStudentWithKitRequestOnDiffrentAdd(student, studentPhoto,request); // studentDocPhoto
 		return ResponseEntity.ok(response);
 	}
 	

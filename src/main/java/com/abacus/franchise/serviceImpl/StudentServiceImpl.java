@@ -19,8 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.abacus.franchise.dto.CourseDTO;
 import com.abacus.franchise.dto.StudentDTO;
@@ -37,6 +40,7 @@ import com.abacus.franchise.model.StoredImages;
 import com.abacus.franchise.model.Student;
 import com.abacus.franchise.model.StudentExam;
 import com.abacus.franchise.model.StudentPracticeTests;
+import com.abacus.franchise.model.TokenDetail;
 import com.abacus.franchise.repo.CourseRepo;
 import com.abacus.franchise.repo.ExamAttemptRepository;
 import com.abacus.franchise.repo.FranchiseKitRequestRepo;
@@ -47,13 +51,19 @@ import com.abacus.franchise.repo.StudentEnrollmentRepo;
 import com.abacus.franchise.repo.StudentExamRepository;
 import com.abacus.franchise.repo.StudentPracticeTestsRepo;
 import com.abacus.franchise.repo.StudentRepo;
+import com.abacus.franchise.repo.TokenDetailRepo;
 import com.abacus.franchise.response.SuccessResponse;
-import com.abacus.franchise.service.S3BucketService;
+import com.abacus.franchise.security.JwtUtil;
+//import com.abacus.franchise.service.S3BucketService;
 import com.abacus.franchise.service.StudentService;
 import com.abacus.franchise.utility.CourseType;
 import com.abacus.franchise.utility.ExamStatus;
+import com.abacus.franchise.utility.ImageStoreProcess;
+import com.abacus.franchise.utility.Roles;
+import com.abacus.franchise.utility.TokenOnly;
 
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 @Component
@@ -68,8 +78,8 @@ public class StudentServiceImpl implements StudentService {
 	@Autowired
 	CourseRepo courseRepo;
 
-	@Autowired
-	S3BucketService s3BucketService;
+//	@Autowired
+//	S3BucketService s3BucketService;
 
 	@Autowired
 	EntityManager entityManager;
@@ -100,29 +110,47 @@ public class StudentServiceImpl implements StudentService {
 
 	@Autowired
 	StudentRepo studentRepo2;
+	
+	@Autowired
+    TokenDetailRepo tokenDetailRepo;
+	
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
+	   @Autowired
+	    JwtUtil jwtUtil;
 
 	@Override
-	public SuccessResponse registerAndUpdateTheStudent(Student student, MultipartFile studentPhoto) throws IOException {
+	public SuccessResponse registerAndUpdateTheStudent(Student student, MultipartFile studentPhoto,HttpServletRequest request) throws IOException {
 		System.out.println("student district : " + student.getAddress().getDistrict());
+		
+		
+		
 		SuccessResponse response = new SuccessResponse();
+		
 		System.out.println(student.getFirst_name());
+		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
+		
 		if (student.getDob() == null || student.getFirst_name() == null || student.getLast_name() == null
 				|| student.getMobile_no() == null) {
 			response.nullDataForStudent(student);
 			return response;
 		}
+		
 		Optional<Student> byEmailID = studentRepo.findByEmail(student.getEmail());
 		if (byEmailID.isPresent() && !byEmailID.get().getStudent_id().equals(student.getStudent_id())) {
 			response.emailAlreadyExist();
 			return response;
 		}
+		
 		Optional<Student> byMobileNo = studentRepo.findByMobileNumber(student.getMobile_no());
 		if (byMobileNo.isPresent() && !byMobileNo.get().getStudent_id().equals(student.getStudent_id())) {
 			response.mobileAlreadyExist();
 			return response;
 		}
+		
 		if (student.getFranchise() != null) {
 			Optional<Franchise> franchiseOpt = franchiseRepo.findById(student.getFranchise().getFranchise_id());
 			if (franchiseOpt.isPresent()) {
@@ -132,17 +160,28 @@ public class StudentServiceImpl implements StudentService {
 				return response;
 			}
 		}
+		
 		List<Course> attachedCourses = new ArrayList<>();
 		for (Course course : student.getCourses()) {
 			if (course.getCourse_id() != null) {
 				Course existingCourse = courseRepo.findcourseById(course.getCourse_id()).orElse(null);
 				if (existingCourse != null) {
+					
+					if (student.getFranchise() == null) {
+					    throw new ResponseStatusException(
+					        HttpStatus.BAD_REQUEST,
+					        "Student is not mapped to any franchise"
+					    );
+					}
+					
 					FranchiseKitRequest kitRequest = franchiseKitRequestRepo.findByFranchiseIdAndCourseId(
 							student.getFranchise().getFranchise_id(), existingCourse.getCourse_id()).orElse(null);
+					
 					if (kitRequest == null) {
 						response.orderKitFirst(existingCourse.getCourse_id());
 						return response;
 					}
+					
 					if (kitRequest.getRemainingStudents() <= 0) {
 						response.insufficientKits();
 						return response;
@@ -158,6 +197,8 @@ public class StudentServiceImpl implements StudentService {
 			}
 		}
 
+		//update
+		
 		if (student.getStudent_id() != null) {
 			Optional<Student> existingStudentOpt = studentRepo.findStudentById(student.getStudent_id());
 			if (existingStudentOpt.isPresent()) {
@@ -190,21 +231,26 @@ public class StudentServiceImpl implements StudentService {
 				}
 				if (studentPhoto != null && !studentPhoto.isEmpty()) {
 					if (existingStudent.getProfile_image_name() != null) {
-						s3BucketService.deleteFile(existingStudent.getProfile_image_name());
+//						s3BucketService.deleteFile(existingStudent.getProfile_image_name());
+						ImageStoreProcess.deleteFile(existingStudent.getProfile_image_link(),existingStudent.getProfile_image_name());
 					}
-					StoredImages storedImages = s3BucketService.storeFile(studentPhoto.getOriginalFilename(),
-							studentPhoto.getInputStream(), studentPhoto.getSize(), 1);
-					existingStudent.setProfile_image_link(storedImages.getProfile_image_link());
-					existingStudent.setProfile_image_name(storedImages.getProfile_image_name());
+//					StoredImages storedImages = s3BucketService.storeFile(studentPhoto.getOriginalFilename(),
+//							studentPhoto.getInputStream(), studentPhoto.getSize(), 1);
+					
+					List<String> saveFile = ImageStoreProcess.saveFile(studentPhoto, request);
+					if(saveFile != null) {
+						existingStudent.setProfile_image_link(saveFile.get(1));
+						existingStudent.setProfile_image_name(saveFile.get(0));
+					}
 				}
 				existingStudent.setModification_time(formatter.format(now));
 				existingStudent.getCourses().addAll(attachedCourses);
+				
+				
 				studentRepo.save(existingStudent);
-				StudentDTO studentDto = modelMapper.map(existingStudent, StudentDTO.class);
-				if (existingStudent.getFranchise() != null) {
-					studentDto.setFranchiseName(existingStudent.getFranchise().getFranchise_name());
-				}
-				response.studentUpdated(studentDto);
+				
+			
+				response.studentUpdated(null);
 				return response;
 			} else {
 				response.idNotFound();
@@ -212,6 +258,8 @@ public class StudentServiceImpl implements StudentService {
 			}
 		}
 
+		//save student
+		
 		if (attachedCourses.isEmpty()) {
 			response.courseNotSelected();
 			return response;
@@ -220,27 +268,39 @@ public class StudentServiceImpl implements StudentService {
 			response.nullFile();
 			return response;
 		}
-		try {
-			StoredImages storedProfileImage = s3BucketService.storeFile(studentPhoto.getOriginalFilename(),
-					studentPhoto.getInputStream(), studentPhoto.getSize(), 1);
-			student.setProfile_image_name(storedProfileImage.getProfile_image_name());
-			student.setProfile_image_link(storedProfileImage.getProfile_image_link());
-		} catch (IOException e) {
-			e.printStackTrace();
-			response.ExceptionForImg(studentPhoto.getName());
-			return response;
+		List<String> saveFile = ImageStoreProcess.saveFile(studentPhoto, request);
+		if(saveFile != null) {
+			student.setProfile_image_name(saveFile.get(0));
+			student.setProfile_image_link(saveFile.get(1));
 		}
 
 		student.setCreation_time(formatter.format(now));
 		student.setCourses(attachedCourses);
 		student.setCurrentCourseId(attachedCourses.get(0).getCourse_id());
 		student.setCurrentCourseName(attachedCourses.get(0).getCourse_name());
-		Student savedStudent = studentRepo.save(student);
-		StudentDTO studentDto = modelMapper.map(student, StudentDTO.class);
-		if (student.getFranchise() != null) {
-			studentDto.setFranchiseName(student.getFranchise().getFranchise_name());
-		}
-		response.saveTheStudent(savedStudent);
+		
+		student.setPassword(passwordEncoder.encode(student.getPassword()));
+		
+		 String accessToken = jwtUtil.generateAccessToken(
+				 student.getMobile_no(),
+	               Roles.STUDENT.toString()
+	        );
+		
+	    TokenDetail tokenEntity = new TokenDetail();
+	    tokenEntity.setToken(accessToken);
+	    tokenEntity.setCreatedAt(LocalDateTime.now());
+	    tokenEntity.setRoles(Roles.STUDENT);
+	    tokenEntity.setMobileNo(student.getMobile_no());
+	    tokenDetailRepo.save(tokenEntity);
+		
+		
+		studentRepo.save(student);
+		
+		
+		
+	
+		
+		response.saveTheStudent(null);
 		return response;
 
 	}
@@ -248,10 +308,11 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	public SuccessResponse loginTheStudent(Student student) {
 		SuccessResponse response = new SuccessResponse();
-		System.out.println("Entered Mobile No: " + student.getMobile_no());
+//		System.out.println("Entered Mobile No: " + student.getMobile_no());
+		
 		if (student.getMobile_no() == null || student.getPassword() == null) {
-			System.out.println("Mobile Number: " + student.getMobile_no());
-			System.out.println("Password: " + student.getPassword());
+//			System.out.println("Mobile Number: " + student.getMobile_no());
+//			System.out.println("Password: " + student.getPassword());
 			response.nullAdminnameAndPass();
 			return response;
 		}
@@ -259,7 +320,7 @@ public class StudentServiceImpl implements StudentService {
 		String studentUsername = student.getMobile_no();
 		String studentPassword = student.getPassword();
 
-		System.out.println("student Username: " + studentUsername);
+//		System.out.println("student Username: " + studentUsername);
 		Optional<Student> byUsername = studentRepo.findByusername(studentUsername);
 
 		if (byUsername.isPresent()) {
@@ -267,13 +328,19 @@ public class StudentServiceImpl implements StudentService {
 
 			StudentDTO studentDto = modelMapper.map(studentFromDb, StudentDTO.class);
 			studentDto.setExamstatus(studentFromDb.getExamStatus());
-			System.out.println("student exam status from DB :" + studentFromDb.getExamStatus());
-			if (studentPassword.equals(studentFromDb.getPassword())) {
-				System.out.println("Exam status : " + studentDto.getExamstatus());
-				response.StudentloginSuccessfully(studentDto);
-			} else {
+			
+//			System.out.println("student exam status from DB :" + studentFromDb.getExamStatus());
+			
+		    if (!passwordEncoder.matches(studentPassword, studentFromDb.getPassword())) {
 				response.wrongPassword();
-			}
+                return response;
+		    }
+		    
+		    Optional<TokenOnly> byMobileNoAndRoles = tokenDetailRepo.findByMobileNoAndRoles(studentFromDb.getMobile_no(), Roles.STUDENT);
+			
+
+			
+			response.StudentloginSuccessfully(byMobileNoAndRoles.get().getToken());
 		} else {
 			response.userNotFound();
 		}
@@ -307,7 +374,7 @@ public class StudentServiceImpl implements StudentService {
 			student2.setCreation_time(byUserName.get().getCreation_time());
 			studentRepo.save(student2);
 			StudentDTO newPassword = modelMapper.map(student2, StudentDTO.class);
-			response.passwordUpdateSuccesfully(newPassword);
+			response.passwordUpdateSuccesfully();
 			return response;
 
 		} else {
@@ -951,7 +1018,7 @@ public class StudentServiceImpl implements StudentService {
 	PracticeStudentRepo practiceStudentRepo;
 
 	@Override
-	public SuccessResponse registerAndUpdateTheStudentDemo(PracticeStudent student, MultipartFile studentPhoto)
+	public SuccessResponse registerAndUpdateTheStudentDemo(PracticeStudent student, MultipartFile studentPhoto,HttpServletRequest request)
 			throws IOException {
 		System.out.println("student obj : " + student);
 		SuccessResponse response = new SuccessResponse();
@@ -1002,12 +1069,18 @@ public class StudentServiceImpl implements StudentService {
 				}
 				if (studentPhoto != null && !studentPhoto.isEmpty()) {
 					if (existingStudent.getProfile_image_name() != null) {
-						s3BucketService.deleteFile(existingStudent.getProfile_image_name());
+//						s3BucketService.deleteFile(existingStudent.getProfile_image_name());
+						ImageStoreProcess.deleteFile(existingStudent.getProfile_image_link(), existingStudent.getProfile_image_name());
 					}
-					StoredImages storedImages = s3BucketService.storeFile(studentPhoto.getOriginalFilename(),
-							studentPhoto.getInputStream(), studentPhoto.getSize(), 1);
-					existingStudent.setProfile_image_link(storedImages.getProfile_image_link());
-					existingStudent.setProfile_image_name(storedImages.getProfile_image_name());
+//					StoredImages storedImages = s3BucketService.storeFile(studentPhoto.getOriginalFilename(),
+//							studentPhoto.getInputStream(), studentPhoto.getSize(), 1);
+					
+					List<String> saveFile = ImageStoreProcess.saveFile(studentPhoto, request);
+					
+					if(saveFile != null) {
+						existingStudent.setProfile_image_link(saveFile.get(1));
+						existingStudent.setProfile_image_name(saveFile.get(0));
+					}
 				}
 				existingStudent.setModification_time(formatter.format(now));
 				practiceStudentRepo.save(existingStudent);
@@ -1024,15 +1097,10 @@ public class StudentServiceImpl implements StudentService {
 			response.nullFile();
 			return response;
 		}
-		try {
-			StoredImages storedProfileImage = s3BucketService.storeFile(studentPhoto.getOriginalFilename(),
-					studentPhoto.getInputStream(), studentPhoto.getSize(), 1);
-			student.setProfile_image_name(storedProfileImage.getProfile_image_name());
-			student.setProfile_image_link(storedProfileImage.getProfile_image_link());
-		} catch (IOException e) {
-			e.printStackTrace();
-			response.ExceptionForImg(studentPhoto.getName());
-			return response;
+		List<String> saveFile = ImageStoreProcess.saveFile(studentPhoto, request);
+		if(saveFile != null) {
+			student.setProfile_image_name(saveFile.get(0));
+			student.setProfile_image_link(saveFile.get(1));
 		}
 
 		student.setCreation_time(formatter.format(now));

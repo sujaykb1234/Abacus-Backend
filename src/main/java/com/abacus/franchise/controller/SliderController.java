@@ -16,6 +16,8 @@ import com.abacus.franchise.model.SliderImage;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.SliderService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("abacus/v1/sliderImage")
 public class SliderController {
@@ -25,8 +27,9 @@ public class SliderController {
 	
 	@PostMapping("/saveSliderImage")
 	public SuccessResponse saveSliderImage(@ModelAttribute SliderImage sliderImage,
-			@RequestParam("sliderImage") MultipartFile sliderImages) {
-		return sliderService.saveSliderImage(sliderImage, sliderImages);
+			@RequestParam("sliderImage") MultipartFile sliderImages
+			,HttpServletRequest request) {
+		return sliderService.saveSliderImage(sliderImage, sliderImages,request);
 	}
 
 	@GetMapping("/getSliderImageById/{sliderImageId}")

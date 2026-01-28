@@ -29,7 +29,6 @@ import com.abacus.franchise.model.FranchiseOrder;
 import com.abacus.franchise.model.OfflineExamUpload;
 import com.abacus.franchise.model.ProductOrderRequest;
 import com.abacus.franchise.model.Products;
-import com.abacus.franchise.model.StoredImages;
 import com.abacus.franchise.model.Student;
 import com.abacus.franchise.model.StudentExam;
 import com.abacus.franchise.repo.AdminNotificationRepo;
@@ -46,10 +45,11 @@ import com.abacus.franchise.repo.StudentExamRepository;
 import com.abacus.franchise.repo.StudentRepo;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.AdminService;
-import com.abacus.franchise.service.S3BucketService;
 import com.abacus.franchise.utility.FranchiseStatus;
+import com.abacus.franchise.utility.ImageStoreProcess;
 import com.abacus.franchise.utility.KitOrderStatus;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -89,13 +89,12 @@ public class AdminServiceImpl implements AdminService {
 	StudentExamRepository studentExamRepository;
 
 	@Autowired
-	S3BucketService bucketService;
-
-	@Autowired
 	StoredImagesRepo imagesRepo;
 
 	@Autowired
 	OfflineExamUploadRepo offlineExamUploadRepo;
+	
+	
 
 	@Override
 	public SuccessResponse loginTheAdmin(Admin admin) {
@@ -159,7 +158,7 @@ public class AdminServiceImpl implements AdminService {
 			admin2.setCreation_time(byUserName.get().getCreation_time());
 			adminRepo.save(admin2);
 			AdminDto newPassword = modelMapper.map(admin2, AdminDto.class);
-			response.passwordUpdateSuccesfully(newPassword);
+			response.passwordUpdateSuccesfully();
 			return response;
 
 		} else {
@@ -189,7 +188,7 @@ public class AdminServiceImpl implements AdminService {
 			SuccessResponse userPassResponse = generateUniqueUserAndPass(franchiseId);
 
 			if (userPassResponse != null) {
-				franchise.setUserName(franchiseUsername);
+//				franchise.setUserName(franchiseUsername);
 				franchise.setFranchise_password(frachisePassword);
 			}
 		}
@@ -368,7 +367,7 @@ public class AdminServiceImpl implements AdminService {
 
 
 	@Override
-	public SuccessResponse uploadOfflineExamPDF(Long courseId, MultipartFile questionPaper) {
+	public SuccessResponse uploadOfflineExamPDF(Long courseId, MultipartFile questionPaper,HttpServletRequest request) {
 		SuccessResponse response = new SuccessResponse();
 		try {
 			if (courseId == null || questionPaper == null || questionPaper.isEmpty()) {
@@ -388,15 +387,38 @@ public class AdminServiceImpl implements AdminService {
 				response.setStatusCode(HttpStatus.ALREADY_REPORTED);
 				return response;
 			}
-			StoredImages storedQuestionPaper = bucketService.storeFile(questionPaper.getOriginalFilename(),
-					questionPaper.getInputStream(), questionPaper.getSize(), 6);
-			OfflineExamUpload examUpload = new OfflineExamUpload();
-			examUpload.setCourseId(courseId);
-			System.out.println("pdf link : " + storedQuestionPaper.getPdfLink());
-			examUpload.setPdfImageName(storedQuestionPaper.getPdfName());
-			examUpload.setPdfImageLink(storedQuestionPaper.getPdfLink());
-			examUpload.setCreatinTime(new Date());
-			offlineExamUploadRepo.save(examUpload);
+//			StoredImages storedQuestionPaper = bucketService.storeFile(questionPaper.getOriginalFilename(),
+//					questionPaper.getInputStream(), questionPaper.getSize(), 6);
+			
+//			System.out.println("pdf link : " + storedQuestionPaper.getPdfLink());
+			
+    	    OfflineExamUpload examUpload = new OfflineExamUpload();
+
+			 if(questionPaper != null && !questionPaper.isEmpty()) {
+				 
+				 List<String> saveFile = ImageStoreProcess.saveFile(questionPaper, request);
+				 
+				 if(!saveFile.isEmpty()) {
+				 
+		  			examUpload.setCourseId(courseId);
+		    	      
+		  			if(saveFile != null) {
+			    	  	examUpload.setPdfImageName(saveFile.get(0));
+						examUpload.setPdfImageLink(saveFile.get(1));
+		  			}
+					examUpload.setCreatinTime(new Date());
+					offlineExamUploadRepo.save(examUpload);
+
+				 }else {
+					 System.out.println("File Not Save");
+				 }  
+			
+			    }else {
+				  response.imageNotFound();
+				  return response;
+			    }
+			
+		
 
 			// Prepare the response
 			response.setMessage("Offline exam PDF uploaded successfully.");
@@ -450,7 +472,11 @@ public class AdminServiceImpl implements AdminService {
 			return response;
 		}
 		OfflineExamUpload offlineExamUpload = findById.get();
-		bucketService.deleteFile(offlineExamUpload.getPdfImageName());
+		
+//		bucketService.deleteFile(offlineExamUpload.getPdfImageName());
+		
+		ImageStoreProcess.deleteFile(offlineExamUpload.getPdfImageLink(), offlineExamUpload.getPdfImageName());
+		
 		offlineExamUploadRepo.deleteById(paperId);
 		response.paperDeleted(offlineExamUpload);
 		return response;

@@ -15,11 +15,13 @@ import com.abacus.franchise.model.KitRequest;
 import com.abacus.franchise.model.Student;
 import com.abacus.franchise.response.SuccessResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public interface FranchiseService {
 
 	public SuccessResponse registerAndUpdateTheFrinchise(Franchise franchise, MultipartFile franchies_owner_pic,
-			MultipartFile franchies_owner_id_photo);
+			MultipartFile franchies_owner_id_photo,HttpServletRequest request);
 
 	SuccessResponse loginTheFranchise(Franchise franchise);
 
@@ -63,7 +65,7 @@ public interface FranchiseService {
 
 	public SuccessResponse getOrdersByFranchise(Long franchiseId);
 
-	public SuccessResponse addStudentWithKitRequestOnDiffrentAdd(Student student, MultipartFile studentPhoto)
+	public SuccessResponse addStudentWithKitRequestOnDiffrentAdd(Student student, MultipartFile studentPhoto,HttpServletRequest request)
 			throws DataNotValidException, IOException;// MultipartFile studentDocPhoto	
 
 } 

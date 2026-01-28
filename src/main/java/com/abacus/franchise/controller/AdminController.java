@@ -1,9 +1,17 @@
  package com.abacus.franchise.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.abacus.franchise.dto.AdminProductDispachedDTO;
 import com.abacus.franchise.model.Admin;
+import com.abacus.franchise.model.Franchise;
 import com.abacus.franchise.model.FranchiseKitRequest;
 import com.abacus.franchise.model.Mail;
 import com.abacus.franchise.model.Products;
@@ -24,8 +33,11 @@ import com.abacus.franchise.repo.AdminRepo;
 import com.abacus.franchise.repo.OfflineExamUploadRepo;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.AdminService;
+import com.abacus.franchise.service.FranchiseService;
 import com.abacus.franchise.service.MailService;
 import com.abacus.franchise.utility.FranchiseStatus;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("abacus/v1/Admin/")
@@ -42,10 +54,13 @@ public class AdminController {
 	
 	@Autowired
 	OfflineExamUploadRepo examUploadRepo;
+	
+	@Autowired
+	FranchiseService franchiseService;
 //-----------------------------------------------------------------------------------------------------	
     @GetMapping("/test")
 	public String getMessage() {
-    	return "Welcome to Franchiese";
+    	return "Welcome to Admin";
     }
 	
 //	Login the admin //DB
@@ -115,8 +130,8 @@ public class AdminController {
 
 	@PostMapping("/uploadQuestionPaperPDF")
 	public SuccessResponse uploadExamPeperForCourse(@RequestParam Long courseId,
-			@RequestParam MultipartFile questionPaper) {
-		return adminService.uploadOfflineExamPDF(courseId, questionPaper);
+			@RequestParam MultipartFile questionPaper,HttpServletRequest request) {
+		return adminService.uploadOfflineExamPDF(courseId, questionPaper,request);
 	}
 
 	@GetMapping("/getPaperPDFByCourse/{courseId}")
@@ -180,5 +195,35 @@ public class AdminController {
 		return response;
 		
 	}
+	
+	
+	  @GetMapping("/view/{filename}")
+	    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+	        try {
+	            Path filePath = Paths.get("C:/Images/").resolve(filename).normalize();
+	            Resource resource = new UrlResource(filePath.toUri());
+
+	            if (!resource.exists()) {
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	            }
+
+	            String contentType = Files.probeContentType(filePath);
+	            if (contentType == null) {
+	                contentType = "application/octet-stream";
+	            }
+
+	            return ResponseEntity.ok()
+	                    .contentType(MediaType.parseMediaType(contentType))
+	                    .body(resource);
+
+	        } catch (IOException e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	        }
+	    }
+	  
+		@PostMapping("setTheNewpasswordForFranchies")
+		public SuccessResponse setTheNewPasswordForFranchies(@RequestBody Franchise franchise) {
+			return franchiseService.setTheNewPasswordForFranchies(franchise);
+		}
 	
 }

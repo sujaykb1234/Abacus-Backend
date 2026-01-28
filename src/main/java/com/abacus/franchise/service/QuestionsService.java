@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.abacus.franchise.dto.QuestionsDTO;
 import com.abacus.franchise.response.SuccessResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Service
@@ -13,7 +14,7 @@ public interface QuestionsService {
 
 	SuccessResponse saveTextQuestion(QuestionsDTO questionsDTO);
 
-	public SuccessResponse saveImageQuestion(QuestionsDTO questionsDTO, MultipartFile que_img);
+	public SuccessResponse saveImageQuestion(QuestionsDTO questionsDTO, MultipartFile que_img,HttpServletRequest request);
 
 	public SuccessResponse getQuestionByQueId(Long id);
 
@@ -27,6 +28,6 @@ public interface QuestionsService {
 
 	SuccessResponse deleteQuestion(Long id);
 	
-	public SuccessResponse updateQuestion(Long id, QuestionsDTO questionsDTO, MultipartFile newImageFile);
+	public SuccessResponse updateQuestion(Long id, QuestionsDTO questionsDTO, MultipartFile newImageFile,HttpServletRequest request);
 
 }

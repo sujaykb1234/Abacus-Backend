@@ -1,39 +1,73 @@
 package com.abacus.franchise.model;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
 
 @Entity
+@Table(name = "address")
 public class Address {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long address_id;
+    @Id
+    @GeneratedValue
+    @Column(name = "address_id")
+    private UUID addressId;
 
-	private String line1;
+    @Column(name = "line1", nullable = false, length = 255)
+    private String line1;
 
-	private String line2;
+    @Column(name = "landmark", length = 200)
+    private String landmark;
 
-	private String city;
+    @Column(name = "pincode", length = 10)
+    private String pincode;
 
-	private String state;
+    @Column(name = "city", length = 100)
+    private String city;
 
-	private String pincode;
+    @Column(name = "country_name", nullable = false)
+    private String countryName = "INDIA";
 
-	private String district;
+    @Column(name = "state_id", nullable = false)
+    private UUID stateId;
 
-	private String taluka;
+    @Column(name = "district_id")
+    private UUID districtId;
 
-	private String country = "INDIA";
+     @Column(name = "is_active")
+    private Boolean isActive = true;
 
-	private boolean status = true;
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
-	public Long getAddress_id() {
-		return address_id;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "created_by")
+    private UUID createdBy;
+
+    @Column(name = "updated_by")
+    private UUID updatedBy;
+    
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+	public UUID getAddressId() {
+		return addressId;
 	}
 
-	public void setAddress_id(Long address_id) {
-		this.address_id = address_id;
+	public void setAddressId(UUID addressId) {
+		this.addressId = addressId;
 	}
 
 	public String getLine1() {
@@ -44,28 +78,12 @@ public class Address {
 		this.line1 = line1;
 	}
 
-	public String getLine2() {
-		return line2;
+	public String getLandmark() {
+		return landmark;
 	}
 
-	public void setLine2(String line2) {
-		this.line2 = line2;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
+	public void setLandmark(String landmark) {
+		this.landmark = landmark;
 	}
 
 	public String getPincode() {
@@ -76,55 +94,77 @@ public class Address {
 		this.pincode = pincode;
 	}
 
-	public String getDistrict() {
-		return district;
+	public String getCity() {
+		return city;
 	}
 
-	public void setDistrict(String district) {
-		this.district = district;
-	}
-
-	public String getTaluka() {
-		return taluka;
-	}
-
-	public void setTaluka(String taluka) {
-		this.taluka = taluka;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public boolean isStatus() {
-		return status;
-	}
-
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
-
-	public Address(Long address_id, String line1, String line2, String city, String state, String pincode,
-			String district, String taluka, String country, boolean status) {
-		super();
-		this.address_id = address_id;
-		this.line1 = line1;
-		this.line2 = line2;
+	public void setCity(String city) {
 		this.city = city;
-		this.state = state;
-		this.pincode = pincode;
-		this.district = district;
-		this.taluka = taluka;
-		this.country = country;
-		this.status = status;
 	}
 
-	public Address() {
-		super();
+	public String getCountryName() {
+		return countryName;
 	}
 
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	public UUID getStateId() {
+		return stateId;
+	}
+
+	public void setStateId(UUID stateId) {
+		this.stateId = stateId;
+	}
+
+	public UUID getDistrictId() {
+		return districtId;
+	}
+
+	public void setDistrictId(UUID districtId) {
+		this.districtId = districtId;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public UUID getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UUID createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UUID getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(UUID updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+	
+    
 }

@@ -25,6 +25,8 @@ import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.MailService;
 import com.abacus.franchise.service.StudentService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("abacus/v1/student/")
 public class StudentController {
@@ -37,40 +39,14 @@ public class StudentController {
 	@Autowired
 	MailService mailService;
 
-	@PostMapping("registerAndUpdateTheStudent")
-	public ResponseEntity<SuccessResponse> registerAndUpdateTheStudent(@ModelAttribute Student student,
-			@RequestParam(value = "studentPhoto", required = false) MultipartFile studentPhoto,
-			@RequestParam(value = "studentDocPhoto", required = false) MultipartFile studentDocPhoto)
-			throws DataNotValidException, IOException {
-		SuccessResponse response = studentService.registerAndUpdateTheStudent(student, studentPhoto); // studentDocPhoto
-		return ResponseEntity.ok(response);
-	}
-
-	@PostMapping("registerAndUpdateTheStudentDemo") // ON mayur sir dimand 20/12
-	public ResponseEntity<SuccessResponse> registerAndUpdateTheStudentDemo(@ModelAttribute PracticeStudent student,
-			@RequestParam(value = "studentPhoto", required = false) MultipartFile studentPhoto,
-			@RequestParam(value = "studentDocPhoto", required = false) MultipartFile studentDocPhoto)
-			throws DataNotValidException, IOException {
-		SuccessResponse response = studentService.registerAndUpdateTheStudentDemo(student, studentPhoto); // studentDocPhoto
-		return ResponseEntity.ok(response);
+	@PostMapping("loginTheStudent")
+	public SuccessResponse loginTheStudnet(@RequestBody Student student) {
+		return studentService.loginTheStudent(student);
 	}
 
 	@GetMapping("/getDemoStudentById/{studentId}") 
 	public SuccessResponse getDemoStudentById(@PathVariable Long studentId) {
 		return studentService.getDemoStudentById(studentId); 
-	}
-//------------------------------------------------------------------------------------------------------------------------------
-
-//login the student using Email   //DB
-	@PostMapping("loginTheStudent")
-	public SuccessResponse loginTheStudnet(@RequestBody Student student) {
-		System.out.println("student " + student.getFirst_name());
-
-		System.out.println("mbl " + student.getMobile_no());
-
-		System.out.println("pass " + student.getPassword());
-
-		return studentService.loginTheStudent(student);
 	}
 
 //-------------------------------------------------------------------------------------------------------------------------------

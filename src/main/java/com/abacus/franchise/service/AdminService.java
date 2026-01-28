@@ -10,6 +10,8 @@ import com.abacus.franchise.model.Products;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.utility.FranchiseStatus;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public interface AdminService {
 
@@ -29,7 +31,7 @@ public interface AdminService {
 
 	public SuccessResponse getExamCompletedStudents(Long franchiseId);
 
-	public SuccessResponse uploadOfflineExamPDF(Long courseId, MultipartFile questionPaper);
+	public SuccessResponse uploadOfflineExamPDF(Long courseId, MultipartFile questionPaper,HttpServletRequest request);
 
 	public SuccessResponse getOfflineExamPdf(Long courseId);
 

@@ -13,15 +13,15 @@ public class Tehsil {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long tehsil_id;
 	private String tehsil_name;
-	@ManyToOne
-	private District district;
-	
-	public District getDistrict() {
-		return district;
-	}
-	public void setDistrict(District district) {
-		this.district = district;
-	}
+//	@ManyToOne
+//	private District district;
+//	
+//	public District getDistrict() {
+//		return district;
+//	}
+//	public void setDistrict(District district) {
+//		this.district = district;
+//	}
 	public Long getTehsil_id() {
 		return tehsil_id;
 	}
