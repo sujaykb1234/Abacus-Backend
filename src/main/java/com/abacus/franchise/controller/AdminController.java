@@ -221,9 +221,9 @@ public class AdminController {
 	        }
 	    }
 	  
-		@PostMapping("setTheNewpasswordForFranchies")
-		public SuccessResponse setTheNewPasswordForFranchies(@RequestBody Franchise franchise) {
-			return franchiseService.setTheNewPasswordForFranchies(franchise);
-		}
+//		@PostMapping("setTheNewpasswordForFranchies")
+//		public SuccessResponse setTheNewPasswordForFranchies(@RequestBody Franchise franchise) {
+//			return franchiseService.setTheNewPasswordForFranchies(franchise);
+//		}
 	
 }

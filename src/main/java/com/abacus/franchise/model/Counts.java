@@ -1,60 +1,29 @@
 package com.abacus.franchise.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Table(name = "counts")
 public class Counts {
 
-	@Id
-	private Long count_id;
-	private String name;
-	private String abbreviation;
-	private Long count;
+    @Id
+    @Column(name = "count_id")
+    private Long countId;
 
-	public Long getCount_id() {
-		return count_id;
-	}
+    @Column(name = "name", length = 100, nullable = false)
+    private String name;
 
-	public void setCount_id(Long count_id) {
-		this.count_id = count_id;
-	}
+    @Column(name = "abbreviation", length = 20)
+    private String abbreviation;
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getAbbreviation() {
-		return abbreviation;
-	}
-
-	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
-	}
-
-	public Long getCount() {
-		return count;
-	}
-
-	public void setCount(Long count) {
-		this.count = count;
-	}
-
-	public Counts(Long count_id, String name, String abbreviation, Long count) {
-		super();
-		this.count_id = count_id;
-		this.name = name;
-		this.abbreviation = abbreviation;
-		this.count = count;
-	}
-
-	public Counts() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
+    @Column(name = "count_value")
+    private Long count;
 }

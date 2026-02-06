@@ -1,61 +1,39 @@
 package com.abacus.franchise.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
+@Table(name = "franchise_order")
 public class FranchiseOrder {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "franchise_id", nullable = false)
-	private Franchise franchise;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "franchise_id", nullable = false)
+    private Franchise franchise;
 
-	private Date orderTime;
+    @Column(name = "order_time", nullable = false)
+    private LocalDateTime orderTime;
 
-	public Long getId() {
-		return id;
-	}
+    // ===== Constructors =====
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public FranchiseOrder() {
+        // JPA requires no-args constructor
+    }
 
-	public Franchise getFranchise() {
-		return franchise;
-	}
+    public FranchiseOrder(Franchise franchise, LocalDateTime orderTime) {
+        this.franchise = franchise;
+        this.orderTime = orderTime;
+    }
 
-	public void setFranchise(Franchise franchise) {
-		this.franchise = franchise;
-	}
-
-	public Date getOrderTime() {
-		return orderTime;
-	}
-
-	public void setOrderTime(Date orderTime) {
-		this.orderTime = orderTime;
-	}
-
-	public FranchiseOrder(Long id, Franchise franchise, Date orderTime) {
-		super();
-		this.id = id;
-		this.franchise = franchise;
-		this.orderTime = orderTime;
-	}
-
-	public FranchiseOrder() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    // ===== Getters & Setters =====
 
 }

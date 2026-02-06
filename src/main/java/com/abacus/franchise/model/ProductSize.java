@@ -2,6 +2,7 @@ package com.abacus.franchise.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,47 +12,52 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class ProductSize {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "product_id", nullable = false)
-	@JsonBackReference
-	private Products product; // Only one-way mapping here
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	private String size; // Size of the product (e.g., S, M, L, XL)
-	private Integer quantity; // Quantity available for this size
+    // Many sizes belong to one product
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "product_id", nullable = false)
+    @JsonBackReference
+    private Products product;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(nullable = false, length = 10)
+    private String size; // e.g. S, M, L, XL
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(nullable = false)
+    private Integer quantity = 0;
 
-	public Products getProduct() {
-		return product;
-	}
+    // ======================
+    // GETTERS & SETTERS
+    // ======================
 
-	public void setProduct(Products product) {
-		this.product = product;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getSize() {
-		return size;
-	}
+    public Products getProduct() {
+        return product;
+    }
 
-	public void setSize(String size) {
-		this.size = size;
-	}
+    public void setProduct(Products product) {
+        this.product = product;
+    }
 
-	public Integer getQuantity() {
-		return quantity;
-	}
+    public String getSize() {
+        return size;
+    }
 
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 }

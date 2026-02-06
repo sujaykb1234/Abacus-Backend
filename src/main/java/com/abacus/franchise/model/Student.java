@@ -1,327 +1,372 @@
 package com.abacus.franchise.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.abacus.franchise.utility.ExamStatus;
 import com.abacus.franchise.utility.ExamType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "student")
 public class Student {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long student_id;
-	private String first_name;
-	private String last_name;
-	private String mobile_no;
-	private String email;
-	private String password;
-	private String name_on_certificate;
-	private String gender;
-	private String dob;
-	@OneToOne(cascade = CascadeType.ALL)
-	private Address address;
-	private Long currentExamId;
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "student_course", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
-	private List<Course> courses = new ArrayList<>();
-	private String profile_image_name;
-	private String profile_image_link;
-	private String education;
-	private String board;
-	private String creation_time;
-	private String modification_time;
-	private String exam_password;
-	private Long currentCourseId;
-	private String currentCourseName;
-	private ExamStatus examStatus = ExamStatus.PENDING;
-	private boolean status = true;
-	@ManyToOne
-	@JoinColumn(name = "franchise_id")
-	private Franchise franchise;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "student_id")
+    private Long studentId;
 
-	private ExamType examType;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<StudentExam> studentExams = new ArrayList<>(); // Added relationship with StudentExam
+    @Column(name = "last_name")
+    private String lastName;
 
-	public void addCourse(Course course) {
-		if (course == null) {
-			throw new IllegalArgumentException("Course cannot be null");
-		}
-		if (!this.courses.contains(course)) {
-			this.courses.add(course);
-		}
-	}
+    @Column(name = "mobile_no", unique = true, nullable = false)
+    private String mobileNo;
 
-	public Long getCurrentExamId() {
-		return currentExamId;
-	}
+    @Column(name = "email", unique = true)
+    private String email;
 
-	public void setCurrentExamId(Long currentExamId) {
-		this.currentExamId = currentExamId;
-	}
+    @Column(name = "password", nullable = false)
+    private String password;
 
-	public void removeCourse(Course course) {
-		if (this.courses != null && this.courses.contains(course)) {
-			this.courses.remove(course);
-		}
-	}
+    @Column(name = "name_on_certificate")
+    private String nameOnCertificate;
 
-	public List<StudentExam> getStudentExams() {
-		return studentExams;
-	}
+    @Column(name = "gender")
+    private String gender;
 
-	public void setStudentExams(List<StudentExam> studentExams) {
-		this.studentExams = studentExams;
-	}
+    @Column(name = "dob")
+    private String dob;
 
-	public Long getStudent_id() {
-		return student_id;
-	}
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
-	public void setStudent_id(Long student_id) {
-		this.student_id = student_id;
-	}
+    @Column(name = "current_exam_id")
+    private Long currentExamId;
 
-	public Long getCurrentCourseId() {
-		return currentCourseId;
-	}
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private List<Course> courses = new ArrayList<>();
 
-	public void setCurrentCourseId(Long currentCourseId) {
-		this.currentCourseId = currentCourseId;
-	}
+    @Column(name = "profile_image_name")
+    private String profileImageName;
 
-	public String getCurrentCourseName() {
-		return currentCourseName;
-	}
+    @Column(name = "profile_image_link")
+    private String profileImageLink;
 
-	public void setCurrentCourseName(String currentCourseName) {
-		this.currentCourseName = currentCourseName;
-	}
+    @Column(name = "education")
+    private String education;
 
-	public String getFirst_name() {
-		return first_name;
-	}
+    @Column(name = "board")
+    private String board;
 
-	public void setFirst_name(String first_name) {
-		this.first_name = first_name;
-	}
+    @Column(name = "exam_password")
+    private String examPassword;
 
-	public String getLast_name() {
-		return last_name;
-	}
+    @Column(name = "current_course_id")
+    private Long currentCourseId;
 
-	public void setLast_name(String last_name) {
-		this.last_name = last_name;
-	}
+    @Column(name = "current_course_name")
+    private String currentCourseName;
 
-	public String getMobile_no() {
-		return mobile_no;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "exam_status")
+    private ExamStatus examStatus = ExamStatus.PENDING;
 
-	public void setMobile_no(String mobile_no) {
-		this.mobile_no = mobile_no;
-	}
+    @Column(name = "status")
+    private boolean isActive = true;
 
-	public String getEmail() {
-		return email;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "franchise_id")
+    private Franchise franchise;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "exam_type")
+    private ExamType examType;
 
-	public String getPassword() {
-		return password;
-	}
+    @JsonIgnore
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<StudentExam> studentExams = new ArrayList<>();
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    // Audit fields
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
-	public String getName_on_certificate() {
-		return name_on_certificate;
-	}
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-	public void setName_on_certificate(String name_on_certificate) {
-		this.name_on_certificate = name_on_certificate;
-	}
+    @Column(name = "created_by", columnDefinition = "CHAR(36)")
+    private UUID createdBy;
 
-	public String getGender() {
-		return gender;
-	}
+    @Column(name = "updated_by", columnDefinition = "CHAR(36)")
+    private UUID updatedBy;
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public String getDob() {
-		return dob;
-	}
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public void setDob(String dob) {
-		this.dob = dob;
-	}
+    public Student() {
+    }
 
-	public Address getAddress() {
-		return address;
-	}
+    // Business methods
+    public void addCourse(Course course) {
+        if (course == null) {
+            throw new IllegalArgumentException("Course cannot be null");
+        }
+        if (!this.courses.contains(course)) {
+            this.courses.add(course);
+            course.addStudent(this);
+        }
+    }
 
-	public void setAddress(Address address) {
-		this.address = address;
-	}
+    public void removeCourse(Course course) {
+        if (this.courses != null && this.courses.contains(course)) {
+            this.courses.remove(course);
+            course.removeStudent(this);
+        }
+    }
 
-	public List<Course> getCourses() {
-		return courses;
-	}
+    // Getters and setters
+    public Long getStudentId() {
+        return studentId;
+    }
 
-	public void setCourses(List<Course> courses) {
-		this.courses = courses;
-	}
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
 
-	public String getProfile_image_name() {
-		return profile_image_name;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setProfile_image_name(String profile_image_name) {
-		this.profile_image_name = profile_image_name;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getProfile_image_link() {
-		return profile_image_link;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setProfile_image_link(String profile_image_link) {
-		this.profile_image_link = profile_image_link;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public String getEducation() {
-		return education;
-	}
+    public String getMobileNo() {
+        return mobileNo;
+    }
 
-	public void setEducation(String education) {
-		this.education = education;
-	}
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
 
-	public String getBoard() {
-		return board;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setBoard(String board) {
-		this.board = board;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
+    public String getPassword() {
+        return password;
+    }
 
-	public String getCreation_time() {
-		return creation_time;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setCreation_time(String creation_time) {
-		this.creation_time = creation_time;
-	}
+    public String getNameOnCertificate() {
+        return nameOnCertificate;
+    }
 
-	public String getModification_time() {
-		return modification_time;
-	}
+    public void setNameOnCertificate(String nameOnCertificate) {
+        this.nameOnCertificate = nameOnCertificate;
+    }
 
-	public void setModification_time(String modification_time) {
-		this.modification_time = modification_time;
-	}
+    public String getGender() {
+        return gender;
+    }
 
-	public String getExam_password() {
-		return exam_password;
-	}
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-	public void setExam_password(String exam_password) {
-		this.exam_password = exam_password;
-	}
+    public String getDob() {
+        return dob;
+    }
 
-	public ExamStatus getExamStatus() {
-		return examStatus;
-	}
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
 
-	public void setExamStatus(ExamStatus examStatus) {
-		this.examStatus = examStatus;
-	}
+    public Address getAddress() {
+        return address;
+    }
 
-	public boolean isStatus() {
-		return status;
-	}
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
+    public Long getCurrentExamId() {
+        return currentExamId;
+    }
 
-	public Franchise getFranchise() {
-		return franchise;
-	}
+    public void setCurrentExamId(Long currentExamId) {
+        this.currentExamId = currentExamId;
+    }
 
-	public void setFranchise(Franchise franchise) {
-		this.franchise = franchise;
-	}
+    public List<Course> getCourses() {
+        return courses;
+    }
 
-	public ExamType getExamType() {
-		return examType;
-	}
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
 
-	public void setExamType(ExamType examType) {
-		this.examType = examType;
-	}
-	public Student(Long student_id, String first_name, String last_name, String mobile_no, String email,
-			String password, String name_on_certificate, String gender, String dob, Address address, Long currentExamId,
-			List<Course> courses, String profile_image_name, String profile_image_link, String education, String board,
-			 String creation_time, String modification_time,
-			String exam_password, Long currentCourseId, String currentCourseName, ExamStatus examStatus, boolean status,
-			Franchise franchise, ExamType examType, List<StudentExam> studentExams) {
-		super();
-		this.student_id = student_id;
-		this.first_name = first_name;
-		this.last_name = last_name;
-		this.mobile_no = mobile_no;
-		this.email = email;
-		this.password = password;
-		this.name_on_certificate = name_on_certificate;
-		this.gender = gender;
-		this.dob = dob;
-		this.address = address;
-		this.currentExamId = currentExamId;
-		this.courses = courses;
-		this.profile_image_name = profile_image_name;
-		this.profile_image_link = profile_image_link;
-		this.education = education;
-		this.board = board;
-		this.creation_time = creation_time;
-		this.modification_time = modification_time;
-		this.exam_password = exam_password;
-		this.currentCourseId = currentCourseId;
-		this.currentCourseName = currentCourseName;
-		this.examStatus = examStatus;
-		this.status = status;
-		this.franchise = franchise;
-		this.examType = examType;
-		this.studentExams = studentExams;
-	}
+    public String getProfileImageName() {
+        return profileImageName;
+    }
 
-	public Student() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public void setProfileImageName(String profileImageName) {
+        this.profileImageName = profileImageName;
+    }
 
+    public String getProfileImageLink() {
+        return profileImageLink;
+    }
+
+    public void setProfileImageLink(String profileImageLink) {
+        this.profileImageLink = profileImageLink;
+    }
+
+    public String getEducation() {
+        return education;
+    }
+
+    public void setEducation(String education) {
+        this.education = education;
+    }
+
+    public String getBoard() {
+        return board;
+    }
+
+    public void setBoard(String board) {
+        this.board = board;
+    }
+
+    public String getExamPassword() {
+        return examPassword;
+    }
+
+    public void setExamPassword(String examPassword) {
+        this.examPassword = examPassword;
+    }
+
+    public Long getCurrentCourseId() {
+        return currentCourseId;
+    }
+
+    public void setCurrentCourseId(Long currentCourseId) {
+        this.currentCourseId = currentCourseId;
+    }
+
+    public String getCurrentCourseName() {
+        return currentCourseName;
+    }
+
+    public void setCurrentCourseName(String currentCourseName) {
+        this.currentCourseName = currentCourseName;
+    }
+
+    public ExamStatus getExamStatus() {
+        return examStatus;
+    }
+
+    public void setExamStatus(ExamStatus examStatus) {
+        this.examStatus = examStatus;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public Franchise getFranchise() {
+        return franchise;
+    }
+
+    public void setFranchise(Franchise franchise) {
+        this.franchise = franchise;
+    }
+
+    public ExamType getExamType() {
+        return examType;
+    }
+
+    public void setExamType(ExamType examType) {
+        this.examType = examType;
+    }
+
+    public List<StudentExam> getStudentExams() {
+        return studentExams;
+    }
+
+    public void setStudentExams(List<StudentExam> studentExams) {
+        this.studentExams = studentExams;
+    }
+
+    // Audit getters/setters
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public UUID getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

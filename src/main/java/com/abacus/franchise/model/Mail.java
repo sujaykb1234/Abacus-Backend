@@ -1,98 +1,100 @@
 package com.abacus.franchise.model;
 
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Mail {
+public class Mail implements Serializable {
 
-	private String mailFrom;
-	private String mailTo;
-	private String mailCc;
-	private String mailBcc;
-	private String mailSubject;
-	private String mailContent;
-	private String contentType = "text/plain";
-	private List<Object> attachments;
+    private static final long serialVersionUID = 1L;
 
-	public String getMailFrom() {
-		return mailFrom;
-	}
+    private String mailFrom;
+    private String mailTo;
+    @Setter
+    private String mailCc;
+    @Setter
+    private String mailBcc;
+    @Setter
+    private String mailSubject;
+    @Setter
+    private String mailContent;
+    private String contentType = "text/plain";
+    private List<Object> attachments = new ArrayList<>();
 
-	public void setMailFrom(String mailFrom) {
-		this.mailFrom = mailFrom;
-	}
+    // ===== Constructors =====
 
-	public String getMailTo() {
-		return mailTo;
-	}
+    public Mail() {
+        // default constructor
+    }
 
-	public void setMailTo(String mailTo) {
-		this.mailTo = mailTo;
-	}
+    public Mail(String mailFrom,
+                String mailTo,
+                String mailCc,
+                String mailBcc,
+                String mailSubject,
+                String mailContent,
+                String contentType,
+                List<Object> attachments) {
 
-	public String getMailCc() {
-		return mailCc;
-	}
+        this.mailFrom = mailFrom;
+        this.mailTo = mailTo;
+        this.mailCc = mailCc;
+        this.mailBcc = mailBcc;
+        this.mailSubject = mailSubject;
+        this.mailContent = mailContent;
+        this.contentType = contentType != null ? contentType : "text/plain";
+        this.attachments = attachments != null ? attachments : new ArrayList<>();
+    }
 
-	public void setMailCc(String mailCc) {
-		this.mailCc = mailCc;
-	}
+    // ===== Getters & Setters =====
 
-	public String getMailBcc() {
-		return mailBcc;
-	}
+    public String getMailFrom() {
+        return mailFrom;
+    }
 
-	public void setMailBcc(String mailBcc) {
-		this.mailBcc = mailBcc;
-	}
+    public void setMailFrom(String mailFrom) {
+        this.mailFrom = mailFrom;
+    }
 
-	public String getMailSubject() {
-		return mailSubject;
-	}
+    public String getMailTo() {
+        return mailTo;
+    }
 
-	public void setMailSubject(String mailSubject) {
-		this.mailSubject = mailSubject;
-	}
+    public void setMailTo(String mailTo) {
+        this.mailTo = mailTo;
+    }
 
-	public String getMailContent() {
-		return mailContent;
-	}
+    public String getMailCc() {
+        return mailCc;
+    }
 
-	public void setMailContent(String mailContent) {
-		this.mailContent = mailContent;
-	}
+    public String getMailBcc() {
+        return mailBcc;
+    }
 
-	public String getContentType() {
-		return contentType;
-	}
+    public String getMailSubject() {
+        return mailSubject;
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+    public String getMailContent() {
+        return mailContent;
+    }
 
-	public List<Object> getAttachments() {
-		return attachments;
-	}
+    public String getContentType() {
+        return contentType;
+    }
 
-	public void setAttachments(List<Object> attachments) {
-		this.attachments = attachments;
-	}
+    public void setContentType(String contentType) {
+        this.contentType = contentType != null ? contentType : "text/plain";
+    }
 
-	public Mail(String mailFrom, String mailTo, String mailCc, String mailBcc, String mailSubject, String mailContent,
-			String contentType, List<Object> attachments) {
-		super();
-		this.mailFrom = mailFrom;
-		this.mailTo = mailTo;
-		this.mailCc = mailCc;
-		this.mailBcc = mailBcc;
-		this.mailSubject = mailSubject;
-		this.mailContent = mailContent;
-		this.contentType = contentType;
-		this.attachments = attachments;
-	}
+    public List<Object> getAttachments() {
+        return attachments;
+    }
 
-	public Mail() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
+    public void setAttachments(List<Object> attachments) {
+        this.attachments = attachments != null ? attachments : new ArrayList<>();
+    }
 }

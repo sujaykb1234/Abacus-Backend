@@ -1,113 +1,62 @@
 package com.abacus.franchise.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
+@Table(name = "franchise_kit_request_logs")
 public class FranchiseKitRequestsLogs {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private Long franchise_id;
-	private String franchise_name;
-	private String franchise_number;
-	private Long courseId;
-	private String courseName;
-	private Integer orderedKits;
-	private String franchiseMobile;
-	private String requestedDate;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(name = "franchise_id", nullable = false)
+    private Long franchiseId;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(name = "franchise_name", nullable = false)
+    private String franchiseName;
 
-	public Long getFranchise_id() {
-		return franchise_id;
-	}
+    @Column(name = "franchise_number", nullable = false)
+    private String franchiseNumber;
 
-	public void setFranchise_id(Long franchise_id) {
-		this.franchise_id = franchise_id;
-	}
+    @Column(name = "course_id", nullable = false)
+    private Long courseId;
 
-	public String getFranchise_name() {
-		return franchise_name;
-	}
+    @Column(name = "course_name", nullable = false)
+    private String courseName;
 
-	public void setFranchise_name(String franchise_name) {
-		this.franchise_name = franchise_name;
-	}
+    @Column(name = "ordered_kits", nullable = false)
+    private Integer orderedKits;
 
-	public String getFranchise_number() {
-		return franchise_number;
-	}
+    @Column(name = "franchise_mobile")
+    private String franchiseMobile;
 
-	public void setFranchise_number(String franchise_number) {
-		this.franchise_number = franchise_number;
-	}
+    @Column(name = "requested_date", nullable = false)
+    private String requestedDate;
 
-	public String getCourseName() {
-		return courseName;
-	}
-
-	public void setCourseName(String courseName) {
-		this.courseName = courseName;
-	}
-
-	public Integer getOrderedKits() {
-		return orderedKits;
-	}
-
-	public void setOrderedKits(Integer orderedKits) {
-		this.orderedKits = orderedKits;
-	}
-
-	public String getFranchiseMobile() {
-		return franchiseMobile;
-	}
-
-	public void setFranchiseMobile(String franchiseMobile) {
-		this.franchiseMobile = franchiseMobile;
-	}
-
-	public Long getCourseId() {
-		return courseId;
-	}
-
-	public void setCourseId(Long courseId) {
-		this.courseId = courseId;
-	}
-
-	public String getRequestedDate() {
-		return requestedDate;
-	}
-
-	public void setRequestedDate(String requestedDate) {
-		this.requestedDate = requestedDate;
-	}
-
-	public FranchiseKitRequestsLogs(Long id, Long franchise_id, String franchise_name, String franchise_number,
-			String courseName, Integer orderedKits, String franchiseMobile, Long courseId, String requestedDate) {
-		super();
-		this.id = id;
-		this.franchise_id = franchise_id;
-		this.franchise_name = franchise_name;
-		this.franchise_number = franchise_number;
-		this.courseName = courseName;
-		this.orderedKits = orderedKits;
-		this.franchiseMobile = franchiseMobile;
-		this.courseId = courseId;
-		this.requestedDate = requestedDate;
-	}
-
-	public FranchiseKitRequestsLogs() {
-		super();
-	}
-
+    public FranchiseKitRequestsLogs(
+            Long franchiseId,
+            String franchiseName,
+            String franchiseNumber,
+            Long courseId,
+            String courseName,
+            Integer orderedKits,
+            String franchiseMobile,
+            String requestedDate
+    ) {
+        this.franchiseId = franchiseId;
+        this.franchiseName = franchiseName;
+        this.franchiseNumber = franchiseNumber;
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.orderedKits = orderedKits;
+        this.franchiseMobile = franchiseMobile;
+        this.requestedDate = requestedDate;
+    }
 }

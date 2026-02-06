@@ -1,126 +1,153 @@
 package com.abacus.franchise.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.abacus.franchise.utility.ExamType;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 
 @Entity
 public class OfflineExam {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long offline_exam_id;
-	
-	private Long exam_id;
-	
-	private ExamType examType; 
-	private Long student_id;
-	private Long franchise_id;
-	private Long course_id;
-	private Double marks;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long offlineExamId;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	private List<StoredImages> pdf_images;
-	
-	private Boolean mark_as_download=false;
+    @Column(nullable = false)
+    private Long examId;
 
-	private String creation_time;
-	private Boolean status=true;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ExamType examType;
 
+    @Column(nullable = false)
+    private Long studentId;
 
-	public Long getOffline_exam_id() {
-		return offline_exam_id;
-	}
+    @Column(nullable = false)
+    private Long franchiseId;
 
-	public void setOffline_exam_id(Long offline_exam_id) {
-		this.offline_exam_id = offline_exam_id;
-	}
-	public Long getExam_id() {
-		return exam_id;
-	}
+    @Column(nullable = false)
+    private Long courseId;
 
-	public void setExam_id(Long exam_id) {
-		this.exam_id = exam_id;
-	}
+    private Double marks;
 
-	public Long getStudent_id() {
-		return student_id;
-	}
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "offline_exam_images",
+            joinColumns = @JoinColumn(name = "offline_exam_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<StoredImages> pdfImages;
 
-	public void setStudent_id(Long student_id) {
-		this.student_id = student_id;
-	}
+    @Column(nullable = false)
+    private Boolean markAsDownload = false;
 
-	public Long getFranchise_id() {
-		return franchise_id;
-	}
+    @Column(nullable = false)
+    private LocalDateTime creationTime;
 
-	public void setFranchise_id(Long franchise_id) {
-		this.franchise_id = franchise_id;
-	}
+    @Column(nullable = false)
+    private Boolean status = true;
 
-	public Long getCourse_id() {
-		return course_id;
-	}
+    // ======================
+    // GETTERS & SETTERS
+    // ======================
 
-	public void setCourse_id(Long course_id) {
-		this.course_id = course_id;
-	}
+    public Long getOfflineExamId() {
+        return offlineExamId;
+    }
 
-	public Double getMarks() {
-		return marks;
-	}
+    public void setOfflineExamId(Long offlineExamId) {
+        this.offlineExamId = offlineExamId;
+    }
 
-	public void setMarks(Double marks) {
-		this.marks = marks;
-	}
+    public Long getExamId() {
+        return examId;
+    }
 
-	public String getCreation_time() {
-		return creation_time;
-	}
+    public void setExamId(Long examId) {
+        this.examId = examId;
+    }
 
-	public void setCreation_time(String creation_time) {
-		this.creation_time = creation_time;
-	}
-	public Boolean getStatus() {
-		return status;
-	}
+    public ExamType getExamType() {
+        return examType;
+    }
 
-	public void setStatus(Boolean status) {
-		this.status = status;
-	}
+    public void setExamType(ExamType examType) {
+        this.examType = examType;
+    }
 
-	public List<StoredImages> getPdf_images() {
-		return pdf_images;
-	}
+    public Long getStudentId() {
+        return studentId;
+    }
 
-	public void setPdf_images(List<StoredImages> pdf_images) {
-		this.pdf_images = pdf_images;
-	}
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
 
-	public ExamType getExamType() {
-		return examType;
-	}
+    public Long getFranchiseId() {
+        return franchiseId;
+    }
 
-	public void setExamType(ExamType examType) {
-		this.examType = examType;
-	}
+    public void setFranchiseId(Long franchiseId) {
+        this.franchiseId = franchiseId;
+    }
 
-	public Boolean getMark_as_download() {
-		return mark_as_download;
-	}
+    public Long getCourseId() {
+        return courseId;
+    }
 
-	public void setMark_as_download(Boolean mark_as_download) {
-		this.mark_as_download = mark_as_download;
-	}
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
+    }
 
+    public Double getMarks() {
+        return marks;
+    }
 
+    public void setMarks(Double marks) {
+        this.marks = marks;
+    }
 
+    public List<StoredImages> getPdfImages() {
+        return pdfImages;
+    }
+
+    public void setPdfImages(List<StoredImages> pdfImages) {
+        this.pdfImages = pdfImages;
+    }
+
+    public Boolean getMarkAsDownload() {
+        return markAsDownload;
+    }
+
+    public void setMarkAsDownload(Boolean markAsDownload) {
+        this.markAsDownload = markAsDownload;
+    }
+
+    public LocalDateTime getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(LocalDateTime creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
 }

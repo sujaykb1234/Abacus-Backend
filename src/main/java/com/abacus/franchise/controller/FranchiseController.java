@@ -251,15 +251,15 @@ public class FranchiseController {
 		return franchiseService.getAllKitRequestsUsingDate(startDate, endDate, franchiseId);
 	}
 
-	@PostMapping("diffrentAddressStudentAddWithKitRequest")
-	public ResponseEntity<SuccessResponse> diffrentAddressStudentAddWithKitRequest(@ModelAttribute Student student,
-			@RequestParam(value = "studentPhoto", required = false) MultipartFile studentPhoto,
-			@RequestParam(value = "studentDocPhoto", required = false) MultipartFile studentDocPhoto
-			,HttpServletRequest request)
-			throws DataNotValidException, IOException {
-		SuccessResponse response = franchiseService.addStudentWithKitRequestOnDiffrentAdd(student, studentPhoto,request); // studentDocPhoto
-		return ResponseEntity.ok(response);
-	}
+//	@PostMapping("diffrentAddressStudentAddWithKitRequest")
+//	public ResponseEntity<SuccessResponse> diffrentAddressStudentAddWithKitRequest(@ModelAttribute Student student,
+//			@RequestParam(value = "studentPhoto", required = false) MultipartFile studentPhoto,
+//			@RequestParam(value = "studentDocPhoto", required = false) MultipartFile studentDocPhoto
+//			,HttpServletRequest request)
+//			throws DataNotValidException, IOException {
+//		//SuccessResponse response = franchiseService.addStudentWithKitRequestOnDiffrentAdd(student, studentPhoto,request); // studentDocPhoto
+//		return ResponseEntity.ok();
+//	}
 	
 	@GetMapping("getFranchiseByMobileNo")
 	public SuccessResponse getFranchiseByMobileNo(@RequestParam String mobile) {
