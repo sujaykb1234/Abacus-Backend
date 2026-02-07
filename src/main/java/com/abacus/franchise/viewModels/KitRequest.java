@@ -1,4 +1,4 @@
-package com.abacus.franchise.view;
+package com.abacus.franchise.viewModels;
 
 import java.util.List;
 import java.util.UUID;

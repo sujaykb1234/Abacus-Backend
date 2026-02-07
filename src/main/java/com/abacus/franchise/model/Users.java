@@ -29,11 +29,11 @@ import lombok.Setter;
 @Builder
 public class Users {
 
-	@Id
-	@UuidGenerator
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "user_id", length = 36, updatable = false, nullable = false)
-	private UUID userId;
+    @Id
+    @UuidGenerator
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "user_id", length = 36, updatable = false, nullable = false)
+    private UUID userId;
 
     @Column(name = "franchise_name", length = 100)
     private String franchiseName;
@@ -56,29 +56,31 @@ public class Users {
     @Column(name = "last_name", length = 100)
     private String lastName;
 
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "role_id", length = 36, updatable = false, nullable = false)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "role_id", length = 36, updatable = false, nullable = false)
     private UUID roleId;
 
     @Column(name = "profile_name", length = 100)
     private String profileName;
-    
+
     private String profileLink;
     private String documentName;
     private String documentLink;
-    
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "franchise_id", length = 36)
+
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "franchise_id", length = 36)
     private UUID franchiseId;
 
     @Column(name = "address_id")
     private UUID addressId;
 
-
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
+    @Builder.Default
     private Boolean isActive = true;
+
+    @Builder.Default
     private Integer failedLoginAttempts = 0;
 
     private LocalDateTime lastLogin;
@@ -86,8 +88,8 @@ public class Users {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "created_by", length = 36)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "created_by", length = 36)
     private UUID createdBy;
 
     @Column(name = "updated_by")
@@ -102,6 +104,4 @@ public class Users {
     void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
-
 }

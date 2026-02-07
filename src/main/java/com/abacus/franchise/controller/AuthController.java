@@ -11,8 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.abacus.franchise.repo.UsersRepository;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.UsersService;
-import com.abacus.franchise.view.ViewUser;
-
+import com.abacus.franchise.viewModels.UserViewModel;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -26,18 +25,10 @@ public class AuthController {
 	UsersRepository usersRepository;
 	
 	@PostMapping("saveOrUpdateUser")
-	public SuccessResponse saveOrUpdateUsers(@ModelAttribute ViewUser viewUser,
+	public SuccessResponse saveOrUpdateUsers(@ModelAttribute UserViewModel user,
 			@RequestParam(required = false) MultipartFile profileImage,
 			@RequestParam(required = false) MultipartFile documentImage,
 			HttpServletRequest request) {
-		return usersService.saveOrUpdateUsers(viewUser,profileImage,documentImage,request);
+		return usersService.saveOrUpdateUsers(user,profileImage,documentImage,request);
 	}
-	
-	
-
-
-	
-	
-
-
 }

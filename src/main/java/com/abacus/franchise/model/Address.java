@@ -47,6 +47,7 @@ public class Address {
     @Column(name = "city", length = 100)
     private String city;
 
+    @Builder.Default
     @Column(name = "country_name", nullable = false)
     private String countryName = "INDIA";
 
@@ -62,6 +63,7 @@ public class Address {
 	@Column(name = "user_id", length = 36)
     private UUID user_id;
 
+    @Builder.Default
     @Column(name = "is_active")
     private Boolean isActive = true;
 

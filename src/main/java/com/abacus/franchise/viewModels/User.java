@@ -1,9 +1,9 @@
-package com.abacus.franchise.view;
+package com.abacus.franchise.viewModels;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class ViewUser {
+public class User {
 
     private UUID userId;
 

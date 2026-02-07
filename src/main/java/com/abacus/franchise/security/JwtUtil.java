@@ -2,9 +2,8 @@ package com.abacus.franchise.security;
 
 import java.security.Key;
 import java.util.Date;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,23 +13,15 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
-    private static final String ACCESS_SECRET =
-            "bXlfYWNjZXNzX3NlY3JldF9rZXlfMjU2X2JpdF9sb25n";
-//    private static final String REFRESH_SECRET =
-//            "bXlfcmVmcmVzaF9zZWNyZXRfa2V5XzI1Nl9iaXRfbG9uZw==";
+    @Value("${jwt.access.secret}")
+    private String accessSecret;
 
-//    private static final long ACCESS_EXPIRY = 1000 * 60 * 1; // 1 minute
-
-//    private static final long ACCESS_EXPIRY = 1000 * 60 * 15;        // 15 min
-//    private static final long REFRESH_EXPIRY = 1000 * 60 * 60 * 24 * 7; // 7 days
+    @Value("${jwt.access.expiry:900000}")
+    private long accessExpiry;
 
     private Key getAccessKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(ACCESS_SECRET));
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecret));
     }
-
-//    private Key getRefreshKey() {
-//        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(REFRESH_SECRET));
-//    }
 
     // ----------------- ACCESS TOKEN -----------------
     public String generateAccessToken(String username, String role) {
@@ -38,35 +29,19 @@ public class JwtUtil {
                 .setSubject(username)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-//                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_EXPIRY))
-                .signWith(SignatureAlgorithm.HS256,getAccessKey())
+                .setExpiration(new Date(System.currentTimeMillis() + accessExpiry))
+                .signWith(getAccessKey(), SignatureAlgorithm.ES256)
                 .compact();
     }
 
-    // ----------------- REFRESH TOKEN -----------------
-//    public String generateRefreshToken(String username) {
-//        return Jwts.builder()
-//                .setSubject(username)
-//                .setIssuedAt(new Date())
-//                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRY))
-//                .signWith(SignatureAlgorithm.HS256,getRefreshKey())
-//                .compact();
-//    }
-
     // ----------------- EXTRACT CLAIMS -----------------
     public Claims extractAccessClaims(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(getAccessKey())
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
-
-//    public Claims extractRefreshClaims(String token) {
-//        return Jwts.parser()
-//                .setSigningKey(getRefreshKey())
-//                .parseClaimsJws(token)
-//                .getBody();
-//    }
 
     // ----------------- HELPERS -----------------
     public String getUsernameFromAccessToken(String token) {
