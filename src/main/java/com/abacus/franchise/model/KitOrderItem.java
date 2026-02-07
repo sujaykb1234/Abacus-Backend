@@ -20,45 +20,44 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "kit_order_item")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Roles {
-	
-	 @Id
-	 @UuidGenerator
-	 @JdbcTypeCode(SqlTypes.VARCHAR)
-	 @Column(name = "role_id", length = 36, updatable = false, nullable = false)    
-	 private UUID roleId;
+public class KitOrderItem {
 
-    @Column(name = "role_name", nullable = false, unique = true, length = 100)
-    private String roleName;
-
-    @Column(name = "role_description", length = 255)
-    private String roleDescription;
-
-    @Column(name = "hierarchy_level", nullable = false)
-    private Integer hierarchyLevel;
-
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+	@Id
+	@UuidGenerator
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "order_item_id", length = 36, updatable = false, nullable = false)
+	private UUID orderItemId;
 
     @JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "created_by", length = 36)
-    private UUID createdBy;
+    @Column(name = "course_id", length = 36)
+    private UUID courseId;
 
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "updated_by", length = 36)
-    private UUID updatedBy;
+    @Column(name = "kit_count")
+    private int kitCount;
+    
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "kit_request_id", length = 36, updatable = false, nullable = false)
+    private UUID kitRequestId;
+
+    @Column(name = "created_at", updatable = false)
+  	private LocalDateTime createdAt;
+  	
+  	@Column(name = "updated_at")
+  	private LocalDateTime updatedAt;
+  	
+  	@JdbcTypeCode(SqlTypes.VARCHAR)
+  	@Column(name = "created_by", length = 36)
+  	private UUID createdBy;
+  	
+  	@JdbcTypeCode(SqlTypes.VARCHAR)
+  	@Column(name = "updated_by", length = 36)
+  	private UUID updatedBy;
     
     @PrePersist
     protected void onCreate() {
@@ -70,6 +69,6 @@ public class Roles {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-   
+	
 }
+

@@ -4,8 +4,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.*;
-import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
@@ -16,10 +29,11 @@ import lombok.*;
 @Builder
 public class Users {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "user_id")
-    private UUID userId;
+	@Id
+	@UuidGenerator
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "user_id", length = 36, updatable = false, nullable = false)
+	private UUID userId;
 
     @Column(name = "franchise_name", length = 100)
     private String franchiseName;
@@ -42,17 +56,26 @@ public class Users {
     @Column(name = "last_name", length = 100)
     private String lastName;
 
-    @Column(name = "role_id", nullable = false)
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "role_id", length = 36, updatable = false, nullable = false)
     private UUID roleId;
 
+    @Column(name = "profile_name", length = 100)
     private String profileName;
+    
     private String profileLink;
     private String documentName;
     private String documentLink;
-
+    
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "franchise_id", length = 36)
     private UUID franchiseId;
+
+    @Column(name = "address_id")
     private UUID addressId;
 
+
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
     private Boolean isActive = true;
@@ -63,7 +86,11 @@ public class Users {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "created_by", length = 36)
     private UUID createdBy;
+
+    @Column(name = "updated_by")
     private UUID updatedBy;
 
     @PrePersist
@@ -75,4 +102,6 @@ public class Users {
     void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+
 }

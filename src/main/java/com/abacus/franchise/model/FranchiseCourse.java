@@ -19,67 +19,50 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
-@Table(name = "address")
+@Table(name = "franchise_course")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Address {
+public class FranchiseCourse {
 
-	@Id
-	@UuidGenerator
+    @Id
+    @UuidGenerator
 	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "address_id", length = 36, updatable = false, nullable = false)
-    private UUID addressId;
-
-    @Column(name = "line1", nullable = false, length = 255)
-    private String line1;
-
-    @Column(name = "landmark", length = 200)
-    private String landmark;
-
-    @Column(name = "pincode", length = 10)
-    private String pincode;
-
-    @Column(name = "city", length = 100)
-    private String city;
-
-    @Column(name = "country_name", nullable = false)
-    private String countryName = "INDIA";
+	@Column(name = "franchise_course_id", length = 36, updatable = false, nullable = false)
+    private UUID franchiseCourseId;
 
 	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "state_id", length = 36, updatable = false, nullable = false)
-    private UUID stateId;
+	@Column(name = "franchise_id", length = 36, updatable = false, nullable = false)
+    private UUID franchiseId;
 
 	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "district_id", length = 36, updatable = false, nullable = false)
-    private UUID districtId;
+	@Column(name = "course_id", length = 36, updatable = false, nullable = false)
+    private UUID courseId;
+
+    @Column(name = "assign_date")
+    private LocalDateTime assignDate;
+    
+    @Column(name = "created_at", updatable = false)
+	private LocalDateTime createdAt;
+	
+	@Column(name = "updated_at")
+	private LocalDateTime updatedAt;
 	
 	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "user_id", length = 36)
-    private UUID user_id;
-
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-	@JdbcTypeCode(SqlTypes.VARCHAR)
 	@Column(name = "created_by", length = 36)
-    private UUID createdBy;
-
+	private UUID createdBy;
+	
 	@JdbcTypeCode(SqlTypes.VARCHAR)
 	@Column(name = "updated_by", length = 36)
-    private UUID updatedBy;
-
-    @PrePersist
+	private UUID updatedBy;
+	
+	@Column(name = "courses_status", nullable = false)
+	private Boolean coursesStatus = true;
+	
+	@PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -89,8 +72,8 @@ public class Address {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-
+    
+    
 
     
 }

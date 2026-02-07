@@ -1,54 +1,79 @@
 package com.abacus.franchise.model;
 
-import com.abacus.franchise.utility.CourseType;
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "course")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "course")
+@Builder
 public class Course {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "course_id")
-    private Long courseId;
+		@Id
+		@UuidGenerator
+		@JdbcTypeCode(SqlTypes.VARCHAR)
+		@Column(name = "course_id", length = 36, updatable = false, nullable = false)
+		private UUID courseId;
+		
+		@Column(name = "course_name", nullable = false, length = 150)
+		private String courseName;
+	
+		
+		@Column(name = "duration_days", nullable = false)
+		private int durationDays;
+		
+		@Column(name = "course_type", nullable = false, length = 50)
+		private String courseType;
+		
+		@Column(name = "no_of_books", nullable = false)
+		private int noOfBooks;
+		
+		@Column(name = "is_active", nullable = false)
+		private Boolean isActive = true;
+		
+		@Column(name = "created_at", updatable = false)
+		private LocalDateTime createdAt;
+		
+		@Column(name = "updated_at")
+		private LocalDateTime updatedAt;
+		
+		@JdbcTypeCode(SqlTypes.VARCHAR)
+		@Column(name = "created_by", length = 36)
+		private UUID createdBy;
+		
+		@JdbcTypeCode(SqlTypes.VARCHAR)
+		@Column(name = "updated_by", length = 36)
+		private UUID updatedBy;
 
-    @Column(name = "course_name", nullable = false, length = 150)
-    private String courseName;
+	    @PrePersist
+	    protected void onCreate() {
+	        this.createdAt = LocalDateTime.now();
+	        this.updatedAt = LocalDateTime.now();
+	    }
 
-    @Column(name = "course_duration", length = 50)
-    private String courseDuration;
+	    @PreUpdate
+	    protected void onUpdate() {
+	        this.updatedAt = LocalDateTime.now();
+	    }
 
-    @Column(name = "no_of_books")
-    private Integer noOfBooks;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "course_type", nullable = false)
-    private CourseType courseType; // ABACUS, OTHER
-
-    @Column(name = "course_status")
-    private boolean courseStatus = true;
-
-    // Business methods for bidirectional relationship
-    public void addStudent(Student student) {
-        if (student == null) {
-            throw new IllegalArgumentException("Student cannot be null");
-        }
-        if (!this.students.contains(student)) {
-            this.students.add(student);
-        }
-    }
-
-    public void removeStudent(Student student) {
-        if (this.students != null && this.students.contains(student)) {
-            this.students.remove(student);
-        }
-    }
+	    
 }
