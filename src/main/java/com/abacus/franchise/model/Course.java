@@ -47,6 +47,7 @@ public class Course {
 		@Column(name = "no_of_books", nullable = false)
 		private int noOfBooks;
 		
+		@Builder.Default
 		@Column(name = "is_active", nullable = false)
 		private Boolean isActive = true;
 		

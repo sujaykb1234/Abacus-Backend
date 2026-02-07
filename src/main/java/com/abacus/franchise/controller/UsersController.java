@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.UsersService;
-import com.abacus.franchise.view.AuthRequest;
-import com.abacus.franchise.view.KitRequest;
+import com.abacus.franchise.viewModels.AuthRequest;
+import com.abacus.franchise.viewModels.KitRequest;
 
 @RestController
 @RequestMapping("abacus/v1/users/")
@@ -51,8 +51,4 @@ public class UsersController {
 	public SuccessResponse sendCourseKitRequest(@RequestBody KitRequest kitRequest) {
 		return usersService.sendCourseKitRequest(kitRequest);
 	}
-
-
-
-
 }

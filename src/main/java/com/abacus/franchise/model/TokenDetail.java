@@ -37,6 +37,7 @@ public class TokenDetail {
     @Column(name = "access_token_hash", nullable = false)
     private String accessTokenHash;
 
+    @Builder.Default
     @Column(name = "is_active")
     private Boolean isActive = true;
 
@@ -62,6 +63,4 @@ public class TokenDetail {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
- 
 }

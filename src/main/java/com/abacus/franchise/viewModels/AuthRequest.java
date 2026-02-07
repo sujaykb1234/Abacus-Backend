@@ -1,4 +1,4 @@
-package com.abacus.franchise.view;
+package com.abacus.franchise.viewModels;
 
 public class AuthRequest {
 

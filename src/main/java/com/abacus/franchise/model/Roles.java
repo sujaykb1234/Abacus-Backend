@@ -27,12 +27,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Roles {
-	
-	 @Id
-	 @UuidGenerator
-	 @JdbcTypeCode(SqlTypes.VARCHAR)
-	 @Column(name = "role_id", length = 36, updatable = false, nullable = false)    
-	 private UUID roleId;
+
+    @Id
+    @UuidGenerator
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "role_id", length = 36, updatable = false, nullable = false)
+    private UUID roleId;
 
     @Column(name = "role_name", nullable = false, unique = true, length = 100)
     private String roleName;
@@ -43,6 +43,7 @@ public class Roles {
     @Column(name = "hierarchy_level", nullable = false)
     private Integer hierarchyLevel;
 
+    @Builder.Default
     @Column(name = "is_active")
     private Boolean isActive = true;
 
@@ -53,13 +54,13 @@ public class Roles {
     private LocalDateTime updatedAt;
 
     @JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "created_by", length = 36)
+    @Column(name = "created_by", length = 36)
     private UUID createdBy;
 
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "updated_by", length = 36)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "updated_by", length = 36)
     private UUID updatedBy;
-    
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -70,6 +71,4 @@ public class Roles {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-   
 }
