@@ -1,86 +1,86 @@
 package com.abacus.franchise.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 @Entity
 public class Products {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String productName;
-	private Date creatingTime;
-	private Date updationTime;
-	private Integer quantity;
-	private boolean status = true;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(nullable = false, unique = true, length = 150)
+    private String productName;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(nullable = false)
+    private Integer quantity = 0;
 
-	public String getProductName() {
-		return productName;
-	}
+    @Column(nullable = false)
+    private Boolean status = true;
 
-	public void setProductName(String productName) {
-		this.productName = productName;
-	}
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-	public Date getCreatingTime() {
-		return creatingTime;
-	}
+    // ======================
+    // JPA LIFECYCLE METHODS
+    // ======================
 
-	public void setCreatingTime(Date creatingTime) {
-		this.creatingTime = creatingTime;
-	}
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public boolean isStatus() {
-		return status;
-	}
+    @PreUpdate
+    public void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
+    // ======================
+    // GETTERS & SETTERS
+    // ======================
 
-	public Integer getQuantity() {
-		return quantity;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
+    public String getProductName() {
+        return productName;
+    }
 
-	public Date getUpdationTime() {
-		return updationTime;
-	}
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 
-	public void setUpdationTime(Date updationTime) {
-		this.updationTime = updationTime;
-	}
+    public Integer getQuantity() {
+        return quantity;
+    }
 
-	public Products(Long id, String productName, Date creatingTime, Date updationTime, Integer quantity,
-			boolean status) {
-		super();
-		this.id = id;
-		this.productName = productName;
-		this.creatingTime = creatingTime;
-		this.updationTime = updationTime;
-		this.quantity = quantity;
-		this.status = status;
-	}
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 
-	public Products() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public Boolean getStatus() {
+        return status;
+    }
 
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }

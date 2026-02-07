@@ -25,7 +25,7 @@ public interface FranchiseService {
 
 	SuccessResponse loginTheFranchise(Franchise franchise);
 
-	public SuccessResponse setTheNewPasswordForFranchies(Franchise franchise);
+	//public SuccessResponse setTheNewPasswordForFranchies(Franchise franchise);
 
 	public SuccessResponse getThefranchiesUsingTheID(Long id);
 
@@ -65,7 +65,7 @@ public interface FranchiseService {
 
 	public SuccessResponse getOrdersByFranchise(Long franchiseId);
 
-	public SuccessResponse addStudentWithKitRequestOnDiffrentAdd(Student student, MultipartFile studentPhoto,HttpServletRequest request)
-			throws DataNotValidException, IOException;// MultipartFile studentDocPhoto	
+//	public SuccessResponse addStudentWithKitRequestOnDiffrentAdd(Student student, MultipartFile studentPhoto,HttpServletRequest request)
+//			throws DataNotValidException, IOException;// MultipartFile studentDocPhoto
 
 } 

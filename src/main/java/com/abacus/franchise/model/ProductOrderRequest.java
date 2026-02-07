@@ -1,149 +1,148 @@
 package com.abacus.franchise.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 @Entity
 public class ProductOrderRequest {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "franchise_id", nullable = false)
-	private Franchise franchise;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "franchise_id")
+    private Franchise franchise;
 
-	@ManyToOne
-	@JoinColumn(name = "product_id", nullable = false)
-	private Products product;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "product_id")
+    private Products product;
 
-	@ManyToOne
-	@JoinColumn(name = "franchise_order_id", nullable = false)
-	private FranchiseOrder franchiseOrder; // Unidirectional mapping to FranchiseOrder
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "franchise_order_id")
+    private FranchiseOrder franchiseOrder;
 
-	private Integer totalProductQuantity;
-	private String trackingNumber;
-	private Integer requestedQuantity;
-	private Integer sentQuantity = 0; // Default to 0
-	private Integer remainingQuantity;
-	private Date requestTime;
-	private Date updateTime;
+    @Column(nullable = false)
+    private Integer totalProductQuantity;
 
-	public Long getId() {
-		return id;
-	}
+    private String trackingNumber;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(nullable = false)
+    private Integer requestedQuantity;
 
-	public Franchise getFranchise() {
-		return franchise;
-	}
+    @Column(nullable = false)
+    private Integer sentQuantity = 0;
 
-	public void setFranchise(Franchise franchise) {
-		this.franchise = franchise;
-	}
+    private Integer remainingQuantity;
 
-	public Products getProduct() {
-		return product;
-	}
+    private LocalDateTime requestTime;
+    private LocalDateTime updateTime;
 
-	public void setProduct(Products product) {
-		this.product = product;
-	}
+    // ======================
+    // JPA CALLBACKS
+    // ======================
 
-	public FranchiseOrder getFranchiseOrder() {
-		return franchiseOrder;
-	}
+    @PrePersist
+    public void onCreate() {
+        this.requestTime = LocalDateTime.now();
+        this.updateTime = LocalDateTime.now();
+        calculateRemainingQuantity();
+    }
 
-	public void setFranchiseOrder(FranchiseOrder franchiseOrder) {
-		this.franchiseOrder = franchiseOrder;
-	}
+    @PreUpdate
+    public void onUpdate() {
+        this.updateTime = LocalDateTime.now();
+        calculateRemainingQuantity();
+    }
 
-	public Integer getRequestedQuantity() {
-		return requestedQuantity;
-	}
+    private void calculateRemainingQuantity() {
+        if (requestedQuantity != null && sentQuantity != null) {
+            this.remainingQuantity = requestedQuantity - sentQuantity;
+        }
+    }
 
-	public void setRequestedQuantity(Integer requestedQuantity) {
-		this.requestedQuantity = requestedQuantity;
-	}
+    // ======================
+    // GETTERS & SETTERS
+    // ======================
 
-	public Integer getSentQuantity() {
-		return sentQuantity;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setSentQuantity(Integer sentQuantity) {
-		this.sentQuantity = sentQuantity;
-	}
+    public Franchise getFranchise() {
+        return franchise;
+    }
 
-	public Integer getRemainingQuantity() {
-		return remainingQuantity;
-	}
+    public void setFranchise(Franchise franchise) {
+        this.franchise = franchise;
+    }
 
-	public void setRemainingQuantity(Integer remainingQuantity) {
-		this.remainingQuantity = remainingQuantity;
-	}
+    public Products getProduct() {
+        return product;
+    }
 
-	public Integer getTotalProductQuantity() {
-		return totalProductQuantity;
-	}
+    public void setProduct(Products product) {
+        this.product = product;
+    }
 
-	public void setTotalProductQuantity(Integer totalProductQuantity) {
-		this.totalProductQuantity = totalProductQuantity;
-	}
+    public FranchiseOrder getFranchiseOrder() {
+        return franchiseOrder;
+    }
 
-	public Date getRequestTime() {
-		return requestTime;
-	}
+    public void setFranchiseOrder(FranchiseOrder franchiseOrder) {
+        this.franchiseOrder = franchiseOrder;
+    }
 
-	public void setRequestTime(Date requestTime) {
-		this.requestTime = requestTime;
-	}
+    public Integer getTotalProductQuantity() {
+        return totalProductQuantity;
+    }
 
-	public Date getUpdateTime() {
-		return updateTime;
-	}
+    public void setTotalProductQuantity(Integer totalProductQuantity) {
+        this.totalProductQuantity = totalProductQuantity;
+    }
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
 
-	public String getTrackingNumber() {
-		return trackingNumber;
-	}
+    public void setTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
+    }
 
-	public void setTrackingNumber(String trackingNumber) {
-		this.trackingNumber = trackingNumber;
-	}
+    public Integer getRequestedQuantity() {
+        return requestedQuantity;
+    }
 
-	public ProductOrderRequest(Long id, Franchise franchise, Products product, FranchiseOrder franchiseOrder,
-			Integer totalProductQuantity, String trackingNumber, Integer requestedQuantity, Integer sentQuantity,
-			Integer remainingQuantity, Date requestTime, Date updateTime) {
-		super();
-		this.id = id;
-		this.franchise = franchise;
-		this.product = product;
-		this.franchiseOrder = franchiseOrder;
-		this.totalProductQuantity = totalProductQuantity;
-		this.trackingNumber = trackingNumber;
-		this.requestedQuantity = requestedQuantity;
-		this.sentQuantity = sentQuantity;
-		this.remainingQuantity = remainingQuantity;
-		this.requestTime = requestTime;
-		this.updateTime = updateTime;
-	}
+    public void setRequestedQuantity(Integer requestedQuantity) {
+        this.requestedQuantity = requestedQuantity;
+    }
 
-	public ProductOrderRequest() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public Integer getSentQuantity() {
+        return sentQuantity;
+    }
 
+    public void setSentQuantity(Integer sentQuantity) {
+        this.sentQuantity = sentQuantity;
+    }
+
+    public Integer getRemainingQuantity() {
+        return remainingQuantity;
+    }
+
+    public LocalDateTime getRequestTime() {
+        return requestTime;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
 }

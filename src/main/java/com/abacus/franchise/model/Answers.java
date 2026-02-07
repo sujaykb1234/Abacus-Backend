@@ -1,119 +1,48 @@
 package com.abacus.franchise.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Table(name = "answers")
 public class Answers {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "answer_id")
+    private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "student_id")
-	private Student student;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
 
-	@ManyToOne
-	@JoinColumn(name = "question_id")
-	@JsonIgnore
-	private Questions question;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", nullable = false)
+    @JsonIgnore
+    private Questions question;
 
-	private String chosenOption;
+    @Column(name = "chosen_option", length = 50)
+    private String chosenOption;
 
-	private String correctOption;
+    @Column(name = "correct_option", length = 50)
+    private String correctOption;
 
-	private String questionType;
+    @Column(name = "question_type", length = 50)
+    private String questionType;
 
-	@ManyToOne
-	@JoinColumn(name = "course_id")
-	private Course course;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
 
-	@ManyToOne
-	@JoinColumn(name = "attemptId")
-	private ExamAttempt attempt;
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getQuestionType() {
-		return questionType;
-	}
-
-	public void setQuestionType(String questionType) {
-		this.questionType = questionType;
-	}
-
-	public String getCorrectOption() {
-		return correctOption;
-	}
-
-	public void setCorrectOption(String correctOption) {
-		this.correctOption = correctOption;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Student getStudent() {
-		return student;
-	}
-
-	public void setStudent(Student student) {
-		this.student = student;
-	}
-
-	public Questions getQuestion() {
-		return question;
-	}
-
-	public void setQuestion(Questions question) {
-		this.question = question;
-	}
-
-	public String getChosenOption() {
-		return chosenOption;
-	}
-
-	public void setChosenOption(String chosenOption) {
-		this.chosenOption = chosenOption;
-	}
-
-	public Course getCourse() {
-		return course;
-	}
-
-	public void setCourse(Course course) {
-		this.course = course;
-	}
-
-	public ExamAttempt getAttempt() {
-		return attempt;
-	}
-
-	public void setAttempt(ExamAttempt attempt) {
-		this.attempt = attempt;
-	}
-
-	public Answers(Long id, Student student, Questions question, String chosenOption, String correctOption,
-			String questionType, Course course, ExamAttempt attempt) {
-		super();
-		this.id = id;
-		this.student = student;
-		this.question = question;
-		this.chosenOption = chosenOption;
-		this.correctOption = correctOption;
-		this.questionType = questionType;
-		this.course = course;
-		this.attempt = attempt;
-	}
-
-	public Answers() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attempt_id", nullable = false)
+    private ExamAttempt attempt;
 }

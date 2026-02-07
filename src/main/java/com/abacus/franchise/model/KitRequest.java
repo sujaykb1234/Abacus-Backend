@@ -1,22 +1,21 @@
 package com.abacus.franchise.model;
 
-public class KitRequest {
-	private Long courseId;
-	private Integer kitCount;
+import lombok.Getter;
+import lombok.Setter;
 
-	public Long getCourseId() {
-		return courseId;
-	}
+import java.io.Serializable;
 
-	public void setCourseId(Long courseId) {
-		this.courseId = courseId;
-	}
+@Setter
+@Getter
+public class KitRequest implements Serializable {
 
-	public Integer getKitCount() {
-		return kitCount;
-	}
+    private static final long serialVersionUID = 1L;
 
-	public void setKitCount(Integer kitCount) {
-		this.kitCount = kitCount;
-	}
+    private Long courseId;
+    private Integer kitCount;
+
+    public KitRequest(Long courseId, Integer kitCount) {
+        this.courseId = courseId;
+        this.kitCount = kitCount;
+    }
 }

@@ -1,96 +1,102 @@
 package com.abacus.franchise.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "stored_images")
 public class StoredImages {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "stored_image_id")
+    private Long storedImageId;
 
-	private Long Stroredimage_id;
-	private String profile_image_name;
-	private String profile_image_link;
-	private String id_proof_image_name;
-	private String id_proof_image_link;
+    @Column(name = "profile_image_name", nullable = false)
+    private String profileImageName;
 
-	private String pdfName;
-	private String pdfLink;
+    @Column(name = "profile_image_link", nullable = false)
+    private String profileImageLink;
 
-	public Long getStroredimage_id() {
-		return Stroredimage_id;
-	}
+    @Column(name = "id_proof_image_name")
+    private String idProofImageName;
 
-	public void setStroredimage_id(Long stroredimage_id) {
-		Stroredimage_id = stroredimage_id;
-	}
+    @Column(name = "id_proof_image_link")
+    private String idProofImageLink;
 
-	public String getProfile_image_name() {
-		return profile_image_name;
-	}
+    @Column(name = "pdf_name")
+    private String pdfName;
 
-	public void setProfile_image_name(String profile_image_name) {
-		this.profile_image_name = profile_image_name;
-	}
+    @Column(name = "pdf_link")
+    private String pdfLink;
 
-	public String getProfile_image_link() {
-		return profile_image_link;
-	}
+    public StoredImages() {
+    }
 
-	public void setProfile_image_link(String profile_image_link) {
-		this.profile_image_link = profile_image_link;
-	}
+    public StoredImages(Long storedImageId, String profileImageName, String profileImageLink,
+                        String idProofImageName, String idProofImageLink, String pdfName, String pdfLink) {
+        this.storedImageId = storedImageId;
+        this.profileImageName = profileImageName;
+        this.profileImageLink = profileImageLink;
+        this.idProofImageName = idProofImageName;
+        this.idProofImageLink = idProofImageLink;
+        this.pdfName = pdfName;
+        this.pdfLink = pdfLink;
+    }
 
-	public String getId_proof_image_name() {
-		return id_proof_image_name;
-	}
+    // Getters and setters
+    public Long getStoredImageId() {
+        return storedImageId;
+    }
 
-	public void setId_proof_image_name(String id_proof_image_name) {
-		this.id_proof_image_name = id_proof_image_name;
-	}
+    public void setStoredImageId(Long storedImageId) {
+        this.storedImageId = storedImageId;
+    }
 
-	public String getId_proof_image_link() {
-		return id_proof_image_link;
-	}
+    public String getProfileImageName() {
+        return profileImageName;
+    }
 
-	public void setId_proof_image_link(String id_proof_image_link) {
-		this.id_proof_image_link = id_proof_image_link;
-	}
+    public void setProfileImageName(String profileImageName) {
+        this.profileImageName = profileImageName;
+    }
 
-	public StoredImages(Long stroredimage_id, String profile_image_name, String profile_image_link,
-			String id_proof_image_name, String id_proof_image_link, String pdfName, String pdfLink) {
-		super();
-		Stroredimage_id = stroredimage_id;
-		this.profile_image_name = profile_image_name;
-		this.profile_image_link = profile_image_link;
-		this.id_proof_image_name = id_proof_image_name;
-		this.id_proof_image_link = id_proof_image_link;
-		this.pdfName = pdfName;
-		this.pdfLink = pdfLink;
-	}
+    public String getProfileImageLink() {
+        return profileImageLink;
+    }
 
-	public String getPdfName() {
-		return pdfName;
-	}
+    public void setProfileImageLink(String profileImageLink) {
+        this.profileImageLink = profileImageLink;
+    }
 
-	public void setPdfName(String pdfName) {
-		this.pdfName = pdfName;
-	}
+    public String getIdProofImageName() {
+        return idProofImageName;
+    }
 
-	public String getPdfLink() {
-		return pdfLink;
-	}
+    public void setIdProofImageName(String idProofImageName) {
+        this.idProofImageName = idProofImageName;
+    }
 
-	public void setPdfLink(String pdfLink) {
-		this.pdfLink = pdfLink;
-	}
+    public String getIdProofImageLink() {
+        return idProofImageLink;
+    }
 
-	public StoredImages() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public void setIdProofImageLink(String idProofImageLink) {
+        this.idProofImageLink = idProofImageLink;
+    }
 
+    public String getPdfName() {
+        return pdfName;
+    }
+
+    public void setPdfName(String pdfName) {
+        this.pdfName = pdfName;
+    }
+
+    public String getPdfLink() {
+        return pdfLink;
+    }
+
+    public void setPdfLink(String pdfLink) {
+        this.pdfLink = pdfLink;
+    }
 }

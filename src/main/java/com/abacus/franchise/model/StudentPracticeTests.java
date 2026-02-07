@@ -1,104 +1,161 @@
 package com.abacus.franchise.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
+@Table(name = "student_practice_tests")
 public class StudentPracticeTests {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String examName;
-	private String startTime;
-	private Long courseId;
-	private int totalQuestion;
-	private String submissionTime;
-	private Double score;
-	private Long studentId;
+    @Column(name = "exam_name")
+    private String examName;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(name = "start_time")
+    private String startTime;
 
-	public int getTotalQuestion() {
-		return totalQuestion;
-	}
+    @Column(name = "course_id")
+    private Long courseId;
 
-	public void setTotalQuestion(int totalQuestion) {
-		this.totalQuestion = totalQuestion;
-	}
+    @Column(name = "total_question", nullable = false)
+    private int totalQuestion;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(name = "submission_time")
+    private String submissionTime;
 
-	public String getExamName() {
-		return examName;
-	}
+    @Column(name = "score", precision = 10, scale = 2)
+    private Double score;
 
-	public void setExamName(String examName) {
-		this.examName = examName;
-	}
+    @Column(name = "student_id")
+    private Long studentId;
 
-	public Long getCourseId() {
-		return courseId;
-	}
+    // Audit fields
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
-	public void setCourseId(Long courseId) {
-		this.courseId = courseId;
-	}
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-	public Double getScore() {
-		return score;
-	}
+    @Column(name = "created_by", columnDefinition = "CHAR(36)")
+    private UUID createdBy;
 
-	public void setScore(Double score) {
-		this.score = score;
-	}
+    @Column(name = "updated_by", columnDefinition = "CHAR(36)")
+    private UUID updatedBy;
 
-	public Long getStudentId() {
-		return studentId;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public void setStudentId(Long studentId) {
-		this.studentId = studentId;
-	}
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public String getSubmissionTime() {
-		return submissionTime;
-	}
+    public StudentPracticeTests() {
+    }
 
-	public void setSubmissionTime(String submissionTime) {
-		this.submissionTime = submissionTime;
-	}
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
 
-	public StudentPracticeTests(Long id, String examName, String startTime, Long courseId, int totalQuestion,
-			String submissionTime, Double score, Long studentId) {
-		super();
-		this.id = id;
-		this.examName = examName;
-		this.startTime = startTime;
-		this.courseId = courseId;
-		this.totalQuestion = totalQuestion;
-		this.submissionTime = submissionTime;
-		this.score = score;
-		this.studentId = studentId;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getStartTime() {
-		return startTime;
-	}
+    public String getExamName() {
+        return examName;
+    }
 
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
-	}
+    public void setExamName(String examName) {
+        this.examName = examName;
+    }
 
-	public StudentPracticeTests() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public String getStartTime() {
+        return startTime;
+    }
 
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
+    }
+
+    public int getTotalQuestion() {
+        return totalQuestion;
+    }
+
+    public void setTotalQuestion(int totalQuestion) {
+        this.totalQuestion = totalQuestion;
+    }
+
+    public String getSubmissionTime() {
+        return submissionTime;
+    }
+
+    public void setSubmissionTime(String submissionTime) {
+        this.submissionTime = submissionTime;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public Long getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
+
+    // Audit getters/setters
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public UUID getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

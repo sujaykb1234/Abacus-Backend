@@ -1,146 +1,79 @@
 package com.abacus.franchise.model;
 
 import com.abacus.franchise.utility.KitOrderStatus;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
+@Table(name = "franchise_different_add_kit_req")
 public class FranchiseDiffrentAddKitReq {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String studentName;
-	private String courseName;
-	private Long studentId;
-	private Long franchiseId;
-	private String franchiseName;
-	private String franchise_owner;
-	private String franchiseMobile;
-	private String trackingNumber;
-	private String address;
-	private KitOrderStatus kitOrderStatus = KitOrderStatus.PENDING;
-	private Long courseId;
-	
-	public String getFranchise_owner() {
-		return franchise_owner;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	public void setFranchise_owner(String franchise_owner) {
-		this.franchise_owner = franchise_owner;
-	}
+    @Column(name = "student_name")
+    private String studentName;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(name = "course_name")
+    private String courseName;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(name = "student_id")
+    private Long studentId;
 
-	public String getAddress() {
-		return address;
-	}
+    @Column(name = "franchise_id")
+    private Long franchiseId;
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    @Column(name = "franchise_name")
+    private String franchiseName;
 
-	public String getTrackingNumber() {
-		return trackingNumber;
-	}
+    @Column(name = "franchise_owner")
+    private String franchiseOwner;
 
-	public void setTrackingNumber(String trackingNumber) {
-		this.trackingNumber = trackingNumber;
-	}
+    @Column(name = "franchise_mobile")
+    private String franchiseMobile;
 
-	public String getStudentName() {
-		return studentName;
-	}
+    @Column(name = "tracking_number")
+    private String trackingNumber;
 
-	public void setStudentName(String studentName) {
-		this.studentName = studentName;
-	}
+    @Column(name = "address", columnDefinition = "TEXT")
+    private String address;
 
-	public String getCourseName() {
-		return courseName;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "kit_order_status")
+    private KitOrderStatus kitOrderStatus = KitOrderStatus.PENDING;
 
-	public void setCourseName(String courseName) {
-		this.courseName = courseName;
-	}
+    @Column(name = "course_id")
+    private Long courseId;
 
-	public String getFranchiseMobile() {
-		return franchiseMobile;
-	}
-
-	public void setFranchiseMobile(String franchiseMobile) {
-		this.franchiseMobile = franchiseMobile;
-	}
-
-	public Long getStudentId() {
-		return studentId;
-	}
-
-	public void setStudentId(Long studentId) {
-		this.studentId = studentId;
-	}
-
-	public Long getFranchiseId() {
-		return franchiseId;
-	}
-
-	public void setFranchiseId(Long franchiseId) {
-		this.franchiseId = franchiseId;
-	}
-
-	public KitOrderStatus getKitOrderStatus() {
-		return kitOrderStatus;
-	}
-
-	public void setKitOrderStatus(KitOrderStatus kitOrderStatus) {
-		this.kitOrderStatus = kitOrderStatus;
-	}
-
-	public Long getCourseId() {
-		return courseId;
-	}
-
-	public void setCourseId(Long courseId) {
-		this.courseId = courseId;
-	}
-
-	public String getFranchiseName() {
-		return franchiseName;
-	}
-
-	public void setFranchiseName(String franchiseName) {
-		this.franchiseName = franchiseName;
-	}
-
-	public FranchiseDiffrentAddKitReq(Long id, String studentName, String courseName, Long studentId, Long franchiseId,
-			String franchiseName, String franchiseMobile, String trackingNumber, String address,
-			KitOrderStatus kitOrderStatus, Long courseId) {
-		super();
-		this.id = id;
-		this.studentName = studentName;
-		this.courseName = courseName;
-		this.studentId = studentId;
-		this.franchiseId = franchiseId;
-		this.franchiseName = franchiseName;
-		this.franchiseMobile = franchiseMobile;
-		this.trackingNumber = trackingNumber;
-		this.address = address;
-		this.kitOrderStatus = kitOrderStatus;
-		this.courseId = courseId;
-	}
-
-	public FranchiseDiffrentAddKitReq() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
+    public FranchiseDiffrentAddKitReq(
+            Long id,
+            String studentName,
+            String courseName,
+            Long studentId,
+            Long franchiseId,
+            String franchiseName,
+            String franchiseMobile,
+            String trackingNumber,
+            String address,
+            KitOrderStatus kitOrderStatus,
+            Long courseId
+    ) {
+        this.id = id;
+        this.studentName = studentName;
+        this.courseName = courseName;
+        this.studentId = studentId;
+        this.franchiseId = franchiseId;
+        this.franchiseName = franchiseName;
+        this.franchiseMobile = franchiseMobile;
+        this.trackingNumber = trackingNumber;
+        this.address = address;
+        this.kitOrderStatus = kitOrderStatus;
+        this.courseId = courseId;
+    }
 }

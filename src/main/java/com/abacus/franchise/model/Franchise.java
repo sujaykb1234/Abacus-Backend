@@ -6,275 +6,149 @@ import java.util.Set;
 import com.abacus.franchise.utility.FranchiseStatus;
 import com.abacus.franchise.utility.Roles;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
+@Table(name = "franchise")
 public class Franchise {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long franchise_id;
-	private String franchise_number;
-	private String franchise_name;
-	private String franchise_owner;
-	private String mobile_no;
-	private String gender;
-	private String owner_DOB;
-	private String franchise_email;
-	private String franchise_password;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "franchise_id")
+    private Long franchiseId;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	private Address franchise_address;
+    @Column(name = "franchise_number")
+    private String franchiseNumber;
 
-	private String profile_image_name;
-	private String profile_image_link;
-	private String document_type;
-	private String document_number;
-	private String document_image_link;
-	private String document_image_name;
-	private String creation_time;
-	private String modification_time;
-	private FranchiseStatus franchiseStatus = FranchiseStatus.PENDING;
-	
-	private Roles roles;
-	
-	
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	private Set<Course> courses = new HashSet<>();
+    @Column(name = "franchise_name")
+    private String franchiseName;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@JoinTable(name = "franchise_exam_attempt", joinColumns = @JoinColumn(name = "franchise_id"), inverseJoinColumns = @JoinColumn(name = "attempt_id"))
-	private Set<ExamAttempt> examAttempts = new HashSet<>();
-	
+    @Column(name = "franchise_owner")
+    private String franchiseOwner;
 
-	
+    @Column(name = "mobile_no")
+    private String mobileNo;
 
-	public Long getFranchise_id() {
-		return franchise_id;
-	}
+    private String gender;
 
-	public void setFranchise_id(Long franchise_id) {
-		this.franchise_id = franchise_id;
-	}
+    @Column(name = "owner_dob")
+    private String ownerDOB;
 
-	public Roles getRoles() {
-		return roles;
-	}
+    @Column(name = "franchise_email")
+    private String franchiseEmail;
 
-	public void setRoles(Roles roles) {
-		this.roles = roles;
-	}
+    @Column(name = "franchise_password")
+    private String franchisePassword;
 
-	public String getFranchise_number() {
-		return franchise_number;
-	}
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address franchiseAddress;
 
-	public void setFranchise_number(String franchise_number) {
-		this.franchise_number = franchise_number;
-	}
+    @Column(name = "profile_image_name")
+    private String profileImageName;
 
-	public String getFranchise_name() {
-		return franchise_name;
-	}
+    @Column(name = "profile_image_link")
+    private String profileImageLink;
 
-	public void setFranchise_name(String franchise_name) {
-		this.franchise_name = franchise_name;
-	}
+    @Column(name = "document_type")
+    private String documentType;
 
-	public String getFranchise_owner() {
-		return franchise_owner;
-	}
+    @Column(name = "document_number")
+    private String documentNumber;
 
-	public void setFranchise_owner(String franchise_owner) {
-		this.franchise_owner = franchise_owner;
-	}
+    @Column(name = "document_image_link")
+    private String documentImageLink;
 
-	public String getMobile_no() {
-		return mobile_no;
-	}
+    @Column(name = "document_image_name")
+    private String documentImageName;
 
-	public void setMobile_no(String mobile_no) {
-		this.mobile_no = mobile_no;
-	}
+    @Column(name = "creation_time")
+    private String creationTime;
 
-	public String getGender() {
-		return gender;
-	}
+    @Column(name = "modification_time")
+    private String modificationTime;
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+    @Enumerated(EnumType.STRING)
+    private FranchiseStatus franchiseStatus = FranchiseStatus.PENDING;
 
-	public String getOwner_DOB() {
-		return owner_DOB;
-	}
+    @Enumerated(EnumType.STRING)
+    private Roles roles;
 
-	public void setOwner_DOB(String owner_DOB) {
-		this.owner_DOB = owner_DOB;
-	}
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "franchise_course",
+            joinColumns = @JoinColumn(name = "franchise_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private Set<Course> courses = new HashSet<>();
 
-	
-	public String getFranchise_email() {
-		return franchise_email;
-	}
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "franchise_exam_attempt",
+            joinColumns = @JoinColumn(name = "franchise_id"),
+            inverseJoinColumns = @JoinColumn(name = "attempt_id")
+    )
+    private Set<ExamAttempt> examAttempts = new HashSet<>();
 
-	public void setFranchise_email(String franchise_email) {
-		this.franchise_email = franchise_email;
-	}
+    // ---------- Helper methods (logic preserved) ----------
 
-	public String getFranchise_password() {
-		return franchise_password;
-	}
+    public void addCourse(Course course) {
+        this.courses.add(course);
+    }
 
-	public void setFranchise_password(String franchise_password) {
-		this.franchise_password = franchise_password;
-	}
+    public void removeCourse(Course course) {
+        this.courses.remove(course);
+    }
 
-	public Address getFranchise_address() {
-		return franchise_address;
-	}
-
-	public void setFranchise_address(Address franchise_address) {
-		this.franchise_address = franchise_address;
-	}
-
-	public String getProfile_image_name() {
-		return profile_image_name;
-	}
-
-	public void setProfile_image_name(String profile_image_name) {
-		this.profile_image_name = profile_image_name;
-	}
-
-	public String getProfile_image_link() {
-		return profile_image_link;
-	}
-
-	public void setProfile_image_link(String profile_image_link) {
-		this.profile_image_link = profile_image_link;
-	}
-
-	public String getDocument_type() {
-		return document_type;
-	}
-
-	public void setDocument_type(String document_type) {
-		this.document_type = document_type;
-	}
-
-	public String getDocument_number() {
-		return document_number;
-	}
-
-	public void setDocument_number(String document_number) {
-		this.document_number = document_number;
-	}
-
-	public String getDocument_image_link() {
-		return document_image_link;
-	}
-
-	public void setDocument_image_link(String document_image_link) {
-		this.document_image_link = document_image_link;
-	}
-
-	public String getDocument_image_name() {
-		return document_image_name;
-	}
-
-	public void setDocument_image_name(String document_image_name) {
-		this.document_image_name = document_image_name;
-	}
-
-	public String getCreation_time() {
-		return creation_time;
-	}
-
-	public void setCreation_time(String creation_time) {
-		this.creation_time = creation_time;
-	}
-
-	public String getModification_time() {
-		return modification_time;
-	}
-
-	public void setModification_time(String modification_time) {
-		this.modification_time = modification_time;
-	}
-
-	public FranchiseStatus getFranchiseStatus() {
-		return franchiseStatus;
-	}
-
-	public void setFranchiseStatus(FranchiseStatus franchiseStatus) {
-		this.franchiseStatus = franchiseStatus;
-	}
-
-	public Set<Course> getCourses() {
-		return courses;
-	}
-
-	public void setCourses(Set<Course> courses) {
-		this.courses = courses;
-	}
-
-	public Set<ExamAttempt> getExamAttempts() {
-		return examAttempts;
-	}
-
-	public void setExamAttempts(Set<ExamAttempt> examAttempts) {
-		this.examAttempts = examAttempts;
-	}
-
-	public void addCourse(Course course) {
-		this.courses.add(course);
-	}
-
-	public void removeCourse(Course course) {
-		this.courses.remove(course);
-	}
-
-	public Franchise(Long franchise_id, String franchise_number, String franchise_name, String franchise_owner,
-			String mobile_no, String gender, String owner_DOB, String franchise_email,
-			String franchise_password, Address franchise_address, String profile_image_name, String profile_image_link,
-			String document_type, String document_number, String document_image_link, String document_image_name,
-			String creation_time, String modification_time, FranchiseStatus franchiseStatus, Set<Course> courses,
-			Set<ExamAttempt> examAttempts) {
-		super();
-		this.franchise_id = franchise_id;
-		this.franchise_number = franchise_number;
-		this.franchise_name = franchise_name;
-		this.franchise_owner = franchise_owner;
-		this.mobile_no = mobile_no;
-		this.gender = gender;
-		this.owner_DOB = owner_DOB;
-		this.franchise_email = franchise_email;
-		this.franchise_password = franchise_password;
-		this.franchise_address = franchise_address;
-		this.profile_image_name = profile_image_name;
-		this.profile_image_link = profile_image_link;
-		this.document_type = document_type;
-		this.document_number = document_number;
-		this.document_image_link = document_image_link;
-		this.document_image_name = document_image_name;
-		this.creation_time = creation_time;
-		this.modification_time = modification_time;
-		this.franchiseStatus = franchiseStatus;
-		this.courses = courses;
-		this.examAttempts = examAttempts;
-	}
-
-	public Franchise() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
+    public Franchise(
+            Long franchiseId,
+            String franchiseNumber,
+            String franchiseName,
+            String franchiseOwner,
+            String mobileNo,
+            String gender,
+            String ownerDOB,
+            String franchiseEmail,
+            String franchisePassword,
+            Address franchiseAddress,
+            String profileImageName,
+            String profileImageLink,
+            String documentType,
+            String documentNumber,
+            String documentImageLink,
+            String documentImageName,
+            String creationTime,
+            String modificationTime,
+            FranchiseStatus franchiseStatus,
+            Set<Course> courses,
+            Set<ExamAttempt> examAttempts
+    ) {
+        this.franchiseId = franchiseId;
+        this.franchiseNumber = franchiseNumber;
+        this.franchiseName = franchiseName;
+        this.franchiseOwner = franchiseOwner;
+        this.mobileNo = mobileNo;
+        this.gender = gender;
+        this.ownerDOB = ownerDOB;
+        this.franchiseEmail = franchiseEmail;
+        this.franchisePassword = franchisePassword;
+        this.franchiseAddress = franchiseAddress;
+        this.profileImageName = profileImageName;
+        this.profileImageLink = profileImageLink;
+        this.documentType = documentType;
+        this.documentNumber = documentNumber;
+        this.documentImageLink = documentImageLink;
+        this.documentImageName = documentImageName;
+        this.creationTime = creationTime;
+        this.modificationTime = modificationTime;
+        this.franchiseStatus = franchiseStatus;
+        this.courses = courses;
+        this.examAttempts = examAttempts;
+    }
 }

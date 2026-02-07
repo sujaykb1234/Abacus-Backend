@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "roles")
 public class Roles {
-	
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "role_id", nullable = false, updatable = false)
@@ -45,7 +45,7 @@ public class Roles {
     @Column(name = "updated_by")
     private UUID updatedBy;
 
-    
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -56,79 +56,76 @@ public class Roles {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-    
-	public UUID getRoleId() {
-		return roleId;
-	}
 
-	public void setRoleId(UUID roleId) {
-		this.roleId = roleId;
-	}
+    public UUID getRoleId() {
+        return roleId;
+    }
 
-	public String getRoleName() {
-		return roleName;
-	}
+    public void setRoleId(UUID roleId) {
+        this.roleId = roleId;
+    }
 
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
+    public String getRoleName() {
+        return roleName;
+    }
 
-	public String getRoleDescription() {
-		return roleDescription;
-	}
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
 
-	public void setRoleDescription(String roleDescription) {
-		this.roleDescription = roleDescription;
-	}
+    public String getRoleDescription() {
+        return roleDescription;
+    }
 
-	public Integer getHierarchyLevel() {
-		return hierarchyLevel;
-	}
+    public void setRoleDescription(String roleDescription) {
+        this.roleDescription = roleDescription;
+    }
 
-	public void setHierarchyLevel(Integer hierarchyLevel) {
-		this.hierarchyLevel = hierarchyLevel;
-	}
+    public Integer getHierarchyLevel() {
+        return hierarchyLevel;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public void setHierarchyLevel(Integer hierarchyLevel) {
+        this.hierarchyLevel = hierarchyLevel;
+    }
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-	public LocalDateTime getUpdatedAt() {
-		return updatedAt;
-	}
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 
-	public UUID getCreatedBy() {
-		return createdBy;
-	}
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-	public void setCreatedBy(UUID createdBy) {
-		this.createdBy = createdBy;
-	}
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
 
-	public UUID getUpdatedBy() {
-		return updatedBy;
-	}
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
 
-	public void setUpdatedBy(UUID updatedBy) {
-		this.updatedBy = updatedBy;
-	}
-    
-    
+    public UUID getUpdatedBy() {
+        return updatedBy;
+    }
 
+    public void setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

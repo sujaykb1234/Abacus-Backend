@@ -4,158 +4,101 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
+@Table(name = "exam_attempt")
 public class ExamAttempt {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long attemptId;
 
-	@ManyToOne
-	@JoinColumn(name = "course_id")
-	private Course course;
-	private String course_name;
-	private String examTime;
-	private String examName;
-	private int imageQuePercentage;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "attempt_id")
+    private Long attemptId;
 
-	@ElementCollection
-	@CollectionTable(name = "exam_attempt_questions", joinColumns = @JoinColumn(name = "attempt_id"))
-	@Column(name = "question_id")
-	private List<Long> questionIds; // Store IDs of questions
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course course;
 
-	@ElementCollection
-	@CollectionTable(name = "exam_attempt_answers", joinColumns = @JoinColumn(name = "attempt_id"))
-	@MapKeyColumn(name = "question_id")
-	@Column(name = "answer")
-	private Map<Long, String> answers = new HashMap<>(); // Store correct answers by question ID
+    @Column(name = "course_name")
+    private String courseName;
 
-	@ElementCollection
-	@CollectionTable(name = "student_selected_answers", joinColumns = @JoinColumn(name = "attempt_id"))
-	@MapKeyColumn(name = "question_id")
-	@Column(name = "answer")
-	private Map<Long, String> studentAnswers = new HashMap<>(); // Store student's selected answers
+    @Column(name = "exam_time")
+    private String examTime;
 
-	private int question_count;
-	
-	private boolean status = true;
+    @Column(name = "exam_name")
+    private String examName;
 
-	public boolean isStatus() {
-		return status;
-	}
+    @Column(name = "image_que_percentage")
+    private int imageQuePercentage;
 
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
+    /**
+     * Stores question IDs related to this exam attempt
+     */
+    @ElementCollection
+    @CollectionTable(
+            name = "exam_attempt_questions",
+            joinColumns = @JoinColumn(name = "attempt_id")
+    )
+    @Column(name = "question_id")
+    private List<Long> questionIds;
 
-	public String getExamTime() {
-		return examTime;
-	}
+    /**
+     * Stores correct answers mapped by question ID
+     */
+    @ElementCollection
+    @CollectionTable(
+            name = "exam_attempt_answers",
+            joinColumns = @JoinColumn(name = "attempt_id")
+    )
+    @MapKeyColumn(name = "question_id")
+    @Column(name = "answer")
+    private Map<Long, String> answers = new HashMap<>();
 
-	public String getExamName() {
-		return examName;
-	}
+    /**
+     * Stores student selected answers mapped by question ID
+     */
+    @ElementCollection
+    @CollectionTable(
+            name = "student_selected_answers",
+            joinColumns = @JoinColumn(name = "attempt_id")
+    )
+    @MapKeyColumn(name = "question_id")
+    @Column(name = "answer")
+    private Map<Long, String> studentAnswers = new HashMap<>();
 
-	public void setExamName(String examName) {
-		this.examName = examName;
-	}
+    @Column(name = "question_count")
+    private int questionCount;
 
-	public void setExamTime(String examTime) {
-		this.examTime = examTime;
-	}
+    @Column(name = "status")
+    private boolean status = true;
 
-	public String getCourse_name() {
-		return course_name;
-	}
-
-	public void setCourse_name(String course_name) {
-		this.course_name = course_name;
-	}
-
-	public int getQuestion_count() {
-		return question_count;
-	}
-
-	public void setQuestion_count(int question_count) {
-		this.question_count = question_count;
-	}
-
-	public Long getAttemptId() {
-		return attemptId;
-	}
-
-	public void setAttemptId(Long attemptId) {
-		this.attemptId = attemptId;
-	}
-
-	public Course getCourse() {
-		return course;
-	}
-
-	public void setCourse(Course course) {
-		this.course = course;
-	}
-
-	public List<Long> getQuestionIds() {
-		return questionIds;
-	}
-
-	public void setQuestionIds(List<Long> questionIds) {
-		this.questionIds = questionIds;
-	}
-
-	public Map<Long, String> getAnswers() {
-		return answers;
-	}
-
-	public void setAnswers(Map<Long, String> answers) {
-		this.answers = answers;
-	}
-
-	public Map<Long, String> getStudentAnswers() {
-		return studentAnswers;
-	}
-
-	public void setStudentAnswers(Map<Long, String> studentAnswers) {
-		this.studentAnswers = studentAnswers;
-	}
-
-	public int getImageQuePercentage() {
-		return imageQuePercentage;
-	}
-
-	public void setImageQuePercentage(int imageQuePercentage) {
-		this.imageQuePercentage = imageQuePercentage;
-	}
-
-	public ExamAttempt(Long attemptId, Course course, String course_name, String examTime, String examName,
-			int imageQuePercentage, List<Long> questionIds, Map<Long, String> answers, Map<Long, String> studentAnswers,
-			int question_count) {
-		super();
-		this.attemptId = attemptId;
-		this.course = course;
-		this.course_name = course_name;
-		this.examTime = examTime;
-		this.examName = examName;
-		this.imageQuePercentage = imageQuePercentage;
-		this.questionIds = questionIds;
-		this.answers = answers;
-		this.studentAnswers = studentAnswers;
-		this.question_count = question_count;
-	}
-
-	public ExamAttempt() {
-		super();
-	}
-
+    public ExamAttempt(
+            Long attemptId,
+            Course course,
+            String courseName,
+            String examTime,
+            String examName,
+            int imageQuePercentage,
+            List<Long> questionIds,
+            Map<Long, String> answers,
+            Map<Long, String> studentAnswers,
+            int questionCount
+    ) {
+        this.attemptId = attemptId;
+        this.course = course;
+        this.courseName = courseName;
+        this.examTime = examTime;
+        this.examName = examName;
+        this.imageQuePercentage = imageQuePercentage;
+        this.questionIds = questionIds;
+        this.answers = answers;
+        this.studentAnswers = studentAnswers;
+        this.questionCount = questionCount;
+    }
 }

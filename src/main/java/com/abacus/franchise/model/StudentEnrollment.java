@@ -1,115 +1,181 @@
 package com.abacus.franchise.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
+import com.abacus.franchise.Enums.EnrollmentStatus;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-
-import jakarta.persistence.*;
-import jakarta.persistence.Id;
+import java.util.UUID;
 
 @Entity
+@Table(name = "student_enrollment")
 public class StudentEnrollment {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "student_id", nullable = false)
-	private Student student;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "course_id", nullable = false)
-	private Course course;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
 
-	@ManyToOne
-	@JoinColumn(name = "franchise_id", nullable = false)
-	private Franchise franchise;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
 
-	private LocalDateTime enrollmentDate;
-	private LocalDateTime switchDate;
-	private boolean isActive;
-	private String enrollmentStatus; // ACTIVE /DEACTIVATE
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "franchise_id", nullable = false)
+    private Franchise franchise;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(name = "course_course_id")
+    private Long courseCourseId;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(name = "enrollment_date")
+    private LocalDateTime enrollmentDate;
 
-	public Student getStudent() {
-		return student;
-	}
+    @Column(name = "switch_date")
+    private LocalDateTime switchDate;
 
-	public void setStudent(Student student) {
-		this.student = student;
-	}
+    @Column(name = "is_active")
+    private boolean isActive = true;
 
-	public Course getCourse() {
-		return course;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "enrollment_status")
+    private EnrollmentStatus enrollmentStatus;
 
-	public void setCourse(Course course) {
-		this.course = course;
-	}
+    // Audit fields
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
-	public Franchise getFranchise() {
-		return franchise;
-	}
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-	public String getEnrollmentStatus() {
-		return enrollmentStatus;
-	}
+    @Column(name = "created_by", columnDefinition = "CHAR(36)")
+    private UUID createdBy;
 
-	public void setEnrollmentStatus(String enrollmentStatus) {
-		this.enrollmentStatus = enrollmentStatus;
-	}
+    @Column(name = "updated_by", columnDefinition = "CHAR(36)")
+    private UUID updatedBy;
 
-	public void setFranchise(Franchise franchise) {
-		this.franchise = franchise;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        if (this.enrollmentDate == null) {
+            this.enrollmentDate = LocalDateTime.now();
+        }
+    }
 
-	public LocalDateTime getEnrollmentDate() {
-		return enrollmentDate;
-	}
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public void setEnrollmentDate(LocalDateTime enrollmentDate) {
-		this.enrollmentDate = enrollmentDate;
-	}
+    public StudentEnrollment() {
+    }
 
-	public LocalDateTime getSwitchDate() {
-		return switchDate;
-	}
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
 
-	public void setSwitchDate(LocalDateTime switchDate) {
-		this.switchDate = switchDate;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public boolean isActive() {
-		return isActive;
-	}
+    public Student getStudent() {
+        return student;
+    }
 
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setStudent(Student student) {
+        this.student = student;
+    }
 
-	public StudentEnrollment(Long id, Student student, Course course, Franchise franchise, LocalDateTime enrollmentDate,
-			LocalDateTime switchDate, boolean isActive) {
-		super();
-		this.id = id;
-		this.student = student;
-		this.course = course;
-		this.franchise = franchise;
-		this.enrollmentDate = enrollmentDate;
-		this.switchDate = switchDate;
-		this.isActive = isActive;
-	}
+    public Course getCourse() {
+        return course;
+    }
 
-	public StudentEnrollment() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public void setCourse(Course course) {
+        this.course = course;
+    }
 
+    public Franchise getFranchise() {
+        return franchise;
+    }
+
+    public void setFranchise(Franchise franchise) {
+        this.franchise = franchise;
+    }
+
+    public Long getCourseCourseId() {
+        return courseCourseId;
+    }
+
+    public void setCourseCourseId(Long courseCourseId) {
+        this.courseCourseId = courseCourseId;
+    }
+
+    public LocalDateTime getEnrollmentDate() {
+        return enrollmentDate;
+    }
+
+    public void setEnrollmentDate(LocalDateTime enrollmentDate) {
+        this.enrollmentDate = enrollmentDate;
+    }
+
+    public LocalDateTime getSwitchDate() {
+        return switchDate;
+    }
+
+    public void setSwitchDate(LocalDateTime switchDate) {
+        this.switchDate = switchDate;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public EnrollmentStatus getEnrollmentStatus() {
+        return enrollmentStatus;
+    }
+
+    public void setEnrollmentStatus(EnrollmentStatus status) {
+        this.enrollmentStatus = status;
+    }
+
+    // Audit getters/setters
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public UUID getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

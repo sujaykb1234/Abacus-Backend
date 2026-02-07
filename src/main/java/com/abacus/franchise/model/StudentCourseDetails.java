@@ -1,65 +1,119 @@
 package com.abacus.franchise.model;
 
 import com.abacus.franchise.utility.CourseStatus;
+import jakarta.persistence.*;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
+@Table(name = "student_course_details")
 public class StudentCourseDetails {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private Long studentId;
-	private CourseStatus courseStatus; // in-progress/completed
-	private Long courseId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(name = "student_id", nullable = false)
+    private Long studentId;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(name = "course_id", nullable = false)
+    private Long courseId;
 
-	public Long getStudentId() {
-		return studentId;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "course_status")
+    private CourseStatus courseStatus;
 
-	public void setStudentId(Long studentId) {
-		this.studentId = studentId;
-	}
+    // Audit fields
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
-	public Long getCourseId() {
-		return courseId;
-	}
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-	public void setCourseId(Long courseId) {
-		this.courseId = courseId;
-	}
+    @Column(name = "created_by", columnDefinition = "CHAR(36)")
+    private UUID createdBy;
 
-	public CourseStatus getCourseStatus() {
-		return courseStatus;
-	}
+    @Column(name = "updated_by", columnDefinition = "CHAR(36)")
+    private UUID updatedBy;
 
-	public void setCourseStatus(CourseStatus courseStatus) {
-		this.courseStatus = courseStatus;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public StudentCourseDetails(Long id, Long studentId, CourseStatus courseStatus, Long courseId) {
-		super();
-		this.id = id;
-		this.studentId = studentId;
-		this.courseStatus = courseStatus;
-		this.courseId = courseId;
-	}
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public StudentCourseDetails() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public StudentCourseDetails() {
+    }
 
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
+    }
+
+    public CourseStatus getCourseStatus() {
+        return courseStatus;
+    }
+
+    public void setCourseStatus(CourseStatus courseStatus) {
+        this.courseStatus = courseStatus;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public UUID getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 }

@@ -1,47 +1,28 @@
 package com.abacus.franchise.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-public class CourseImage{
+@Table(name = "course_image")
+public class CourseImage {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long image_id;
-	private Long course_id;
-	private String image_link;
-	private String image_name;
-	
-	public Long getImage_id() {
-		return image_id;
-	}
-	public void setImage_id(Long image_id) {
-		this.image_id = image_id;
-	}
-	public Long getCourse_id() {
-		return course_id;
-	}
-	public void setCourse_id(Long course_id) {
-		this.course_id = course_id;
-	}
-	public String getImage_link() {
-		return image_link;
-	}
-	public void setImage_link(String image_link) {
-		this.image_link = image_link;
-	}
-	public String getImage_name() {
-		return image_name;
-	}
-	public void setImage_name(String image_name) {
-		this.image_name = image_name;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "image_id")
+    private Long imageId;
 
-	
-	
+    @Column(name = "course_id", nullable = false)
+    private Long courseId;
 
-	
+    @Column(name = "image_link", nullable = false, length = 255)
+    private String imageLink;
+
+    @Column(name = "image_name", length = 150)
+    private String imageName;
 }

@@ -1,121 +1,60 @@
 package com.abacus.franchise.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import java.time.LocalDateTime;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
+@Table(name = "admin")
 public class Admin {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long admin_id;
-	private String admin_username;
-	private String admin_password;
-	private String admin_mobileNo;
-	private String admin_emailId;
-	private String creation_time;
-	private String modification_time;
-	private String accessToken;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "admin_id")
+    private Long adminId;
+
+    @Column(name = "admin_username", nullable = false, unique = true, length = 100)
+    private String adminUsername;
+
+    @Column(name = "admin_password_hash", nullable = false)
+    private String passwordHash;
+
+    @Column(name = "admin_mobile_no", length = 15, unique = true)
+    private String adminMobileNo;
+
+    @Column(name = "admin_email_id", length = 150, unique = true)
+    private String adminEmailId;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Optional / infra-related (consider moving later)
+    @Column(name = "access_token")
+    private String accessToken;
+
+    @Column(name = "instance_id")
     private String instanceId;
+
+    @Column(name = "api_url")
     private String apiUrl;
-    
-	public String getAccessToken() {
-		return accessToken;
-	}
 
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public String getInstanceId() {
-		return instanceId;
-	}
-
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
-
-	public String getApiUrl() {
-		return apiUrl;
-	}
-
-	public void setApiUrl(String apiUrl) {
-		this.apiUrl = apiUrl;
-	}
-
-	public Long getAdmin_id() {
-		return admin_id;
-	}
-
-	public void setAdmin_id(Long admin_id) {
-		this.admin_id = admin_id;
-	}
-
-	public String getAdmin_username() {
-		return admin_username;
-	}
-
-	public void setAdmin_username(String admin_username) {
-		this.admin_username = admin_username;
-	}
-
-	public String getAdmin_password() {
-		return admin_password;
-	}
-
-	public void setAdmin_password(String admin_password) {
-		this.admin_password = admin_password;
-	}
-
-	public String getAdmin_mobileNo() {
-		return admin_mobileNo;
-	}
-
-	public void setAdmin_mobileNo(String admin_mobileNo) {
-		this.admin_mobileNo = admin_mobileNo;
-	}
-
-	public String getAdmin_emailId() {
-		return admin_emailId;
-	}
-
-	public void setAdmin_emailId(String admin_emailId) {
-		this.admin_emailId = admin_emailId;
-	}
-
-	public String getCreation_time() {
-		return creation_time;
-	}
-
-	public void setCreation_time(String creation_time) {
-		this.creation_time = creation_time;
-	}
-
-	public String getModification_time() {
-		return modification_time;
-	}
-
-	public void setModification_time(String modification_time) {
-		this.modification_time = modification_time;
-	}
-
-	public Admin(Long admin_id, String admin_username, String admin_password, String admin_mobileNo,
-			String admin_emailId, String creation_time, String modification_time) {
-		super();
-		this.admin_id = admin_id;
-		this.admin_username = admin_username;
-		this.admin_password = admin_password;
-		this.admin_mobileNo = admin_mobileNo;
-		this.admin_emailId = admin_emailId;
-		this.creation_time = creation_time;
-		this.modification_time = modification_time;
-	}
-
-	public Admin() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
