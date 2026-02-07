@@ -60,7 +60,6 @@ public class FranchiseController {
 	}
 	
 	
-//	send Email(otp send)    //DB
 	@PostMapping("/sendEmailForFranchies")
 	public SuccessResponse sendEmail(@RequestBody Mail info) {
 		Mail mail = new Mail();
@@ -82,15 +81,12 @@ public class FranchiseController {
 		}
 	}
 	
-//	get the franchies using the franchies ID   //DB
 	@GetMapping("getTheFranchiesUsingTheID/{id}")
 	public SuccessResponse getThefranchiesUsingTheID(@PathVariable Long id) {
 		return franchiseService.getThefranchiesUsingTheID(id);
 	}
 
-//----------------------------------------------------------------------------------------------------------------------------	
 
-//	get the All franchies    //DB
 	@GetMapping("getTheAllFranchies")
 	public SuccessResponse getTheAllFranchies(
 			@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
@@ -100,7 +96,8 @@ public class FranchiseController {
 		return franchiseService.getTheAllFranchies(pageNo, pageSize, sortBy, orderBy);
 	}
 
-//--------------------------------------------------------------------------------------------------------------
+	
+	
 
 	@DeleteMapping("deleteTheFranchiesUsingTheID/{id}")
 	public SuccessResponse deleteTheFranchiesUsingTheID(@PathVariable Long id) {
@@ -236,13 +233,13 @@ public class FranchiseController {
 //
 //	}
 
-	@PostMapping("sendMultipleKitRequestsByFranchise/{franchiseId}")
-	public SuccessResponse sendKitRequestsToAdmin(@PathVariable Long franchiseId,
-			@RequestBody List<KitRequest> kitRequests) {
-		System.out.println("FranchiseId: " + franchiseId);
-		System.out.println("KitRequests: " + kitRequests);
-		return franchiseService.sendKitRequests(franchiseId, kitRequests);
-	}
+//	@PostMapping("sendMultipleKitRequestsByFranchise/{franchiseId}")
+//	public SuccessResponse sendKitRequestsToAdmin(@PathVariable Long franchiseId,
+//			@RequestBody List<KitRequest> kitRequests) {
+//		System.out.println("FranchiseId: " + franchiseId);
+//		System.out.println("KitRequests: " + kitRequests);
+//		return franchiseService.sendKitRequests(franchiseId, kitRequests);
+//	}
 
 	@GetMapping("getAllKitRequestUsingDate")
 	public SuccessResponse getAllKitRequestUsingDate(@RequestParam(required = false) String startDate,

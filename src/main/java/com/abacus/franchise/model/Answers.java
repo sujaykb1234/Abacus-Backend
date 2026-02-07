@@ -25,9 +25,8 @@ public class Answers {
 	private String correctOption;
 
 	private String questionType;
-
+//
 	@ManyToOne
-	@JoinColumn(name = "course_id")
 	private Course course;
 
 	@ManyToOne

@@ -3,16 +3,25 @@ package com.abacus.franchise.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.*;
-import jakarta.persistence.GeneratedValue;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "address")
 public class Address {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "address_id")
+	@Id
+	@UuidGenerator
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "address_id", length = 36, updatable = false, nullable = false)
     private UUID addressId;
 
     @Column(name = "line1", nullable = false, length = 255)
@@ -30,11 +39,17 @@ public class Address {
     @Column(name = "country_name", nullable = false)
     private String countryName = "INDIA";
 
-    @Column(name = "state_id", nullable = false)
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "state_id", length = 36, updatable = false, nullable = false)
     private UUID stateId;
 
-    @Column(name = "district_id")
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "district_id", length = 36, updatable = false, nullable = false)
     private UUID districtId;
+	
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "user_id", length = 36)
+    private UUID user_id;
 
      @Column(name = "is_active")
     private Boolean isActive = true;
@@ -45,10 +60,12 @@ public class Address {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "created_by")
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "created_by", length = 36)
     private UUID createdBy;
 
-    @Column(name = "updated_by")
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "updated_by", length = 36)
     private UUID updatedBy;
     
     @PrePersist
@@ -165,6 +182,16 @@ public class Address {
 	public void setUpdatedBy(UUID updatedBy) {
 		this.updatedBy = updatedBy;
 	}
+
+	public UUID getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(UUID user_id) {
+		this.user_id = user_id;
+	}
+	
+	
 	
     
 }

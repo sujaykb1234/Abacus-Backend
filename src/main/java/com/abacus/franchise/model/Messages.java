@@ -16,7 +16,10 @@ public class Messages {
 
 	public static final String wrongPassword = "ENTER CORRECT PASSWORD";
 
-	public static String userNotFound = "USER NOT FOUND TRY AGAIN..!";
+	public static String userNotFound = "USER NOT FOUND";
+	
+	public static String userFound = "USER FOUND SUCCESSFULLY";
+
 
 	public static String nullData = "YOU ENTER NULL DATA PLZ CHECK..!";
 
@@ -142,7 +145,6 @@ public class Messages {
 
 	public static String course_get_succesfully = "COURSE INFORMATION GET SUCCESFULLY..!";
 
-	public static String course_not_found = "NO COURSE FOUND ..!";
 
 	public static String kitReq = "KIT REQUESTS..!";
 
@@ -192,7 +194,7 @@ public class Messages {
 
 	public static String courseAlreadyAssign = "COURSE IS ALREADY ASSIGN FOR FRANCHIES..!";
 
-	public static String kitSendSuccessfully = "KITS SEND TO FRANCHISE SUCCESSFULLY..!";
+	public static String kitSendSuccessfully = "SEND COURSES KITS SUCCESSFULLY";
 
 	public static String noKitsAvaiable = "NO ENOUFG KITS ARE AVAILABLE..!";
 
@@ -227,7 +229,9 @@ public class Messages {
 
 	public static String exam_already_assign = "EXAM_ALREADY_ASSIGN..!";
 
-	public static String course_not_found_for_this_student = "COURSE_NOT_FOUND_FOR_THIS_STUDENT..!";
+	public static String course_not_found = " COURSE NOT FOUND";
+	
+	public static String course_found = "COURSE FOUND SUCCESSFULLY";
 
 	public static String request_for_course = "REQUEST TO ADMIN FOR ASSIGN COURSE..!";
 

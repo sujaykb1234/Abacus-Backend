@@ -3,10 +3,12 @@ package com.abacus.franchise.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -16,8 +18,9 @@ import jakarta.persistence.Table;
 @Table(name = "state")
 public class State {
 	    @Id
-	    @GeneratedValue(strategy = GenerationType.UUID)
-	    @Column(name = "state_id", nullable = false, updatable = false,columnDefinition = "CHAR(36)")
+	    @UuidGenerator
+	    @JdbcTypeCode(SqlTypes.VARCHAR)
+	    @Column(name = "state_id", length = 36, updatable = false, nullable = false)	    
 	    private UUID stateId;
 
 	    @Column(name = "state_name", nullable = false, length = 150)
@@ -32,12 +35,14 @@ public class State {
 	    @Column(name = "updated_at")
 	    private LocalDateTime updatedAt;
 
-	    @Column(name = "created_by",columnDefinition = "CHAR(36)")
+	    @JdbcTypeCode(SqlTypes.VARCHAR)
+		@Column(name = "created_by", length = 36)
 	    private UUID createdBy;
 
-	    @Column(name = "updated_by",columnDefinition = "CHAR(36)")
+		@JdbcTypeCode(SqlTypes.VARCHAR)
+		@Column(name = "updated_by", length = 36)
 	    private UUID updatedBy;
-
+		
 	    @PrePersist
 	    protected void onCreate() {
 	        this.createdAt = LocalDateTime.now();

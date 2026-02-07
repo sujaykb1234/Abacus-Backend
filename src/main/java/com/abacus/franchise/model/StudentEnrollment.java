@@ -19,7 +19,7 @@ public class StudentEnrollment {
 	private Student student;
 
 	@ManyToOne
-	@JoinColumn(name = "course_id", nullable = false)
+//	@JoinColumn(name = "course_id", nullable = false)
 	private Course course;
 
 	@ManyToOne

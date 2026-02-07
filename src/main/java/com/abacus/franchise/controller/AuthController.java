@@ -42,19 +42,6 @@ public class AuthController {
 		return usersService.saveOrUpdateUsers(viewUser,profileImage,documentImage,request);
 	}
 	
-	@GetMapping("getAll")
-	public List<Users> getAll() {
-		return usersRepository.getAllList();
-	}
-
-	
-//	@PostMapping("registerAndUpdateFranchies")
-//	public SuccessResponse registerAndUpdateTheFrinchise(@ModelAttribute Franchise franchise,
-//			@RequestParam(value = "franchies_owner_pic", required = false) MultipartFile franchies_owner_pic,
-//			@RequestParam(value = "franchies_owner_id_photo", required = false) MultipartFile franchies_owner_id_photo
-//			,HttpServletRequest request) {
-//		return franchiseService.registerAndUpdateTheFrinchise(franchise, franchies_owner_pic, franchies_owner_id_photo,request);
-//	}
 	
 
 

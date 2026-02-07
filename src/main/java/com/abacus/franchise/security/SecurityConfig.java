@@ -25,9 +25,9 @@ public class SecurityConfig {
           .csrf(csrf -> csrf.disable())
           .authorizeHttpRequests(auth -> auth
               .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
-              .requestMatchers("abacus/v1/auth/**").permitAll()
-            .requestMatchers("abacus/v1/franchise/**").hasAnyRole("FRANCHISE","MASTER_FRANCHISE")
-            .requestMatchers("abacus/users/login").hasAnyRole("FRANCHISE","MASTER_FRANCHISE","STUDENT","ADMIN")  
+              .requestMatchers("abacus/v1/auth/**","abacus/v1/users/**").permitAll()
+//            .requestMatchers("abacus/v1/franchise/**").hasAnyRole("FRANCHISE","MASTER_FRANCHISE")
+//            .requestMatchers("abacus/users/login").hasAnyRole("FRANCHISE","MASTER_FRANCHISE","STUDENT","ADMIN")  
             .anyRequest().authenticated())
           .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

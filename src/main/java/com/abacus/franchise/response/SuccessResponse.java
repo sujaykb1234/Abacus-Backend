@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatusCode;
 
 import com.abacus.franchise.dto.AdminDto;
 import com.abacus.franchise.dto.CourseDTO;
+import com.abacus.franchise.dto.CourseDetail;
 import com.abacus.franchise.dto.ExamDTO;
 import com.abacus.franchise.dto.FranchiseDTO;
 import com.abacus.franchise.dto.ProductRequestDTO;
@@ -100,11 +101,19 @@ public class SuccessResponse {
 
 	public void userNotFound() {
 		this.status = false;
-		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.statusCode = HttpStatus.NOT_FOUND;
 		this.message = Messages.userNotFound;
-
+        this.response = null;
 	}
 
+	public void userFoundResponse(Object object) {
+		this.status = true;
+		this.statusCode = HttpStatus.FOUND;
+		this.message = Messages.userFound;
+        this.response = object;
+	}
+
+	
 	public void missingFieldResponse(Object franchise) {
 		this.response = franchise;
 		this.status = false;
@@ -322,11 +331,7 @@ public class SuccessResponse {
 		this.message = Messages.exam_save;
 	}
 
-	public void courseNotFound(Long course_id) {
-		this.status = false;
-		this.statusCode = HttpStatus.BAD_REQUEST;
-		this.message = Messages.courseNotFound;
-	}
+
 
 	public void courseUpdated(CourseDTO courseDto) {
 		this.response = courseDto;
@@ -946,11 +951,11 @@ public class SuccessResponse {
 		this.message = Messages.exam_already_assign;
 	}
 
-	public void courseNotFound() {
+	public void courseNotFound(String courseId) {
 		this.response = null;
 		this.status = false;
 		this.statusCode = HttpStatus.NOT_FOUND;
-		this.message = Messages.course_not_found_for_this_student;
+		this.message = courseId+Messages.course_not_found;
 	}
 
 	public void examNotCompleted() {
@@ -1272,5 +1277,19 @@ public class SuccessResponse {
 		this.message = "ACCOUNT IS DEACTIVATE";
 		this.statusCode = HttpStatus.BAD_REQUEST;
 		this.response = null;		
+	}
+
+	public void courseFound(List<CourseDetail> allCoursesByFranchiseId) {
+		this.status = true;
+		this.message = Messages.course_found;
+		this.statusCode = HttpStatus.CREATED;
+		this.response = allCoursesByFranchiseId;		
+	}
+
+	public void addressNotFound() {
+		this.status = false;
+		this.message = "ADDRESS NOT FOUND";
+		this.statusCode = HttpStatus.NOT_FOUND;
+		this.response = null;			
 	}
 }

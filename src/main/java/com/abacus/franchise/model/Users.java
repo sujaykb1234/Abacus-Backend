@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,9 +21,10 @@ import jakarta.persistence.Table;
 public class Users {
 
 	@Id
-    @Column(name = "user_id")
-    @GeneratedValue
-    private UUID userId;
+	@UuidGenerator
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "user_id", length = 36, updatable = false, nullable = false)
+	private UUID userId;
 
     @Column(name = "franchise_name", length = 100)
     private String franchiseName;
@@ -42,7 +47,8 @@ public class Users {
     @Column(name = "last_name", length = 100)
     private String lastName;
 
-    @Column(name = "role_id", nullable = false)
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "role_id", length = 36, updatable = false, nullable = false)
     private UUID roleId;
 
     @Column(name = "profile_name")
@@ -57,12 +63,9 @@ public class Users {
     @Column(name = "document_link")
     private String documentLink;
     
-    @Column(name = "franchise_id")
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "franchise_id", length = 36)
     private UUID franchiseId;
-
-    @Column(name = "address_id")
-    private UUID addressId;
-
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
@@ -85,10 +88,12 @@ public class Users {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "created_by")
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "created_by", length = 36)
     private UUID createdBy;
 
-    @Column(name = "updated_by")
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "updated_by", length = 36)
     private UUID updatedBy;
     
     @PrePersist
@@ -180,14 +185,6 @@ public class Users {
 
 	public void setFranchiseId(UUID franchiseId) {
 		this.franchiseId = franchiseId;
-	}
-
-	public UUID getAddressId() {
-		return addressId;
-	}
-
-	public void setAddressId(UUID addressId) {
-		this.addressId = addressId;
 	}
 
 	public LocalDate getDateOfBirth() {

@@ -8,12 +8,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.abacus.franchise.dto.CourseDetail;
+import com.abacus.franchise.dto.UserAddressDetail;
 import com.abacus.franchise.dto.UserDetail;
 import com.abacus.franchise.model.Address;
+import com.abacus.franchise.model.KitOrderItem;
+import com.abacus.franchise.model.KitRequests;
 import com.abacus.franchise.model.TokenDetail;
 import com.abacus.franchise.model.Users;
 import com.abacus.franchise.repo.AddressRepo;
+import com.abacus.franchise.repo.CoursesRepository;
 import com.abacus.franchise.repo.DistrictRepository;
+import com.abacus.franchise.repo.KitOrderItemRepository;
+import com.abacus.franchise.repo.KitRequestsRepository;
 import com.abacus.franchise.repo.RolesRepo;
 import com.abacus.franchise.repo.StateRepository;
 import com.abacus.franchise.repo.TokenDetailRepo;
@@ -23,6 +30,7 @@ import com.abacus.franchise.security.JwtUtil;
 import com.abacus.franchise.service.UsersService;
 import com.abacus.franchise.utility.ImageStoreProcess;
 import com.abacus.franchise.view.AuthRequest;
+import com.abacus.franchise.view.KitRequest;
 import com.abacus.franchise.view.ViewUser;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,6 +61,15 @@ public class UsersServiceImpl implements UsersService {
 
 	@Autowired
 	JwtUtil jwtUtil;
+	
+	@Autowired
+	CoursesRepository coursesRepository;
+	
+	@Autowired
+	KitOrderItemRepository kitOrderItemRepository;
+	
+	@Autowired
+	KitRequestsRepository kitRequestsRepository;
 	
 	@Override
 	public SuccessResponse saveOrUpdateUsers(ViewUser viewUser,MultipartFile profileImage,MultipartFile documentImage,HttpServletRequest request) {
@@ -113,7 +130,7 @@ public class UsersServiceImpl implements UsersService {
 	    users.setDateOfBirth(viewUser.getDateOfBirth());
 	    
 	    if(viewUser.getFranchiseId() != null ){
-	    	  UUID checkFranchiseIdIsExistOrNot = usersRepository.checkFranchiseIdIsExistOrNot(viewUser.getUserId().toString());
+	    	  UUID checkFranchiseIdIsExistOrNot = usersRepository.checkFranchiseIdIsExistOrNot(viewUser.getFranchiseId().toString());
 	    	
 	    	if(checkFranchiseIdIsExistOrNot != null) {
 	    	    	users.setFranchiseId(checkFranchiseIdIsExistOrNot);
@@ -143,7 +160,10 @@ public class UsersServiceImpl implements UsersService {
 	         }
 	    }
 	    
+	    Users saveUsers = usersRepository.save(users);
+	    
 	    Address address = new Address();
+	    address.setUser_id(saveUsers.getUserId());
 	    address.setLine1(viewUser.getLine1());
 	    address.setLandmark(viewUser.getLandmark());
 	    address.setCity(viewUser.getCity());
@@ -152,10 +172,8 @@ public class UsersServiceImpl implements UsersService {
 	    address.setPincode(viewUser.getPincode());
 	    
 	    Address saveAddress = addressRepo.save(address);
+	    	    
 	    
-	    users.setAddressId(saveAddress.getAddressId());
-	    
-	    Users saveUsers = usersRepository.save(users);
 	    
 	    
 		    String accessToken = jwtUtil.generateAccessToken(
@@ -205,13 +223,143 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public SuccessResponse getUsersById(String userId) {
+	public SuccessResponse getUsersById(UUID userId,String roleName) {
 		
 		SuccessResponse response = new SuccessResponse();
 		
-		usersRepository.getUserById(userId);
+		UserAddressDetail userAddressDetailByUserId = usersRepository.getUserAddressDetailByUserId(userId.toString(),roleName);
 		
+		if(userAddressDetailByUserId != null) {
+			response.userFoundResponse(userAddressDetailByUserId);
+			return response;
+		}
+		
+		response.userNotFound();
+		return response;
 	}
+
+	@Override
+	public SuccessResponse getStudentByFranchiseId(UUID franchiseId) {
+		SuccessResponse response = new SuccessResponse();
+		
+	    List<UserAddressDetail> studentDetailByFranchiseId = usersRepository.getStudentDetailByFranchiseId(franchiseId.toString());
+		
+		if(studentDetailByFranchiseId != null) {
+			response.userFoundResponse(studentDetailByFranchiseId);
+			return response;
+		}
+		
+		response.userNotFound();
+		return response;
+	}
+
+	@Override
+	public SuccessResponse getAllCoursesByFranchiseId(UUID franchiseId) {
+		
+		SuccessResponse response = new SuccessResponse();
+		
+		List<CourseDetail> allCoursesByFranchiseId = coursesRepository.getAllCoursesByFranchiseId(franchiseId.toString());
+	
+	    if(allCoursesByFranchiseId.isEmpty()) {
+	    	response.courseNotFound("");
+	    	return response;
+	    }
+	
+	    response.courseFound(allCoursesByFranchiseId);
+	    return response;
+	    
+	}
+
+
+
+	@Override
+	public SuccessResponse sendCourseKitRequest(KitRequest kitRequest) {
+		SuccessResponse response = new SuccessResponse();
+		
+		KitRequests kitRequests = new KitRequests();
+
+		 if(kitRequest.getFranchiseId() != null ){
+	    	  UUID checkFranchiseIdIsExistOrNot = usersRepository.checkFranchiseIdIsExistOrNot(kitRequest.getFranchiseId().toString());
+	    	
+	    	  if(checkFranchiseIdIsExistOrNot == null) {
+	    		  response.franchiesnotfound();
+	    		  return response;
+	    	  }
+	    	  
+	    	  kitRequests.setFranchiseId(checkFranchiseIdIsExistOrNot);
+	    }
+		 
+		 
+
+		if(kitRequest.getAddressId() != null) {
+			UUID addressById = addressRepo.getAddressById(kitRequest.getAddressId().toString());
+			
+			if(addressById == null) {
+				response.addressNotFound();
+				return response;
+			}
+			
+			kitRequests.setAddressId(addressById);
+			
+		}else {
+			 if(kitRequest.getStateId() == null || stateRepository.checkStateIdPresentOrNot(kitRequest.getStateId().toString())==0){
+			    	response.stateNotFound();
+			    	return response;
+			    }
+			    
+			    if(kitRequest.getDistrictId() == null || districtRepository.checkDistrictIdPresentOrNot(kitRequest.getDistrictId().toString())==0){
+			    	response.districtNotFound();
+			    	return response;
+			    }  
+			    
+			    Address address = new Address();
+			    address.setUser_id(kitRequest.getFranchiseId());
+			    address.setLine1(kitRequest.getLine1());
+			    address.setLandmark(kitRequest.getLandmark());
+			    address.setCity(kitRequest.getCity());
+			    address.setStateId(kitRequest.getStateId());
+			    address.setDistrictId(kitRequest.getDistrictId());
+			    address.setPincode(kitRequest.getPincode());
+			    
+			    Address saveAddress = addressRepo.save(address);
+			    kitRequests.setAddressId(saveAddress.getAddressId());
+	             
+		     
+		}
+		
+		 
+		KitRequests save_kitrequest = kitRequestsRepository.save(kitRequests);
+			 
+		 if(kitRequest.getKitOrderItems() != null ){
+			    	
+			 for( KitOrderItem item  : kitRequest.getKitOrderItems()) {
+				 UUID checkCourseIdIsExistOrNot = coursesRepository.checkCourseIdIsExistOrNot(item.getCourseId().toString());
+			    	
+		    	  if(checkCourseIdIsExistOrNot == null) {
+		    		  response.courseNotFound(item.getCourseId().toString());
+		    		  return response;
+		    	  }
+		    	  
+		    	  item.setKitRequestId(save_kitrequest.getKitRequestId());
+			 }
+			 
+			  kitOrderItemRepository.saveAll(kitRequest.getKitOrderItems());
+			 
+			          
+	    }
+		 
+		response.kitsSentSuccessfully(null);
+		return response;
+		 
+	
+	
+			
+			
+		}
+	
+		 
+		 
+	
 	
 	
 }

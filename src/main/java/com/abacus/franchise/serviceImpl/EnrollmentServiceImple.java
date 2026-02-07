@@ -57,7 +57,7 @@ public class EnrollmentServiceImple implements EnrollmentService {
 			EnrollmentDTO dto = new EnrollmentDTO();
 			dto.setId(enrollment.getId());
 			dto.setStudentId(enrollment.getStudent().getStudent_id());
-			dto.setCourseId(enrollment.getCourse().getCourse_id());
+//			dto.setCourseId(enrollment.getCourse().getCourse_id());
 			dto.setFranchiseId(enrollment.getFranchise().getFranchise_id());
 			dto.setEnrollmentDate(enrollment.getEnrollmentDate());
 			dto.setSwitchDate(enrollment.getSwitchDate());

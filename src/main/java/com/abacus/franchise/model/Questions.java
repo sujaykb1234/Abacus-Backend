@@ -25,8 +25,8 @@ public class Questions {
 	@Column(columnDefinition = "TEXT")
 	private String options;
 	@ManyToOne
-	@JoinColumn(name = "course_id")
-	@JsonIgnore
+//	@JoinColumn(name = "course_id")
+//	@JsonIgnore
 	private Course course;
 
 	private boolean status = true;

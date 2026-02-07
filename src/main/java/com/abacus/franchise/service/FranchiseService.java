@@ -59,7 +59,7 @@ public interface FranchiseService {
 
 	public SuccessResponse getAllKitRequestsUsingDate(String startDate, String endDate, Long franchiseId);
 
-	public SuccessResponse sendKitRequests(Long franchiseId, List<KitRequest> kitRequests);
+//	public SuccessResponse sendKitRequests(Long franchiseId, List<KitRequest> kitRequests);
 																							
 	public SuccessResponse createOrder(FranchiseOrderDTO orderDTO);
 

@@ -156,16 +156,16 @@ public class QuestionsServiceImpl implements QuestionsService {
 		}
 		List<QuestionsDTO> textQuestionsDTOList = textQuestions.stream().map(question -> {
 			QuestionsDTO questionsDTO = mapper.map(question, QuestionsDTO.class);
-			CourseResponseDTO courseDTO = new CourseResponseDTO(question.getCourse().getCourse_id(),
-					question.getCourse().getCourse_name());
-			questionsDTO.setCourse(courseDTO);
+//			CourseResponseDTO courseDTO = new CourseResponseDTO(question.getCourse().getCourse_id(),
+//					question.getCourse().getCourse_name());
+//			questionsDTO.setCourse(courseDTO);
 			return questionsDTO;
 		}).collect(Collectors.toList());
 		List<QuestionsDTO> imageQuestionsDTOList = imageQuestions.stream().map(question -> {
 			QuestionsDTO questionsDTO = mapper.map(question, QuestionsDTO.class);
-			CourseResponseDTO courseDTO = new CourseResponseDTO(question.getCourse().getCourse_id(),
-					question.getCourse().getCourse_name());
-			questionsDTO.setCourse(courseDTO);
+//			CourseResponseDTO courseDTO = new CourseResponseDTO(question.getCourse().getCourse_id(),
+//					question.getCourse().getCourse_name());
+//			questionsDTO.setCourse(courseDTO);
 			return questionsDTO;
 		}).collect(Collectors.toList());
 		List<QuestionsDTO> combinedQuestionsList = new ArrayList<>();
@@ -198,18 +198,18 @@ public class QuestionsServiceImpl implements QuestionsService {
 		System.out.println("Image questions size : " + imageQuestions.size());
 		List<QuestionsDTO> textQuestionsDTOList = textQuestions.stream().map(question -> {
 			QuestionsDTO questionsDTO = mapper.map(question, QuestionsDTO.class);
-			CourseResponseDTO courseDTO = new CourseResponseDTO(question.getCourse().getCourse_id(),
-					question.getCourse().getCourse_name());
-			questionsDTO.setCourse(courseDTO);
+//			CourseResponseDTO courseDTO = new CourseResponseDTO(question.getCourse().getCourse_id(),
+//					question.getCourse().getCourse_name());
+//			questionsDTO.setCourse(courseDTO);
 			return questionsDTO;
 		}).collect(Collectors.toList());
 
 		// Convert image-based questions to DTOs
 		List<QuestionsDTO> imageQuestionsDTOList = imageQuestions.stream().map(question -> {
 			QuestionsDTO questionsDTO = mapper.map(question, QuestionsDTO.class);
-			CourseResponseDTO courseDTO = new CourseResponseDTO(question.getCourse().getCourse_id(),
-					question.getCourse().getCourse_name());
-			questionsDTO.setCourse(courseDTO);
+//			CourseResponseDTO courseDTO = new CourseResponseDTO(question.getCourse().getCourse_id(),
+//					question.getCourse().getCourse_name());
+//			questionsDTO.setCourse(courseDTO);
 			return questionsDTO;
 		}).collect(Collectors.toList());
 

@@ -22,7 +22,6 @@ public class ExamAttempt {
 	private Long attemptId;
 
 	@ManyToOne
-	@JoinColumn(name = "course_id")
 	private Course course;
 	private String course_name;
 	private String examTime;

@@ -53,6 +53,7 @@ import com.abacus.franchise.repo.ProductOrderRequestRepo;
 import com.abacus.franchise.repo.ProductsRepo;
 import com.abacus.franchise.repo.StudentRepo;
 import com.abacus.franchise.repo.TokenDetailRepo;
+import com.abacus.franchise.repo.UsersRepository;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.security.JwtUtil;
 import com.abacus.franchise.service.FranchiseService;
@@ -111,6 +112,9 @@ public class FranchiseServiceImpl implements FranchiseService {
 	
 	@Autowired
     TokenDetailRepo tokenDetailRepo;
+	
+	@Autowired
+	UsersRepository usersRepository;
 	
 	// Method to generate and assign a unique franchise number
 	public String generateUniqueFranchiseNumber() {
@@ -867,123 +871,126 @@ public class FranchiseServiceImpl implements FranchiseService {
 
 
 
-	@Override
-	public SuccessResponse sendKitRequests(Long franchiseId, List<KitRequest> kitRequests) {
-		SuccessResponse response = new SuccessResponse();
-		List<KitOrderResponseDTO> kitOrderResponses = new ArrayList<>();
-
-		// Check if franchise exists
-		if (franchiseId == null || kitRequests == null || kitRequests.isEmpty()) {
-			response.nullData();
-			return response;
-		}
-
-		Optional<Franchise> franchiseOpt = franchiseRepo.findById(franchiseId);
-		if (!franchiseOpt.isPresent()) {
-			response.franchiseNotFound();
-			return response;
-		}
-		Franchise franchise = franchiseOpt.get();
-		for (KitRequest kitRequest : kitRequests) {
-			Integer kitCount = kitRequest.getKitCount();
-			Long courseId = kitRequest.getCourseId();
-			// Validation: Kit count should not be null or less than or equal to zero
-			if (kitCount == null || kitCount <= 0) {
-				response.kitCountZero();
-				return response;
-			}
-
-			// Check if the course exists
-			Optional<Course> courseOpt = courseRepo.findById(courseId);
-			if (!courseOpt.isPresent()) {
-				response.courseNotFound(courseId);
-				return response;
-			}
-			Course course = courseOpt.get();
-			System.out.println("Course Name " + course.getCourse_name());
-
-			// Check if the course is assigned to the franchise
-			if (!franchise.getCourses().contains(course)) {
-				response.courseNotAssignedToFranchise(courseId);
-				return response;
-			}
-
-			FranchiseKitRequestsLogs kitRequestsLogs = new FranchiseKitRequestsLogs();
-			kitRequestsLogs.setFranchise_id(franchiseId);
-			kitRequestsLogs.setFranchise_name(franchise.getFranchise_name());
-			kitRequestsLogs.setFranchise_number(franchise.getFranchise_number());
-			kitRequestsLogs.setFranchiseMobile(franchise.getMobile_no());
-			kitRequestsLogs.setCourseId(courseId);
-			kitRequestsLogs.setCourseName(course.getCourse_name());
-			kitRequestsLogs.setOrderedKits(kitCount);
-			kitRequestsLogs.setRequestedDate(getCurrentDateString());
-
-			// Check if there's an existing request for the same course
-			Optional<FranchiseKitRequest> existingRequestOpt = franchiseKitRequestRepo
-					.findByFranchiseIdAndCourseId(franchiseId, courseId);
-			FranchiseKitRequest franchiseKitRequest;
-			if (existingRequestOpt.isPresent()) {
-				franchiseKitRequest = existingRequestOpt.get();
-				franchiseKitRequest.setOrderedKits(franchiseKitRequest.getOrderedKits() + kitCount);
-				franchiseKitRequest.setRemainingStudents(franchiseKitRequest.getRemainingStudents() + kitCount);
-				franchiseKitRequest.setRemainingKitsSendToFranchise(
-						franchiseKitRequest.getRemainingKitsSendToFranchise() + kitCount);
-				franchiseKitRequest.setCourseName(course.getCourse_name());
-				franchiseKitRequest.setFranchiseMobile(franchise.getMobile_no());
-				franchiseKitRequest.setRequestedDate(getCurrentDateString());
-				franchiseKitRequest.setFranchiseMobile(franchise.getMobile_no());
-				franchiseKitRequest.setFranchise_owner(franchise.getFranchise_owner());
-			} else {
-				franchiseKitRequest = new FranchiseKitRequest();
-				franchiseKitRequest.setFranchise_id(franchiseId);
-				franchiseKitRequest.setFranchise_name(franchise.getFranchise_name());
-				franchiseKitRequest.setFranchiseMobile(franchise.getMobile_no());
-				franchiseKitRequest.setOrderedKits(kitCount);
-				franchiseKitRequest.setRemainingStudents(kitCount);
-				franchiseKitRequest.setRemainingKitsSendToFranchise(kitCount);
-				franchiseKitRequest.setCourseId(courseId);
-				franchiseKitRequest.setCourseName(course.getCourse_name());
-				franchiseKitRequest.setRequestedDate(getCurrentDateString());
-				franchiseKitRequest.setFranchise_owner(franchise.getFranchise_owner());
-
-			}
-
-			// Save logs and requests
-			requestsLogsRepo.save(kitRequestsLogs);
-			franchiseKitRequestRepo.save(franchiseKitRequest);
-
-			// Build KitOrderResponse for the current kit request
-			KitOrderResponseDTO kitOrderResponse = new KitOrderResponseDTO();
-			kitOrderResponse.setId(franchiseKitRequest.getId());
-			kitOrderResponse.setFranchise_name(franchise.getFranchise_name());
-			kitOrderResponse.setFranchise_number(franchise.getFranchise_number());
-			kitOrderResponse.setCourseName(course.getCourse_name());
-			kitOrderResponse.setRemainingStudents(franchiseKitRequest.getRemainingStudents());
-			kitOrderResponse.setOrderedKits(franchiseKitRequest.getOrderedKits());
-			kitOrderResponse.setFranchiseMobile(franchise.getMobile_no());
-			kitOrderResponse.setProvidedKitsCountToFranchise(0); // Adjust as per logic
-			kitOrderResponse.setAvelableTotalKits(76); // Adjust as per logic
-			kitOrderResponse.setRemainingKitsSendToFranchise(franchiseKitRequest.getRemainingKitsSendToFranchise());
-			kitOrderResponse.setTrackingNumber(null); // Adjust if applicable
-			kitOrderResponse.setCourseId(courseId);
-			kitOrderResponse.setFranchise_id(franchiseId);
-			kitOrderResponse.setRequestedDate(getCurrentDateString());
-			kitOrderResponse.setKitOrderStatus("ORDERED");
-
-			// Add the response object to the list
-			kitOrderResponses.add(kitOrderResponse);
-
-			// Send notification after each kit request
-			notificationsServiceImple.generateNotificationAfterFranchiseKitRequest(franchise, course.getCourse_name());
-		}
-
-		// Set the kitOrderResponses in the final response
-		response.setData(kitOrderResponses);
-		response.setStatus(true);
-		response.setMessage("KIT ORDER PLACED SUCCESSFULLY..!");
-		response.setStatusCode(HttpStatus.OK);
-		return response;
-	}
+//	public SuccessResponse sendKitRequests(Long franchiseId, List<KitRequest> kitRequests) {
+//		SuccessResponse response = new SuccessResponse();
+//		List<KitOrderResponseDTO> kitOrderResponses = new ArrayList<>();
+//
+//		// Check if franchise exists
+//		if (franchiseId == null || kitRequests == null || kitRequests.isEmpty()) {
+//			response.nullData();
+//			return response;
+//		}
+//
+//		Optional<Franchise> franchiseOpt = franchiseRepo.findById(franchiseId);
+//		if (!franchiseOpt.isPresent()) {
+//			response.franchiseNotFound();
+//			return response;
+//		}
+//		
+//		Franchise franchise = franchiseOpt.get();
+//		
+//		for (KitRequest kitRequest : kitRequests) {
+//			Integer kitCount = kitRequest.getKitCount();
+//			Long courseId = kitRequest.getCourseId();
+//			// Validation: Kit count should not be null or less than or equal to zero
+//			if (kitCount == null || kitCount <= 0) {
+//				response.kitCountZero();
+//				return response;
+//			}
+//
+//			// Check if the course exists
+//			Optional<Course> courseOpt = courseRepo.findById(courseId);
+//			if (!courseOpt.isPresent()) {
+//				response.courseNotFound(courseId);
+//				return response;
+//			}
+//			Course course = courseOpt.get();
+//			System.out.println("Course Name " + course.getCourse_name());
+//
+//			// Check if the course is assigned to the franchise
+//			if (!franchise.getCourses().contains(course)) {
+//				response.courseNotAssignedToFranchise(courseId);
+//				return response;
+//			}
+//
+//			FranchiseKitRequestsLogs kitRequestsLogs = new FranchiseKitRequestsLogs();
+//			kitRequestsLogs.setFranchise_id(franchiseId);
+//			kitRequestsLogs.setFranchise_name(franchise.getFranchise_name());
+//			kitRequestsLogs.setFranchise_number(franchise.getFranchise_number());
+//			kitRequestsLogs.setFranchiseMobile(franchise.getMobile_no());
+//			kitRequestsLogs.setCourseId(courseId);
+//			kitRequestsLogs.setCourseName(course.getCourse_name());
+//			kitRequestsLogs.setOrderedKits(kitCount);
+//			kitRequestsLogs.setRequestedDate(getCurrentDateString());
+//
+//			// Check if there's an existing request for the same course
+//			Optional<FranchiseKitRequest> existingRequestOpt = franchiseKitRequestRepo
+//					.findByFranchiseIdAndCourseId(franchiseId, courseId);
+//			
+//			FranchiseKitRequest franchiseKitRequest;
+//			
+//			if (existingRequestOpt.isPresent()) {
+//				franchiseKitRequest = existingRequestOpt.get();
+//				franchiseKitRequest.setOrderedKits(franchiseKitRequest.getOrderedKits() + kitCount);
+//				franchiseKitRequest.setRemainingStudents(franchiseKitRequest.getRemainingStudents() + kitCount);
+//				franchiseKitRequest.setRemainingKitsSendToFranchise(
+//						franchiseKitRequest.getRemainingKitsSendToFranchise() + kitCount);
+//				franchiseKitRequest.setCourseName(course.getCourse_name());
+//				franchiseKitRequest.setFranchiseMobile(franchise.getMobile_no());
+//				franchiseKitRequest.setRequestedDate(getCurrentDateString());
+//				franchiseKitRequest.setFranchiseMobile(franchise.getMobile_no());
+//				franchiseKitRequest.setFranchise_owner(franchise.getFranchise_owner());
+//			} else {
+//				franchiseKitRequest = new FranchiseKitRequest();
+//				franchiseKitRequest.setFranchise_id(franchiseId);
+//				franchiseKitRequest.setFranchise_name(franchise.getFranchise_name());
+//				franchiseKitRequest.setFranchiseMobile(franchise.getMobile_no());
+//				franchiseKitRequest.setOrderedKits(kitCount);
+//				franchiseKitRequest.setRemainingStudents(kitCount);
+//				franchiseKitRequest.setRemainingKitsSendToFranchise(kitCount);
+//				franchiseKitRequest.setCourseId(courseId);
+//				franchiseKitRequest.setCourseName(course.getCourse_name());
+//				franchiseKitRequest.setRequestedDate(getCurrentDateString());
+//				franchiseKitRequest.setFranchise_owner(franchise.getFranchise_owner());
+//
+//			}
+//
+//			// Save logs and requests
+//			requestsLogsRepo.save(kitRequestsLogs);
+//			franchiseKitRequestRepo.save(franchiseKitRequest);
+//
+//			// Build KitOrderResponse for the current kit request
+//			KitOrderResponseDTO kitOrderResponse = new KitOrderResponseDTO();
+//			kitOrderResponse.setId(franchiseKitRequest.getId());
+//			kitOrderResponse.setFranchise_name(franchise.getFranchise_name());
+//			kitOrderResponse.setFranchise_number(franchise.getFranchise_number());
+//			kitOrderResponse.setCourseName(course.getCourse_name());
+//			kitOrderResponse.setRemainingStudents(franchiseKitRequest.getRemainingStudents());
+//			kitOrderResponse.setOrderedKits(franchiseKitRequest.getOrderedKits());
+//			kitOrderResponse.setFranchiseMobile(franchise.getMobile_no());
+//			kitOrderResponse.setProvidedKitsCountToFranchise(0); // Adjust as per logic
+//			kitOrderResponse.setAvelableTotalKits(76); // Adjust as per logic
+//			kitOrderResponse.setRemainingKitsSendToFranchise(franchiseKitRequest.getRemainingKitsSendToFranchise());
+//			kitOrderResponse.setTrackingNumber(null); // Adjust if applicable
+//			kitOrderResponse.setCourseId(courseId);
+//			kitOrderResponse.setFranchise_id(franchiseId);
+//			kitOrderResponse.setRequestedDate(getCurrentDateString());
+//			kitOrderResponse.setKitOrderStatus("ORDERED");
+//
+//			// Add the response object to the list
+//			kitOrderResponses.add(kitOrderResponse);
+//
+//			// Send notification after each kit request
+//			notificationsServiceImple.generateNotificationAfterFranchiseKitRequest(franchise, course.getCourse_name());
+//		}
+//
+//		// Set the kitOrderResponses in the final response
+//		response.setData(kitOrderResponses);
+//		response.setStatus(true);
+//		response.setMessage("KIT ORDER PLACED SUCCESSFULLY..!");
+//		response.setStatusCode(HttpStatus.OK);
+//		return response;
+//	}
 
 
 
