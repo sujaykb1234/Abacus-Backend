@@ -13,9 +13,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "franchise_courses")
+@Table(name = "franchise_course")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class FranchiseCourse {
 
     @Id
@@ -64,61 +74,6 @@ public class FranchiseCourse {
     }
     
     
-	public Boolean getCoursesStatus() {
-		return coursesStatus;
-	}
 
-	public void setCoursesStatus(Boolean coursesStatus) {
-		this.coursesStatus = coursesStatus;
-	}
-
-	public UUID getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(UUID createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public UUID getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(UUID updatedBy) {
-		this.updatedBy = updatedBy;
-	}
-
-	public UUID getFranchiseCourseId() {
-		return franchiseCourseId;
-	}
-
-	public void setFranchiseCourseId(UUID franchiseCourseId) {
-		this.franchiseCourseId = franchiseCourseId;
-	}
-
-	public UUID getFranchiseId() {
-		return franchiseId;
-	}
-
-	public void setFranchiseId(UUID franchiseId) {
-		this.franchiseId = franchiseId;
-	}
-
-	public UUID getCourseId() {
-		return courseId;
-	}
-
-	public void setCourseId(UUID courseId) {
-		this.courseId = courseId;
-	}
-
-	public LocalDateTime getAssignDate() {
-		return assignDate;
-	}
-
-	public void setAssignDate(LocalDateTime assignDate) {
-		this.assignDate = assignDate;
-	}
-    
     
 }

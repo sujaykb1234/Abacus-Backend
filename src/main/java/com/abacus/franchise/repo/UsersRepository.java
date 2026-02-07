@@ -76,4 +76,10 @@ public interface UsersRepository extends JpaRepository<Users, UUID>{
 	""",nativeQuery = true)
 	List<UserAddressDetail> getStudentDetailByFranchiseId(@Param("franchiseId") String franchiseId);
 
+	
+	@Query(value="SELECT user_id FROM users where mobile = :mobile and is_active = true ",nativeQuery = true)
+	UUID checkMobileNoIsExistOrNot(@Param("mobile") String mobile);
+	
+	@Query(value="SELECT user_id FROM users where email = :email and is_active = true",nativeQuery = true)
+	UUID checkEmailIsExistOrNot(@Param("email") String email);
 }

@@ -1,5 +1,6 @@
 package com.abacus.franchise.model;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -9,8 +10,22 @@ import org.hibernate.type.SqlTypes;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Table(name = "kit_order_item")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class KitOrderItem {
 
 	@Id
@@ -30,37 +45,30 @@ public class KitOrderItem {
     @Column(name = "kit_request_id", length = 36, updatable = false, nullable = false)
     private UUID kitRequestId;
 
-	public UUID getOrderItemId() {
-		return orderItemId;
-	}
+    @Column(name = "created_at", updatable = false)
+  	private LocalDateTime createdAt;
+  	
+  	@Column(name = "updated_at")
+  	private LocalDateTime updatedAt;
+  	
+  	@JdbcTypeCode(SqlTypes.VARCHAR)
+  	@Column(name = "created_by", length = 36)
+  	private UUID createdBy;
+  	
+  	@JdbcTypeCode(SqlTypes.VARCHAR)
+  	@Column(name = "updated_by", length = 36)
+  	private UUID updatedBy;
+    
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
-	public void setOrderItemId(UUID orderItemId) {
-		this.orderItemId = orderItemId;
-	}
-
-	public UUID getCourseId() {
-		return courseId;
-	}
-
-	public void setCourseId(UUID courseId) {
-		this.courseId = courseId;
-	}
-
-	public int getKitCount() {
-		return kitCount;
-	}
-
-	public void setKitCount(int kitCount) {
-		this.kitCount = kitCount;
-	}
-
-	public UUID getKitRequestId() {
-		return kitRequestId;
-	}
-
-	public void setKitRequestId(UUID kitRequestId) {
-		this.kitRequestId = kitRequestId;
-	}
-
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+	
 }
 

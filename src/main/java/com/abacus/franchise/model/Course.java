@@ -1,85 +1,79 @@
 package com.abacus.franchise.model;
 
-import com.abacus.franchise.utility.CourseType;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Table(name = "course")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Course {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long course_id;
-	private String course_name;
-	private String course_duration;
-	private Integer no_of_books;
-	private CourseType courseType;  //ABACUS,OTHER
-	private boolean course_status = true;
+		@Id
+		@UuidGenerator
+		@JdbcTypeCode(SqlTypes.VARCHAR)
+		@Column(name = "course_id", length = 36, updatable = false, nullable = false)
+		private UUID courseId;
+		
+		@Column(name = "course_name", nullable = false, length = 150)
+		private String courseName;
+	
+		
+		@Column(name = "duration_days", nullable = false)
+		private int durationDays;
+		
+		@Column(name = "course_type", nullable = false, length = 50)
+		private String courseType;
+		
+		@Column(name = "no_of_books", nullable = false)
+		private int noOfBooks;
+		
+		@Column(name = "is_active", nullable = false)
+		private Boolean isActive = true;
+		
+		@Column(name = "created_at", updatable = false)
+		private LocalDateTime createdAt;
+		
+		@Column(name = "updated_at")
+		private LocalDateTime updatedAt;
+		
+		@JdbcTypeCode(SqlTypes.VARCHAR)
+		@Column(name = "created_by", length = 36)
+		private UUID createdBy;
+		
+		@JdbcTypeCode(SqlTypes.VARCHAR)
+		@Column(name = "updated_by", length = 36)
+		private UUID updatedBy;
 
-	public Long getCourse_id() {
-		return course_id;
-	}
+	    @PrePersist
+	    protected void onCreate() {
+	        this.createdAt = LocalDateTime.now();
+	        this.updatedAt = LocalDateTime.now();
+	    }
 
-	public void setCourse_id(Long course_id) {
-		this.course_id = course_id;
-	}
+	    @PreUpdate
+	    protected void onUpdate() {
+	        this.updatedAt = LocalDateTime.now();
+	    }
 
-	public String getCourse_name() {
-		return course_name;
-	}
-
-	public CourseType getCourseType() {
-		return courseType;
-	}
-
-	public void setCourseType(CourseType courseType) {
-		this.courseType = courseType;
-	}
-
-	public void setCourse_name(String course_name) {
-		this.course_name = course_name;
-	}
-
-	public String getCourse_duration() {
-		return course_duration;
-	}
-
-	public void setCourse_duration(String course_duration) {
-		this.course_duration = course_duration;
-	}
-
-	public Integer getNo_of_books() {
-		return no_of_books;
-	}
-
-	public void setNo_of_books(Integer no_of_books) {
-		this.no_of_books = no_of_books;
-	}
-
-	public boolean isCourse_status() {
-		return course_status;
-	}
-
-	public void setCourse_status(boolean course_status) {
-		this.course_status = course_status;
-	}
-
-	public Course(Long course_id, String course_name, String course_duration, Integer no_of_books,
-			CourseType courseType, boolean course_status) {
-		super();
-		this.course_id = course_id;
-		this.course_name = course_name;
-		this.course_duration = course_duration;
-		this.no_of_books = no_of_books;
-		this.courseType = courseType;
-		this.course_status = course_status;
-	}
-
-	public Course() {
-		super();
-	}
-
+	    
 }

@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.abacus.franchise.dto.CourseDetail;
@@ -14,10 +14,11 @@ import com.abacus.franchise.dto.UserDetail;
 import com.abacus.franchise.model.Address;
 import com.abacus.franchise.model.KitOrderItem;
 import com.abacus.franchise.model.KitRequests;
+import com.abacus.franchise.model.Roles;
 import com.abacus.franchise.model.TokenDetail;
 import com.abacus.franchise.model.Users;
 import com.abacus.franchise.repo.AddressRepo;
-import com.abacus.franchise.repo.CoursesRepository;
+import com.abacus.franchise.repo.CourseRepository;
 import com.abacus.franchise.repo.DistrictRepository;
 import com.abacus.franchise.repo.KitOrderItemRepository;
 import com.abacus.franchise.repo.KitRequestsRepository;
@@ -35,7 +36,7 @@ import com.abacus.franchise.view.ViewUser;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@Component
+@Service
 public class UsersServiceImpl implements UsersService {
 
 	@Autowired
@@ -63,7 +64,7 @@ public class UsersServiceImpl implements UsersService {
 	JwtUtil jwtUtil;
 	
 	@Autowired
-	CoursesRepository coursesRepository;
+	CourseRepository courseRepository;
 	
 	@Autowired
 	KitOrderItemRepository kitOrderItemRepository;
@@ -116,8 +117,19 @@ public class UsersServiceImpl implements UsersService {
 	    	return response;
 	    }
 	    
-	      
+	     UUID checkMobileNoIsExistOrNot = usersRepository.checkMobileNoIsExistOrNot(viewUser.getMobile());  
 
+	     if(checkMobileNoIsExistOrNot != null) {
+	    	 response.mobileAlreadyExist();
+	    	 return response;
+	     }
+	     
+	     UUID checkEmailIsExistOrNot = usersRepository.checkEmailIsExistOrNot(viewUser.getEmail());
+	    
+	     if(checkEmailIsExistOrNot != null) {
+	    	 response.emailAlreadyExist();
+	    	 return response;
+	     }
 		
 	    Users users = new Users();
 	    users.setFirstName(viewUser.getFirstName());
@@ -161,6 +173,7 @@ public class UsersServiceImpl implements UsersService {
 	    }
 	    
 	    Users saveUsers = usersRepository.save(users);
+	   	   
 	    
 	    Address address = new Address();
 	    address.setUser_id(saveUsers.getUserId());
@@ -171,7 +184,7 @@ public class UsersServiceImpl implements UsersService {
 	    address.setDistrictId(viewUser.getDistrictId());
 	    address.setPincode(viewUser.getPincode());
 	    
-	    Address saveAddress = addressRepo.save(address);
+	    addressRepo.save(address);
 	    	    
 	    
 	    
@@ -258,7 +271,7 @@ public class UsersServiceImpl implements UsersService {
 		
 		SuccessResponse response = new SuccessResponse();
 		
-		List<CourseDetail> allCoursesByFranchiseId = coursesRepository.getAllCoursesByFranchiseId(franchiseId.toString());
+		List<CourseDetail> allCoursesByFranchiseId = courseRepository.getAllCoursesByFranchiseId(franchiseId.toString());
 	
 	    if(allCoursesByFranchiseId.isEmpty()) {
 	    	response.courseNotFound("");
@@ -333,7 +346,7 @@ public class UsersServiceImpl implements UsersService {
 		 if(kitRequest.getKitOrderItems() != null ){
 			    	
 			 for( KitOrderItem item  : kitRequest.getKitOrderItems()) {
-				 UUID checkCourseIdIsExistOrNot = coursesRepository.checkCourseIdIsExistOrNot(item.getCourseId().toString());
+				 UUID checkCourseIdIsExistOrNot = courseRepository.checkCourseIdIsExistOrNot(item.getCourseId().toString());
 			    	
 		    	  if(checkCourseIdIsExistOrNot == null) {
 		    		  response.courseNotFound(item.getCourseId().toString());

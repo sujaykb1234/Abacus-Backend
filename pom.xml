@@ -146,10 +146,16 @@
 		    <artifactId>jjwt</artifactId>
 		    <version>0.9.1</version>
 		</dependency>
+       
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.42</version>  <!-- use latest stable -->
+		    <scope>provided</scope>
+		</dependency>
 
 
-
-	</dependencies>
+    </dependencies>
 
 	   <build>
      <plugins> 	

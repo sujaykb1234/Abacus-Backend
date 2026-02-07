@@ -15,9 +15,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "kit_requests")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class KitRequests {
 
    @Id
@@ -71,107 +81,10 @@ public class KitRequests {
         this.placedDate = LocalDateTime.now();
     }
 
-    @PreUpdate
+	@PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
-	public UUID getKitRequestId() {
-		return kitRequestId;
+	        this.updatedAt = LocalDateTime.now();
 	}
-
-	public void setKitRequestId(UUID kitRequestId) {
-		this.kitRequestId = kitRequestId;
-	}
-
-	public UUID getFranchiseId() {
-		return franchiseId;
-	}
-
-	public void setFranchiseId(UUID franchiseId) {
-		this.franchiseId = franchiseId;
-	}
-
-	public RequestStatus getRequestStatus() {
-		return requestStatus;
-	}
-
-	public void setRequestStatus(RequestStatus requestStatus) {
-		this.requestStatus = requestStatus;
-	}
-
-	public UUID getAddressId() {
-		return addressId;
-	}
-
-	public void setAddressId(UUID addressId) {
-		this.addressId = addressId;
-	}
-
-	public LocalDateTime getPlacedDate() {
-		return placedDate;
-	}
-
-	public void setPlacedDate(LocalDateTime placedDate) {
-		this.placedDate = placedDate;
-	}
-
-	public LocalDateTime getDispatchedDate() {
-		return dispatchedDate;
-	}
-
-	public void setDispatchedDate(LocalDateTime dispatchedDate) {
-		this.dispatchedDate = dispatchedDate;
-	}
-
-	public LocalDateTime getDeliveredDate() {
-		return deliveredDate;
-	}
-
-	public void setDeliveredDate(LocalDateTime deliveredDate) {
-		this.deliveredDate = deliveredDate;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public LocalDateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public UUID getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(UUID createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public UUID getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(UUID updatedBy) {
-		this.updatedBy = updatedBy;
-	}
-
-    
+  
     
 }
