@@ -213,5 +213,10 @@ public class SuccessResponse {
         this.response = null;		
 	}
 		
-
+	public void passwordRequired() {
+		this.status = false;
+		this.message = Messages.passwordRequired;
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;
+	}
 }
