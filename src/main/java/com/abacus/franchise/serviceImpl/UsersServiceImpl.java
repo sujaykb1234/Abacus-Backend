@@ -71,112 +71,147 @@ public class UsersServiceImpl implements UsersService {
 	KitRequestsRepository kitRequestsRepository;
 
 	@Override
-	public SuccessResponse saveOrUpdateUsers(UserViewModel viewUser, MultipartFile profileImage,
-			MultipartFile documentImage, HttpServletRequest request) {
+	public SuccessResponse saveOrUpdateUsers(
+			UserViewModel viewUser,
+			MultipartFile profileImage,
+			MultipartFile documentImage,
+			HttpServletRequest request) {
 
 		SuccessResponse response = new SuccessResponse();
 
-		// SAVE
+		/* ================= BASIC VALIDATION ================= */
 
-		if (viewUser == null || viewUser.getEmail() == null || viewUser.getMobile() == null |
-				viewUser.getFirstName() == null || viewUser.getMiddleName() == null || viewUser.getDateOfBirth() == null
-				||
-				viewUser.getLastName() == null || viewUser.getPasswordHash() == null || viewUser.getRoleId() == null) {
+		if (viewUser == null
+				|| viewUser.getEmail() == null
+				|| viewUser.getMobile() == null
+				|| viewUser.getFirstName() == null
+				|| viewUser.getLastName() == null
+				|| viewUser.getDateOfBirth() == null
+				|| viewUser.getRoleId() == null) {
 			response.basicDetailsIsNull();
 			return response;
 		}
 
-		if (viewUser.getLine1() == null || viewUser.getLandmark() == null || viewUser.getCity() == null ||
-				viewUser.getDistrictId() == null || viewUser.getStateId() == null || viewUser.getPincode() == null) {
+		if (viewUser.getLine1() == null
+				|| viewUser.getCity() == null
+				|| viewUser.getDistrictId() == null
+				|| viewUser.getStateId() == null
+				|| viewUser.getPincode() == null) {
 			response.addressDetailIsNull();
 			return response;
 		}
 
-		String checkRoleIdPresentOrNot = null;
+		/* ================= ROLE VALIDATION ================= */
 
-		if (viewUser.getRoleId() != null) {
-			checkRoleIdPresentOrNot = rolesRepo.checkRoleIdPresentOrNot(viewUser.getRoleId().toString());
-
-			if (checkRoleIdPresentOrNot == null) {
-				response.rolesNotFound();
-				return response;
-			}
-		} else {
+		String roleName = rolesRepo.checkRoleIdPresentOrNot(viewUser.getRoleId().toString());
+		if (roleName == null) {
 			response.rolesNotFound();
 			return response;
 		}
+		// roleName already like ROLE_ADMIN / ROLE_FRANCHISE (from DB)
 
-		if (viewUser.getStateId() == null
-				|| stateRepository.checkStateIdPresentOrNot(viewUser.getStateId().toString()) == 0) {
+		/* ================= STATE / DISTRICT ================= */
+
+		if (stateRepository.checkStateIdPresentOrNot(viewUser.getStateId().toString()) == 0) {
 			response.stateNotFound();
 			return response;
 		}
 
-		if (viewUser.getDistrictId() == null
-				|| districtRepository.checkDistrictIdPresentOrNot(viewUser.getDistrictId().toString()) == 0) {
+		if (districtRepository.checkDistrictIdPresentOrNot(viewUser.getDistrictId().toString()) == 0) {
 			response.districtNotFound();
 			return response;
 		}
 
-		UUID checkMobileNoIsExistOrNot = usersRepository.checkMobileNoIsExistOrNot(viewUser.getMobile());
+		/* ================= SAVE vs UPDATE ================= */
 
-		if (checkMobileNoIsExistOrNot != null) {
-			response.mobileAlreadyExist();
-			return response;
+		boolean isSave = (viewUser.getUserId() == null);
+
+		UUID mobileOwnerId = usersRepository.checkMobileNoIsExistOrNot(viewUser.getMobile());
+		if (isSave) {
+			if (mobileOwnerId != null) {
+				response.mobileAlreadyExist();
+				return response;
+			}
+		} else {
+			if (mobileOwnerId != null && !mobileOwnerId.equals(viewUser.getUserId())) {
+				response.mobileAlreadyExist();
+				return response;
+			}
 		}
 
-		UUID checkEmailIsExistOrNot = usersRepository.checkEmailIsExistOrNot(viewUser.getEmail());
-
-		if (checkEmailIsExistOrNot != null) {
-			response.emailAlreadyExist();
-			return response;
+		UUID emailOwnerId = usersRepository.checkEmailIsExistOrNot(viewUser.getEmail());
+		if (isSave) {
+			if (emailOwnerId != null) {
+				response.emailAlreadyExist();
+				return response;
+			}
+		} else {
+			if (emailOwnerId != null && !emailOwnerId.equals(viewUser.getUserId())) {
+				response.emailAlreadyExist();
+				return response;
+			}
 		}
 
-		Users users = new Users();
+		/* ================= USER ENTITY ================= */
+
+		Users users;
+		if (isSave) {
+			if (viewUser.getPasswordHash() == null) {
+				response.passwordRequired();
+				return response;
+			}
+			users = new Users();
+		} else {
+			users = usersRepository.findById(viewUser.getUserId())
+					.orElseThrow(() -> new RuntimeException("User not found"));
+		}
+
 		users.setFirstName(viewUser.getFirstName());
 		users.setMiddleName(viewUser.getMiddleName());
 		users.setLastName(viewUser.getLastName());
 		users.setEmail(viewUser.getEmail());
 		users.setMobile(viewUser.getMobile());
-		users.setPasswordHash(passwordEncoder.encode(viewUser.getPasswordHash()));
 		users.setRoleId(viewUser.getRoleId());
 		users.setDateOfBirth(viewUser.getDateOfBirth());
 
-		if (viewUser.getFranchiseId() != null) {
-			UUID checkFranchiseIdIsExistOrNot = usersRepository
-					.checkFranchiseIdIsExistOrNot(viewUser.getFranchiseId().toString());
+		if (viewUser.getPasswordHash() != null) {
+			users.setPasswordHash(passwordEncoder.encode(viewUser.getPasswordHash()));
+		}
 
-			if (checkFranchiseIdIsExistOrNot != null) {
-				users.setFranchiseId(checkFranchiseIdIsExistOrNot);
+		if (viewUser.getFranchiseId() != null) {
+			UUID franchiseId = usersRepository
+					.checkFranchiseIdIsExistOrNot(viewUser.getFranchiseId().toString());
+			if (franchiseId != null) {
+				users.setFranchiseId(franchiseId);
 			}
 		}
 
-		if (viewUser.getFranchiseName() != null) {
-			users.setFranchiseName(viewUser.getFranchiseName());
-		}
+		users.setFranchiseName(viewUser.getFranchiseName());
 
 		if (profileImage != null) {
-			List<String> saveProfileImage = ImageStoreProcess.saveFile(profileImage, request);
-
-			if (saveProfileImage != null) {
-				users.setProfileLink(saveProfileImage.get(1));
-				users.setProfileName(saveProfileImage.get(0));
+			List<String> saved = ImageStoreProcess.saveFile(profileImage, request);
+			if (saved != null) {
+				users.setProfileName(saved.get(0));
+				users.setProfileLink(saved.get(1));
 			}
 		}
 
 		if (documentImage != null) {
-			List<String> saveDocumentImage = ImageStoreProcess.saveFile(documentImage, request);
-
-			if (saveDocumentImage != null) {
-				users.setDocumentLink(saveDocumentImage.get(1));
-				users.setDocumentName(saveDocumentImage.get(0));
+			List<String> saved = ImageStoreProcess.saveFile(documentImage, request);
+			if (saved != null) {
+				users.setDocumentName(saved.get(0));
+				users.setDocumentLink(saved.get(1));
 			}
 		}
 
-		Users saveUsers = usersRepository.save(users);
+		Users savedUser = usersRepository.save(users);
 
-		Address address = new Address();
-		address.setUser_id(saveUsers.getUserId());
+		/* ================= ADDRESS ================= */
+
+		Address address = addressRepo.findByUserId(savedUser.getUserId())
+				.orElse(new Address());
+
+		address.setUserId(savedUser.getUserId());
 		address.setLine1(viewUser.getLine1());
 		address.setLandmark(viewUser.getLandmark());
 		address.setCity(viewUser.getCity());
@@ -186,18 +221,19 @@ public class UsersServiceImpl implements UsersService {
 
 		addressRepo.save(address);
 
-		String accessToken = jwtUtil.generateAccessToken(
-				viewUser.getMobile(),
-				checkRoleIdPresentOrNot);
+		/* ================= JWT ================= */
 
-		TokenDetail tokenEntity = new TokenDetail();
-		tokenEntity.setAccessTokenHash(accessToken);
-		tokenEntity.setUserId(saveUsers.getUserId());
-		tokenDetailRepo.save(tokenEntity);
+		String accessToken = jwtUtil.generateAccessToken(
+				savedUser.getMobile(),
+				roleName);
+
+		TokenDetail token = new TokenDetail();
+		token.setUserId(savedUser.getUserId());
+		token.setAccessTokenHash(accessToken);
+		tokenDetailRepo.save(token);
 
 		response.saveUserResponse(accessToken);
 		return response;
-
 	}
 
 	@Override
@@ -324,7 +360,7 @@ public class UsersServiceImpl implements UsersService {
 			}
 
 			Address address = new Address();
-			address.setUser_id(kitRequest.getFranchiseId());
+			address.setUserId(kitRequests.getFranchiseId());
 			address.setLine1(kitRequest.getLine1());
 			address.setLandmark(kitRequest.getLandmark());
 			address.setCity(kitRequest.getCity());

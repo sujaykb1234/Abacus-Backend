@@ -19,7 +19,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
 @Table(name = "address")
 @Getter
@@ -29,10 +28,10 @@ import lombok.Setter;
 @Builder
 public class Address {
 
-	@Id
-	@UuidGenerator
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "address_id", length = 36, updatable = false, nullable = false)
+    @Id
+    @UuidGenerator
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "address_id", length = 36, updatable = false, nullable = false)
     private UUID addressId;
 
     @Column(name = "line1", nullable = false, length = 255)
@@ -51,17 +50,17 @@ public class Address {
     @Column(name = "country_name", nullable = false)
     private String countryName = "INDIA";
 
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "state_id", length = 36, updatable = false, nullable = false)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "state_id", length = 36, updatable = false, nullable = false)
     private UUID stateId;
 
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "district_id", length = 36, updatable = false, nullable = false)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "district_id", length = 36, updatable = false, nullable = false)
     private UUID districtId;
-	
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "user_id", length = 36)
-    private UUID user_id;
+
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "user_id", length = 36)
+    private UUID userId;
 
     @Builder.Default
     @Column(name = "is_active")
@@ -73,12 +72,12 @@ public class Address {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "created_by", length = 36)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "created_by", length = 36)
     private UUID createdBy;
 
-	@JdbcTypeCode(SqlTypes.VARCHAR)
-	@Column(name = "updated_by", length = 36)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "updated_by", length = 36)
     private UUID updatedBy;
 
     @PrePersist
@@ -92,7 +91,4 @@ public class Address {
         this.updatedAt = LocalDateTime.now();
     }
 
-
-
-    
 }
