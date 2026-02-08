@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.abacus.franchise.dto.CourseDetail;
+import com.abacus.franchise.dto.ProductDetail;
 import com.abacus.franchise.dto.UserAddressDetail;
 import com.abacus.franchise.dto.UserDetail;
 import com.abacus.franchise.model.Address;
@@ -20,6 +22,7 @@ import com.abacus.franchise.repo.CourseRepository;
 import com.abacus.franchise.repo.DistrictRepository;
 import com.abacus.franchise.repo.KitOrderItemRepository;
 import com.abacus.franchise.repo.KitRequestsRepository;
+import com.abacus.franchise.repo.ProductRepository;
 import com.abacus.franchise.repo.RolesRepo;
 import com.abacus.franchise.repo.StateRepository;
 import com.abacus.franchise.repo.TokenDetailRepo;
@@ -69,6 +72,9 @@ public class UsersServiceImpl implements UsersService {
 
 	@Autowired
 	KitRequestsRepository kitRequestsRepository;
+	
+	@Autowired
+	ProductRepository productRepository;
 
 	@Override
 	public SuccessResponse saveOrUpdateUsers(UserViewModel viewUser, MultipartFile profileImage,
@@ -253,7 +259,7 @@ public class UsersServiceImpl implements UsersService {
 		SuccessResponse response = new SuccessResponse();
 
 		List<UserAddressDetail> studentDetailByFranchiseId = usersRepository
-				.getStudentDetailByFranchiseId(franchiseId.toString());
+				.getStudentDetailByFranchiseId(franchiseId.toString(),"STUDENT");
 
 		if (studentDetailByFranchiseId != null) {
 			response.userFoundResponse(studentDetailByFranchiseId);
@@ -356,6 +362,22 @@ public class UsersServiceImpl implements UsersService {
 		}
 
 		response.kitsSentSuccessfully(null);
+		return response;
+	}
+
+	@Override
+	public SuccessResponse getAllProductDetail() {
+		
+		SuccessResponse response = new SuccessResponse();
+		
+		List<ProductDetail> allProductDetail = productRepository.getAllProductDetail();
+		
+		if(allProductDetail != null) {
+			response.productFound(allProductDetail);
+			return response;
+		}
+		
+		response.productNotFound();
 		return response;
 	}
 }

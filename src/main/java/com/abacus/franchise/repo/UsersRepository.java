@@ -72,9 +72,9 @@ public interface UsersRepository extends JpaRepository<Users, UUID>{
 		JOIN state s on s.state_id = a.state_id AND s.is_active = true
 		JOIN district d on d.district_id = a.district_id AND d.is_active = true
 		JOIN roles r on r.role_id = u.role_id AND r.is_active = true
-		WHERE u.franchise_id = :franchiseId AND u.is_active = TRUE ;			
+		WHERE u.franchise_id = :franchiseId  AND r.role_name = :roleName AND u.is_active = TRUE ;			
 	""",nativeQuery = true)
-	List<UserAddressDetail> getStudentDetailByFranchiseId(@Param("franchiseId") String franchiseId);
+	List<UserAddressDetail> getStudentDetailByFranchiseId(@Param("franchiseId") String franchiseId,@Param("roleName") String roleName);
 
 	
 	@Query(value="SELECT user_id FROM users where mobile = :mobile and is_active = true ",nativeQuery = true)

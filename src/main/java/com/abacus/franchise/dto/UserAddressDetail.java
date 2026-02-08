@@ -1,11 +1,10 @@
 package com.abacus.franchise.dto;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 public interface UserAddressDetail {
  
-	public UUID getUserId();
+	public String getUserId();
 	public LocalDate getDateOfBirth();
 	public String getEmail();
 	public String getFirstName();

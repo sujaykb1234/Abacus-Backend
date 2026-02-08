@@ -51,4 +51,9 @@ public class UsersController {
 	public SuccessResponse sendCourseKitRequest(@RequestBody KitRequest kitRequest) {
 		return usersService.sendCourseKitRequest(kitRequest);
 	}
+	
+	@GetMapping("/getAllProductDetail")
+	public SuccessResponse getAllProductDetail() {
+		return usersService.getAllProductDetail();
+	}
 }

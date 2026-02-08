@@ -21,5 +21,8 @@ public interface UsersService {
     public SuccessResponse getAllCoursesByFranchiseId(UUID franchiseId);
 
     public SuccessResponse sendCourseKitRequest(KitRequest kitRequest);
+    
+    public SuccessResponse getAllProductDetail();
+
 
 }

@@ -71,7 +71,8 @@ public class Users {
     @Column(name = "franchise_id", length = 36)
     private UUID franchiseId;
 
-    @Column(name = "address_id")
+    @Column(name = "address_id",length = 36)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID addressId;
 
     @Column(name = "date_of_birth")

@@ -198,6 +198,20 @@ public class SuccessResponse {
 		this.statusCode = HttpStatus.BAD_REQUEST;
 		this.response = null;			
 	}
+
+	public void productFound(Object object) {
+		this.status = true;
+		this.statusCode = HttpStatus.FOUND;
+		this.message = Messages.productFound;
+        this.response = object;		
+	}
+	
+	public void productNotFound() {
+		this.status = false;
+		this.statusCode = HttpStatus.NOT_FOUND;
+		this.message = Messages.productNotFound;
+        this.response = null;		
+	}
 		
 
 }

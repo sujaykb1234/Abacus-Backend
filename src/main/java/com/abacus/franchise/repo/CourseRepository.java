@@ -14,12 +14,38 @@ import com.abacus.franchise.model.Course;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, UUID> {
 
-	@Query(value = """
+//	@Query(value = """
+//		SELECT 
+//		     c.course_name,c.course_type,c.duration_days,c.no_of_books 
+//		FROM course c
+//		JOIN franchise_course fc ON fc.course_id = c.course_id
+//		  WHERE fc.franchise_id = :franchiseId AND courses_status = true;
+//	""",nativeQuery = true)
+
+	@Query(value="""
 		SELECT 
-		     c.course_name,c.course_type,c.duration_days,c.no_of_books 
+		    c.course_id,
+		    c.course_name,
+		    c.course_type,
+		    c.duration_days,
+		    c.no_of_books,
+		    COALESCE(SUM(kor.kit_count),0) AS kit_count
 		FROM course c
-		JOIN franchise_course fc ON fc.course_id = c.course_id
-		  WHERE fc.franchise_id = :franchiseId AND courses_status = true;
+		JOIN franchise_course fc 
+		    ON fc.course_id = c.course_id
+		LEFT JOIN kit_requests kr 
+		    ON kr.franchise_id = fc.franchise_id
+		LEFT JOIN kit_order_item kor 
+		    ON kor.kit_request_id = kr.kit_request_id
+		   AND kor.course_id = c.course_id
+		WHERE fc.franchise_id = :franchiseId
+		AND fc.courses_status = 1
+		GROUP BY 
+		    c.course_id,
+		    c.course_name,
+		    c.course_type,
+		    c.duration_days,
+		    c.no_of_books;
 	""",nativeQuery = true)
 	List<CourseDetail> getAllCoursesByFranchiseId(@Param("franchiseId") String franchiseId);
 	

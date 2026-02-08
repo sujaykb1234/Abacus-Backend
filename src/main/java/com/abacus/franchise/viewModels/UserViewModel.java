@@ -27,6 +27,7 @@ public class UserViewModel {
 
     private String franchiseName;
 
+	private UUID courseId;
     //address
     private String line1;
 
@@ -196,4 +197,14 @@ public class UserViewModel {
         this.userId = userId;
     }
 
+	public UUID getCourseId() {
+		return courseId;
+	}
+
+	public void setCourseId(UUID courseId) {
+		this.courseId = courseId;
+	}
+
+    
+    
 }

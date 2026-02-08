@@ -44,5 +44,11 @@ public final class Messages {
 	public static final String mobileAlreadyExist = "MOBILE NUMBER ALREADY EXISTS";
 
 	public static final String emailAlreadyExist = "EMAIL ALREADY EXISTS";
+	
+	public static final String productFound = "PRODUCT FOUND SUCCESSFULLY";
+	
+	public static final String productNotFound = "PRODUCT NOT FOUND";
+
+
 
 }
