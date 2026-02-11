@@ -1,6 +1,6 @@
 package com.abacus.franchise.viewModels;
 
-public class AuthRequest {
+public class AuthRequestDto {
 
 	private String username;
 	private String password;
@@ -17,5 +17,4 @@ public class AuthRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
 }

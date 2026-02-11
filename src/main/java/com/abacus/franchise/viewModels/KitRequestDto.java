@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import com.abacus.franchise.model.KitOrderItem;
 
-public class KitRequest {
+public class KitRequestDto {
 	
 	private UUID franchiseId;
 		

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.abacus.franchise.model.Users;
 import com.abacus.franchise.utility.ImageStoreProcess;
-import com.abacus.franchise.viewModels.UserViewModel;
+import com.abacus.franchise.viewModels.UserRequestDto;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class UserHelper {
 
-    public boolean isValidUser(UserViewModel v) {
+    public boolean isValidUser(UserRequestDto v) {
         return v != null &&
                 v.getEmail() != null &&
                 v.getMobile() != null &&
@@ -24,7 +24,7 @@ public class UserHelper {
                 v.getDateOfBirth() != null;
     }
 
-    public boolean isValidAddress(UserViewModel v) {
+    public boolean isValidAddress(UserRequestDto v) {
         return v != null &&
                 v.getLine1() != null &&
                 v.getLandmark() != null &&

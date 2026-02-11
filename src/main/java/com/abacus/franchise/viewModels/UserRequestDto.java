@@ -3,7 +3,7 @@ package com.abacus.franchise.viewModels;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class User {
+public class UserRequestDto {
 
     private UUID userId;
 
