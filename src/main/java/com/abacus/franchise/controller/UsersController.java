@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abacus.franchise.dto.request.AuthRequestDto;
+import com.abacus.franchise.dto.request.KitRequestDto;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.UsersService;
-import com.abacus.franchise.viewModels.AuthRequest;
-import com.abacus.franchise.viewModels.KitRequest;
 
 @RestController
 @RequestMapping("abacus/v1/users/")
@@ -25,7 +25,7 @@ public class UsersController {
 	UsersService usersService;
 	
 	@PostMapping("login")
-	public SuccessResponse loginUsers(@RequestBody AuthRequest authRequest) {
+	public SuccessResponse loginUsers(@RequestBody AuthRequestDto authRequest) {
 		return usersService.loginUsers(authRequest);
 	}
 	
@@ -48,7 +48,7 @@ public class UsersController {
 	}
 
 	@PostMapping("/sendCourseKitRequest")
-	public SuccessResponse sendCourseKitRequest(@RequestBody KitRequest kitRequest) {
+	public SuccessResponse sendCourseKitRequest(@RequestBody KitRequestDto kitRequest) {
 		return usersService.sendCourseKitRequest(kitRequest);
 	}
 }

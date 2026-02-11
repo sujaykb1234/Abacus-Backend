@@ -2,14 +2,17 @@ package com.abacus.franchise.serviceImpl;
 
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.abacus.franchise.dto.CourseDetail;
-import com.abacus.franchise.dto.UserAddressDetail;
-import com.abacus.franchise.dto.UserDetail;
+
+import com.abacus.franchise.dto.request.AuthRequestDto;
+import com.abacus.franchise.dto.request.KitRequestDto;
+import com.abacus.franchise.dto.request.UserRequestDto;
+import com.abacus.franchise.interfaces.CourseDetail;
+import com.abacus.franchise.interfaces.UserAddressDetail;
+import com.abacus.franchise.interfaces.UserDetail;
 import com.abacus.franchise.model.Address;
 import com.abacus.franchise.model.KitOrderItem;
 import com.abacus.franchise.model.KitRequests;
@@ -28,9 +31,6 @@ import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.security.JwtUtil;
 import com.abacus.franchise.service.UsersService;
 import com.abacus.franchise.utility.ImageStoreProcess;
-import com.abacus.franchise.viewModels.AuthRequest;
-import com.abacus.franchise.viewModels.KitRequest;
-import com.abacus.franchise.viewModels.UserViewModel;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -72,7 +72,7 @@ public class UsersServiceImpl implements UsersService {
 
 	@Override
 	public SuccessResponse saveOrUpdateUsers(
-			UserViewModel viewUser,
+			UserRequestDto viewUser,
 			MultipartFile profileImage,
 			MultipartFile documentImage,
 			HttpServletRequest request) {
@@ -237,7 +237,7 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public SuccessResponse loginUsers(AuthRequest authRequest) {
+	public SuccessResponse loginUsers(AuthRequestDto authRequest) {
 
 		SuccessResponse response = new SuccessResponse();
 
@@ -319,7 +319,7 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public SuccessResponse sendCourseKitRequest(KitRequest kitRequest) {
+	public SuccessResponse sendCourseKitRequest(KitRequestDto kitRequest) {
 		SuccessResponse response = new SuccessResponse();
 
 		KitRequests kitRequests = new KitRequests();

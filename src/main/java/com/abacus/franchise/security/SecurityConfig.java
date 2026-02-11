@@ -16,13 +16,10 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/abacus/v1/auth/**").permitAll()
-
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/franchise/**").hasAnyRole("FRANCHISE", "MASTER_FRANCHISE")
                         .requestMatchers("/student/**").hasRole("STUDENT")
-
                         .anyRequest().authenticated());
-
         return http.build();
     }
 }

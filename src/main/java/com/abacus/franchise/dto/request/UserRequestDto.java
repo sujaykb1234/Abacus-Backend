@@ -1,9 +1,9 @@
-package com.abacus.franchise.viewModels;
+package com.abacus.franchise.dto.request;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class User {
+public class UserRequestDto {
 
     private UUID userId;
 

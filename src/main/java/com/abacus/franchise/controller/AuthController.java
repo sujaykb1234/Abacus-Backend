@@ -8,27 +8,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.abacus.franchise.dto.request.UserRequestDto;
 import com.abacus.franchise.repo.UsersRepository;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.UsersService;
-import com.abacus.franchise.viewModels.UserViewModel;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("abacus/v1/auth/")
 public class AuthController {
-	
+
 	@Autowired
 	UsersService usersService;
-	
+
 	@Autowired
 	UsersRepository usersRepository;
-	
+
 	@PostMapping("saveOrUpdateUser")
-	public SuccessResponse saveOrUpdateUsers(@ModelAttribute UserViewModel user,
+	public SuccessResponse saveOrUpdateUsers(@ModelAttribute UserRequestDto user,
 			@RequestParam(required = false) MultipartFile profileImage,
 			@RequestParam(required = false) MultipartFile documentImage,
 			HttpServletRequest request) {
-		return usersService.saveOrUpdateUsers(user,profileImage,documentImage,request);
+		return usersService.saveOrUpdateUsers(user, profileImage, documentImage, request);
 	}
 }
