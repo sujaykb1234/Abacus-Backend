@@ -2,10 +2,12 @@ package com.abacus.franchise.service;
 
 import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.abacus.franchise.dto.request.AuthRequestDto;
+import com.abacus.franchise.dto.request.KitRequestDto;
+import com.abacus.franchise.dto.request.UserRequestDto;
 import com.abacus.franchise.response.SuccessResponse;
-import com.abacus.franchise.viewModels.AuthRequestDto;
-import com.abacus.franchise.viewModels.KitRequestDto;
-import com.abacus.franchise.viewModels.UserRequestDto;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface UsersService {

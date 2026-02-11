@@ -6,9 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.abacus.franchise.dto.CourseDetail;
-import com.abacus.franchise.dto.UserAddressDetail;
-import com.abacus.franchise.dto.UserDetail;
+
+import com.abacus.franchise.dto.request.AuthRequestDto;
+import com.abacus.franchise.dto.request.KitRequestDto;
+import com.abacus.franchise.dto.request.UserRequestDto;
+import com.abacus.franchise.interfaces.CourseDetail;
+import com.abacus.franchise.interfaces.UserAddressDetail;
+import com.abacus.franchise.interfaces.UserDetail;
 import com.abacus.franchise.model.Address;
 import com.abacus.franchise.model.KitOrderItem;
 import com.abacus.franchise.model.KitRequests;
@@ -27,9 +31,7 @@ import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.security.JwtUtil;
 import com.abacus.franchise.service.UsersService;
 import com.abacus.franchise.utility.ImageStoreProcess;
-import com.abacus.franchise.viewModels.AuthRequestDto;
-import com.abacus.franchise.viewModels.KitRequestDto;
-import com.abacus.franchise.viewModels.UserRequestDto;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service

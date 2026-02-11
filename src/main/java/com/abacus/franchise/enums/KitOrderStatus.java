@@ -1,4 +1,4 @@
-package com.abacus.franchise.utility;
+package com.abacus.franchise.enums;
 
 public enum KitOrderStatus {
 	PENDING,ORDERED,REMAINING,PROVIDED

@@ -2,9 +2,9 @@ package com.abacus.franchise.helperMethods;
 
 import java.util.List;
 
+import com.abacus.franchise.dto.request.UserRequestDto;
 import com.abacus.franchise.model.Users;
 import com.abacus.franchise.utility.ImageStoreProcess;
-import com.abacus.franchise.viewModels.UserRequestDto;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;

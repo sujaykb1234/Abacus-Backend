@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abacus.franchise.dto.request.AuthRequestDto;
+import com.abacus.franchise.dto.request.KitRequestDto;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.UsersService;
-import com.abacus.franchise.viewModels.AuthRequestDto;
-import com.abacus.franchise.viewModels.KitRequestDto;
 
 @RestController
 @RequestMapping("abacus/v1/users/")

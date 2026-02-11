@@ -7,7 +7,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
-import com.abacus.franchise.utility.RequestStatus;
+import com.abacus.franchise.enums.RequestStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
