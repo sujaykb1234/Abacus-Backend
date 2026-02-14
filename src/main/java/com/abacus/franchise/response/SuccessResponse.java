@@ -17,6 +17,23 @@ public class SuccessResponse {
 
 	private HttpStatusCode statusCode;
 
+	public SuccessResponse() {
+	}
+
+	public SuccessResponse(String message, Object response) {
+		this.status = true;
+		this.message = message;
+		this.response = response;
+		this.statusCode = HttpStatus.OK;
+	}
+
+	public SuccessResponse(Boolean status, String message, Object response, HttpStatusCode statusCode) {
+		this.status = status;
+		this.message = message;
+		this.response = response;
+		this.statusCode = statusCode;
+	}
+
 	public Object getResponse() {
 		return response;
 	}
