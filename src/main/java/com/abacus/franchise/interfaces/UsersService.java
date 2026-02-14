@@ -1,4 +1,4 @@
-package com.abacus.franchise.service;
+package com.abacus.franchise.interfaces;
 
 import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;

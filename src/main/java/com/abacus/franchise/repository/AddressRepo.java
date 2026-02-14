@@ -1,4 +1,4 @@
-package com.abacus.franchise.repo;
+package com.abacus.franchise.repository;
 
 import java.util.Optional;
 import java.util.UUID;
