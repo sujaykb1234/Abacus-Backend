@@ -2,6 +2,7 @@ package com.abacus.franchise.security;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,44 +33,48 @@ public class JwtFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain
     ) throws ServletException, IOException {
-
-//    	String path = request.getServletPath();
-//    	if (path.startsWith("/auth/")) {
-//    	    filterChain.doFilter(request, response);
-//    	    return;
-//    	}
-
     	
-        String authHeader = request.getHeader("Authorization");
+    	String authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+    	if (authHeader != null && authHeader.startsWith("Bearer ")) {
+    	    try {
+    	        String token = authHeader.substring(7).trim(); // ✅ IMPORTANT
 
-            String token = authHeader.substring(7);
-            Claims claims = jwtUtil.extractAccessClaims(token);
+    	        System.out.println("TOKEN = [" + token + "]");
 
-            String username = claims.getSubject();
-            String role = claims.get("role", String.class);
+    	        Claims claims = jwtUtil.extractAccessClaims(token);
 
-            List<GrantedAuthority> authorities =
-                List.of(new SimpleGrantedAuthority("ROLE_" + role));
+    	        String username = claims.getSubject();
+    	        String role = claims.get("role", String.class);
+    	        UUID userId = UUID.fromString(claims.get("userId", String.class));
 
-            UsernamePasswordAuthenticationToken authToken =
-                new UsernamePasswordAuthenticationToken(
-                    username,
-                    null,
-                    authorities
-                );
+    	        List<GrantedAuthority> authorities =
+    	                List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
-            SecurityContextHolder.getContext()
-                .setAuthentication(authToken);
-        }
+    	        UsernamePasswordAuthenticationToken authToken =
+    	                new UsernamePasswordAuthenticationToken(
+    	                        username,
+    	                        null,
+    	                        authorities
+    	                );
 
-        filterChain.doFilter(request, response);
+    	        request.setAttribute("userId", userId);
+    	        request.setAttribute("role", role);
+
+    	        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+    	    } catch (ExpiredJwtException ex) {
+    	        throw ex;
+    	    }
+    	    catch (MalformedJwtException | SignatureException ex) {
+    	        throw ex;
+    	    }
+    	}
+
+    	filterChain.doFilter(request, response);    
+    	
     }
     
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) {
-//        return request.getServletPath().startsWith("/auth/");
-//    }
+
 
 }

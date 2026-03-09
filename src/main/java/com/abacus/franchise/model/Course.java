@@ -7,8 +7,12 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
+import com.abacus.franchise.enums.CourseType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -41,8 +45,9 @@ public class Course {
 		@Column(name = "duration_days", nullable = false)
 		private int durationDays;
 		
+		@Enumerated(EnumType.STRING)
 		@Column(name = "course_type", nullable = false, length = 50)
-		private String courseType;
+		private CourseType courseType;
 		
 		@Column(name = "no_of_books", nullable = false)
 		private int noOfBooks;

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.abacus.franchise.dto.CourseDetail;
+import com.abacus.franchise.dto.StudentCourseDetail;
 import com.abacus.franchise.model.Course;
 
 @Repository
@@ -53,4 +54,47 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
 	@Query(value="SELECT course_id FROM course WHERE course_id = :courseId AND is_active = true",nativeQuery = true)
 	UUID checkCourseIdIsExistOrNot(@Param("courseId") String courseId);
 	
+    @Query(value="""
+      SELECT 
+		    c.course_id,
+		    c.course_name,
+		    c.course_type,
+            u.user_id,
+            u.first_name,
+            u.middle_name,
+            u.last_name,
+            u.mobile
+		FROM course c
+		JOIN franchise_course fc 
+		    ON fc.course_id = c.course_id
+		JOIN student_course sc 
+			ON sc.course_id = c.course_id
+            AND sc.franchise_id = fc.franchise_id
+	    JOIN users u 
+           ON u.user_id = sc.student_id
+	    JOIN exam e
+           ON e.course_id = c.course_id
+		JOIN assign_exam ae
+           ON ae.exam_id = e.exam_id
+		JOIN assign_exam_student aes
+           ON aes.assign_exam_id = ae.assign_exam_id
+           AND aes.student_id = u.user_id
+        WHERE fc.franchise_id = :franchiseId
+			AND fc.courses_status = 1
+			AND sc.course_active = 1
+	        AND ae.exam_status = :examStatus
+		GROUP BY 
+		    c.course_id,
+		    c.course_name,
+		    c.course_type,
+            u.user_id,
+            u.first_name,
+            u.middle_name,
+            u.last_name,
+            u.mobile		
+    """,nativeQuery =  true)
+	List<StudentCourseDetail> getAllCompleteCoursesStudentByFranchiseId(@Param("franchiseId") String franchiseId,@Param("examStatus") String examStatus);
+
+    
+    
 }

@@ -11,7 +11,7 @@ import com.abacus.franchise.model.Roles;
 
 
 @Repository
-public interface RolesRepo extends JpaRepository<Roles, UUID> {
+public interface RolesRepository extends JpaRepository<Roles, UUID> {
 	
 	@Query(value="SELECT role_name FROM roles where role_id = :roleId and is_active =  true",nativeQuery = true)
 	String checkRoleIdPresentOrNot(@Param("roleId") String roleId);

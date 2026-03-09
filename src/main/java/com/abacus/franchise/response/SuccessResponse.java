@@ -1,14 +1,15 @@
 package com.abacus.franchise.response;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-import com.abacus.franchise.dto.CourseDetail;
 import com.abacus.franchise.utility.Messages;
 
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class SuccessResponse {
 
 	private Object response;
@@ -18,47 +19,11 @@ public class SuccessResponse {
 	private String message;
 
 	private HttpStatusCode statusCode;
-
-	public Object getResponse() {
-		return response;
-	}
-
-	public void setResponse(Object response) {
-		this.response = response;
-	}
-
-	public Boolean getStatus() {
-		return status;
-	}
-
-	public void setData(Object quiz) {
-		this.response = quiz;
-
-	}
-
-	public void setStatus(Boolean status) {
-		this.status = status;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public HttpStatusCode getStatusCode() {
-		return statusCode;
-	}
-
-	public void setStatusCode(HttpStatusCode statusCode) {
-		this.statusCode = statusCode;
-	}
-
+	
+	
 		
-	public void kitsSentSuccessfully(Object save) {
-		this.response = save;
+	public void kitsSentSuccessfully() {
+		this.response = null;
 		this.status = true;
 		this.statusCode = HttpStatus.OK;
 		this.message = Messages.kitSendSuccessfully;
@@ -85,11 +50,18 @@ public class SuccessResponse {
 		this.message = courseId+Messages.course_not_found;
 	}
 	
-	public void courseFound(List<CourseDetail> allCoursesByFranchiseId) {
+	public void courseNotFoundInFranchise() {
+		this.response = null;
+		this.status = false;
+		this.statusCode = HttpStatus.NOT_FOUND;
+		this.message = Messages.course_not_found_franchise;
+	}
+	
+	public void courseFound(Object object) {
 		this.status = true;
 		this.message = Messages.course_found;
 		this.statusCode = HttpStatus.CREATED;
-		this.response = allCoursesByFranchiseId;		
+		this.response = object;		
 	}
 	
 	public void userNotFound() {
@@ -100,10 +72,10 @@ public class SuccessResponse {
 	}
 
 	
-	public void userFoundResponse(Object object) {
+	public void userFoundResponse(Object object,String role) {
 		this.status = true;
 		this.statusCode = HttpStatus.FOUND;
-		this.message = Messages.userFound;
+		this.message = role+Messages.userFound;
         this.response = object;
 	}
 	
@@ -206,10 +178,10 @@ public class SuccessResponse {
         this.response = object;		
 	}
 	
-	public void productNotFound() {
+	public void productNotFound(String msg) {
 		this.status = false;
 		this.statusCode = HttpStatus.NOT_FOUND;
-		this.message = Messages.productNotFound;
+		this.message = msg+Messages.productNotFound;
         this.response = null;		
 	}
 		
@@ -218,5 +190,153 @@ public class SuccessResponse {
 		this.message = Messages.passwordRequired;
 		this.statusCode = HttpStatus.BAD_REQUEST;
 		this.response = null;
+	}
+
+	public void sendProductOrder() {
+		this.response = null;
+		this.status = true;
+		this.statusCode = HttpStatus.OK;
+		this.message = Messages.sendProductOrder;		
+	}
+
+	public void examNotFound() {
+		this.status = false;
+		this.statusCode = HttpStatus.NOT_FOUND;
+		this.message = Messages.examNotFound;
+        this.response = null;				
+	}
+	
+	public void examFound(Object object) {
+		this.status = true;
+		this.statusCode = HttpStatus.FOUND;
+		this.message = Messages.examFound;
+        this.response = object;		
+	}
+
+	public void studentIdIsNull() {
+		this.status = false;
+		this.message = Messages.studentIsNull;
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;			
+	}
+
+	public void studentNotFound() {
+		this.status = false;
+		this.statusCode = HttpStatus.NOT_FOUND;
+		this.message = Messages.studentNotFound;
+        this.response = null;						
+	}
+
+	public void examIdIsNull() {
+		this.status = false;
+		this.message = Messages.examIdIsNull;
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;			
+	}
+
+	public void assignExamSuccessfully() {
+		this.response = null;
+		this.status = true;
+		this.statusCode = HttpStatus.OK;
+		this.message = Messages.assignExamSuccess;
+		
+	}
+
+	public void studentFound(Object object) {
+		this.status = true;
+		this.statusCode = HttpStatus.FOUND;
+		this.message = Messages.examFound;
+        this.response = object;			
+	}
+
+	public void switchCourseSuccessfully() {
+		this.response = null;
+		this.status = true;
+		this.statusCode = HttpStatus.OK;
+		this.message = Messages.switchCourseSuccess;		
+	}
+
+	public void requestNotFound() {
+		this.status = false;
+		this.statusCode = HttpStatus.NOT_FOUND;
+		this.message = Messages.requestNotFound;
+        this.response = null;		
+	}
+	
+	public void requestFound(Object object) {
+		this.status = true;
+		this.statusCode = HttpStatus.FOUND;
+		this.message = Messages.requestFound;
+        this.response = object;			
+	}
+
+	public void quantityIsLessThan() {
+		this.status = false;
+		this.message = Messages.quantityIsLess;
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;			
+	}
+
+	public void examNotComplete() {
+		this.status = false;
+		this.message = Messages.examNotComplete;
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;		
+	}
+
+	public void courseAlreadyExists() {
+		this.status = false;
+		this.message = Messages.courseAlreadyExists;
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;		
+	}
+
+	public void reassignFailed() {
+		this.status = false;
+		this.message = Messages.reassignFailed;
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.response = null;		
+	}
+
+	public void reassignSuccessfully() {
+		this.response = null;
+		this.status = true;
+		this.statusCode = HttpStatus.OK;
+		this.message = Messages.reassignSuccess;		
+	}
+
+	public void assignExamNotFound() {
+		this.status = false;
+		this.statusCode = HttpStatus.NOT_FOUND;
+		this.message = Messages.notAssignExam;
+        this.response = null;		
+	}
+
+	public void questionNotFound() {
+		this.status = false;
+		this.statusCode = HttpStatus.NOT_FOUND;
+		this.message = Messages.questionNotFound;
+        this.response = null;		
+	}
+
+	public void questionFound(Object object) {
+		this.status = true;
+		this.statusCode = HttpStatus.FOUND;
+		this.message = Messages.questionFound;
+        this.response = object;
+	}
+
+	public void examSendSuccessfully(Object object) {
+		this.status = true;
+		this.statusCode = HttpStatus.OK;
+		this.message = Messages.sendExamSuccess;
+        this.response = object;		
+	}
+
+	public void examNotSend() {
+		this.status = true;
+		this.statusCode = HttpStatus.BAD_REQUEST;
+		this.message = Messages.failedToSendExam;
+        this.response = null;		
 	}
 }

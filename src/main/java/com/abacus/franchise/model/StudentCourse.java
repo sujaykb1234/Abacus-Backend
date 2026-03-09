@@ -41,6 +41,10 @@ public class StudentCourse {
 	@JdbcTypeCode(SqlTypes.VARCHAR)
 	@Column(name = "course_id", length = 36, updatable = false, nullable = false)
 	private UUID courseId;
+	
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "franchise_id", length = 36, updatable = false, nullable = false)
+	private UUID franchiseId;
 
 	@Column(name = "assign_date")
 	private LocalDateTime assignDate;
@@ -60,13 +64,15 @@ public class StudentCourse {
 	private UUID updatedBy;
 
 	@Builder.Default
-	@Column(name = "courses_status", nullable = false)
-	private Boolean coursesStatus = true;
+	@Column(name = "course_active", nullable = false)
+	private Boolean courseActive = true;
 
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
+		this.assignDate = LocalDateTime.now();
+
 	}
 
 	@PreUpdate

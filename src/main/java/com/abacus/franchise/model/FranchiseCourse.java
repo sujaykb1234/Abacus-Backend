@@ -62,6 +62,8 @@ public class FranchiseCourse {
 	@Builder.Default
 	@Column(name = "courses_status", nullable = false)
 	private Boolean coursesStatus = true;
+	
+	
 
 	@PrePersist
 	protected void onCreate() {

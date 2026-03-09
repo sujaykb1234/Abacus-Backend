@@ -62,9 +62,14 @@ public class Users {
 
     @Column(name = "profile_name", length = 100)
     private String profileName;
-
+    
+    @Column(name = "profile_link", length = 100)
     private String profileLink;
+    
+    @Column(name = "document_name", length = 100)
     private String documentName;
+    
+    @Column(name = "document_link", length = 100)
     private String documentLink;
 
     @JdbcTypeCode(SqlTypes.VARCHAR)

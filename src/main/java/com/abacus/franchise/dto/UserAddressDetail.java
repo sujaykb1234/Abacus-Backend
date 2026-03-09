@@ -21,6 +21,5 @@ public interface UserAddressDetail {
 	public String getPincode();
 	public String getStateName();
 	public String getDistrictName();
-	
-	 
+	public String getFranchiseId();	 
 }

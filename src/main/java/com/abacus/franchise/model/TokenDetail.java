@@ -3,6 +3,10 @@ package com.abacus.franchise.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,11 +30,13 @@ import lombok.Setter;
 @Builder
 public class TokenDetail {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "token_id", nullable = false, updatable = false)
+	@Id
+	@UuidGenerator
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "token_id", length = 36, updatable = false, nullable = false)
     private UUID tokenId;
 
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "user_id", length = 36, nullable = false)
     private UUID userId;
 
