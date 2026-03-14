@@ -1,4 +1,4 @@
-package com.abacus.franchise.viewModels;
+package com.abacus.franchise.dto.request;
 
 import java.util.List;
 import java.util.UUID;

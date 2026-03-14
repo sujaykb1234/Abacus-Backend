@@ -1,4 +1,4 @@
-package com.abacus.franchise.repo;
+package com.abacus.franchise.repository;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,12 +13,9 @@ import com.abacus.franchise.model.District;
 @Repository
 public interface DistrictRepository extends JpaRepository<District, UUID> {
 
-	@Query(value = "SELECT * FROM district where state_state_id = ?",nativeQuery =  true)
+	@Query(value = "SELECT * FROM district where state_state_id = ?", nativeQuery = true)
 	List<District> getAllDistrictByStateId(Long stateId);
-	
-	@Query(value="SELECT COUNT(*) FROM district WHERE district_id = :districtId AND is_active = true",nativeQuery = true)
-	int checkDistrictIdPresentOrNot(@Param("districtId") String districtId);
 
-	
-	
+	@Query(value = "SELECT COUNT(*) FROM district WHERE district_id = :districtId AND is_active = true", nativeQuery = true)
+	int checkDistrictIdPresentOrNot(@Param("districtId") String districtId);
 }

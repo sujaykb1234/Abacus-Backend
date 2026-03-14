@@ -1,7 +1,6 @@
 package com.abacus.franchise.response;
 
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
@@ -31,26 +30,26 @@ public class SuccessResponse {
 		this.statusCode = HttpStatus.OK;
 		this.message = Messages.kitSendSuccessfully;
 	}
-	
+
 	public void addressNotFound() {
 		this.status = false;
 		this.message = Messages.addressNotFound;
 		this.statusCode = HttpStatus.NOT_FOUND;
-		this.response = null;			
+		this.response = null;
 	}
-	
+
 	public void franchiesnotfound() {
 		this.response = null;
 		this.status = true;
 		this.statusCode = HttpStatus.NOT_EXTENDED;
 		this.message = Messages.franchiesNotFound;
 	}
-	
+
 	public void courseNotFound(String courseId) {
 		this.response = null;
 		this.status = false;
 		this.statusCode = HttpStatus.NOT_FOUND;
-		this.message = courseId+Messages.course_not_found;
+		this.message = courseId + Messages.course_not_found;
 	}
 	
 	public void courseNotFoundInFranchise() {
@@ -66,12 +65,12 @@ public class SuccessResponse {
 		this.statusCode = HttpStatus.CREATED;
 		this.response = object;		
 	}
-	
+
 	public void userNotFound() {
 		this.status = false;
 		this.statusCode = HttpStatus.NOT_FOUND;
 		this.message = Messages.userNotFound;
-        this.response = null;
+		this.response = null;
 	}
 
 	
@@ -81,7 +80,7 @@ public class SuccessResponse {
 		this.message = role+Messages.userFound;
         this.response = object;
 	}
-	
+
 	public void loginSuccessfully(Object object) {
 		this.response = object;
 		this.status = true;
@@ -89,82 +88,81 @@ public class SuccessResponse {
 		this.message = Messages.admilogin;
 
 	}
-	
+
 	public void wrongPassword() {
 		this.status = false;
 		this.statusCode = HttpStatus.BAD_REQUEST;
 		this.message = Messages.wrongPassword;
 	}
-	
+
 	public void userIsDeactivate() {
 		this.status = false;
 		this.message = Messages.accountIsDeactivate;
 		this.statusCode = HttpStatus.BAD_REQUEST;
-		this.response = null;		
+		this.response = null;
 	}
-	
+
 	public void usernameIncorrect() {
 		this.status = false;
 		this.message = Messages.correctUsername;
 		this.statusCode = HttpStatus.BAD_REQUEST;
-		this.response = null;		
+		this.response = null;
 	}
-	
+
 	public void basicDetailsIsNull() {
 		this.status = false;
 		this.message = Messages.basicDetailIsNull;
 		this.statusCode = HttpStatus.BAD_REQUEST;
-		this.response = null;		
+		this.response = null;
 	}
-	
+
 	public void addressDetailIsNull() {
 		this.status = false;
 		this.message = Messages.addressIsNull;
 		this.statusCode = HttpStatus.BAD_REQUEST;
-		this.response = null;		
+		this.response = null;
 	}
 
 	public void rolesNotFound() {
 		this.status = false;
 		this.message = Messages.rolesNotFound;
 		this.statusCode = HttpStatus.NOT_FOUND;
-		this.response = null;	
+		this.response = null;
 	}
-	
+
 	public void stateNotFound() {
 		this.response = null;
 		this.status = false;
 		this.statusCode = HttpStatus.NOT_FOUND;
 		this.message = Messages.state_not_found;
 	}
-	
+
 	public void districtNotFound() {
 		this.response = null;
 		this.status = false;
 		this.statusCode = HttpStatus.NOT_FOUND;
 		this.message = Messages.district_not_found;
 	}
-	
+
 	public void saveUserResponse(String accessToken) {
 		this.status = true;
 		this.message = Messages.save_user;
 		this.statusCode = HttpStatus.CREATED;
-		this.response = accessToken;		
+		this.response = accessToken;
 	}
-	
-	
+
 	public void loginCredentialIsNull() {
 		this.status = false;
 		this.message = Messages.usernamePasswordNull;
 		this.statusCode = HttpStatus.BAD_REQUEST;
-		this.response = null;			
+		this.response = null;
 	}
 
 	public void mobileAlreadyExist() {
 		this.status = false;
 		this.message = Messages.mobileAlreadyExist;
 		this.statusCode = HttpStatus.BAD_REQUEST;
-		this.response = null;		
+		this.response = null;
 	}
 
 	public void emailAlreadyExist() {
@@ -187,7 +185,7 @@ public class SuccessResponse {
 		this.message = msg+Messages.productNotFound;
         this.response = null;		
 	}
-		
+
 	public void passwordRequired() {
 		this.status = false;
 		this.message = Messages.passwordRequired;

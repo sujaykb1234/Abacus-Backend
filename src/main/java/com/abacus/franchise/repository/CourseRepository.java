@@ -1,8 +1,7 @@
-package com.abacus.franchise.repo;
+package com.abacus.franchise.repository;
 
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -49,9 +48,8 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
 		    c.no_of_books;
 	""",nativeQuery = true)
 	List<CourseDetail> getAllCoursesByFranchiseId(@Param("franchiseId") String franchiseId);
-	
 
-	@Query(value="SELECT course_id FROM course WHERE course_id = :courseId AND is_active = true",nativeQuery = true)
+	@Query(value = "SELECT course_id FROM course WHERE course_id = :courseId AND is_active = true", nativeQuery = true)
 	UUID checkCourseIdIsExistOrNot(@Param("courseId") String courseId);
 	
     @Query(value="""

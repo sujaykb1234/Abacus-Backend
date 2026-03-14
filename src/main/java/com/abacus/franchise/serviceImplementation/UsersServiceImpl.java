@@ -1,4 +1,4 @@
-package com.abacus.franchise.serviceImpl;
+package com.abacus.franchise.serviceImplementation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -68,7 +67,6 @@ import com.abacus.franchise.repo.TokenDetailRepo;
 import com.abacus.franchise.repo.UsersRepository;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.security.JwtUtil;
-import com.abacus.franchise.service.UsersService;
 import com.abacus.franchise.utility.ImageStoreProcess;
 import com.abacus.franchise.viewModels.AssignExamRequst;
 import com.abacus.franchise.viewModels.AuthRequest;
@@ -146,7 +144,7 @@ public class UsersServiceImpl implements UsersService {
 	
 	@Override
 	public SuccessResponse saveOrUpdateUsers(
-			UserViewModel viewUser,
+			UserRequestDto viewUser,
 			MultipartFile profileImage,
 			MultipartFile documentImage,
 			HttpServletRequest request) {
@@ -332,7 +330,7 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public SuccessResponse loginUsers(AuthRequest authRequest) {
+	public SuccessResponse loginUsers(AuthRequestDto authRequest) {
 
 	    SuccessResponse response = new SuccessResponse();
 
@@ -430,7 +428,7 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public SuccessResponse sendCourseKitRequest(KitRequest kitRequest) {
+	public SuccessResponse sendCourseKitRequest(KitRequestDto kitRequest) {
 		SuccessResponse response = new SuccessResponse();
 
 		KitRequests kitRequests = new KitRequests();
