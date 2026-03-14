@@ -6,11 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abacus.franchise.enums.ExamType;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.service.UsersService;
 import com.abacus.franchise.viewModels.AuthRequest;
@@ -90,6 +93,30 @@ public class StudentController {
 	            .status(response.getStatusCode())
 	            .body(response);
 	}
+
+	@GetMapping("getStudentAttemptResult/{assignExamId}/{examType}")
+	public ResponseEntity<SuccessResponse> getStudentAttemptResult(@PathVariable String assignExamId,
+			@PathVariable ExamType examType,
+			HttpServletRequest request) {
+
+	    UUID userId = (UUID) request.getAttribute("userId");
+
+	    SuccessResponse response =usersService.getStudentAttemptResult(userId.toString(),assignExamId,examType);
+	    return ResponseEntity
+	            .status(response.getStatusCode())
+	            .body(response);
+	}
+	
+	@GetMapping("getAllPracticeQuestionByCourse")
+	public ResponseEntity<SuccessResponse> getAllPracticeQuestionByCourse(@RequestParam String courseId,@RequestParam int limit) {
+
+
+	    SuccessResponse response =usersService.getAllPracticeQuestionByCourse(courseId,limit);
+	    return ResponseEntity
+	            .status(response.getStatusCode())
+	            .body(response);
+	}
+	
 
 	
 	

@@ -54,8 +54,8 @@ public interface AssignExamRepository extends JpaRepository<AssignExam, UUID> {
 	
 	@Modifying
 	@Transactional
-	@Query(value = "UPDATE assign_exam SET exam_status = 'COMPLETED' ,correct_que = :countMarks, exam_marks = :countMarks ,start_date = :startTime , submit_date = :endTime WHERE assign_exam_id = :assignExamId",nativeQuery = true)
-	int updateMarksByExamId(@Param("countMarks") int countMarks,@Param("assignExamId") String assignExamId,@Param("startTime") String startTime,@Param("endTime") String endTime);
+	@Query(value = "UPDATE assign_exam SET exam_status = 'COMPLETED' ,correct_que = :countMarks, exam_marks = :countMarks ,start_date = :startTime , submit_date = :endTime,exam_attempt = :examAttempt WHERE assign_exam_id = :assignExamId",nativeQuery = true)
+	int updateMarksByExamId(@Param("countMarks") int countMarks,@Param("assignExamId") String assignExamId,@Param("startTime") String startTime,@Param("endTime") String endTime,@Param("examAttempt") int examAttempt);
 
 	
 	

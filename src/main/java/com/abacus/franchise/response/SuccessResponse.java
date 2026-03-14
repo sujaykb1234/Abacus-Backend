@@ -1,8 +1,11 @@
 package com.abacus.franchise.response;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
+import com.abacus.franchise.dto.AttemptResultProjection;
 import com.abacus.franchise.utility.Messages;
 
 import lombok.Getter;
@@ -338,5 +341,19 @@ public class SuccessResponse {
 		this.statusCode = HttpStatus.BAD_REQUEST;
 		this.message = Messages.failedToSendExam;
         this.response = null;		
+	}
+
+	public void resultNotFound() {
+		this.status = true;
+		this.statusCode = HttpStatus.NOT_FOUND;
+		this.message = Messages.resultNotFound;
+        this.response = null;		
+	}
+
+	public void resultFoundSuccessfully(Object object) {
+		this.status = true;
+		this.statusCode = HttpStatus.FOUND;
+		this.message = Messages.resultFound;
+        this.response = object;		
 	}
 }

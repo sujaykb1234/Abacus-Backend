@@ -94,5 +94,8 @@ public final class Messages {
 
 	public static final String failedToSendExam = "FAILED TO SEND EXAM";
 
+	public static final String resultNotFound = "RESULT NOT FOUND";
+
+	public static final String resultFound = "RESULT FOUND SUCCESSFULLY";
 
 }

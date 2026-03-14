@@ -2,12 +2,14 @@ package com.abacus.franchise.service;
 
 import java.util.List;
 import java.util.UUID;
+
 import org.springframework.web.multipart.MultipartFile;
+
+import com.abacus.franchise.enums.ExamType;
 import com.abacus.franchise.response.SuccessResponse;
 import com.abacus.franchise.viewModels.AssignExamRequst;
 import com.abacus.franchise.viewModels.AuthRequest;
 import com.abacus.franchise.viewModels.KitRequest;
-import com.abacus.franchise.viewModels.QuestionsAnswerRequest;
 import com.abacus.franchise.viewModels.SubmitExamRequest;
 import com.abacus.franchise.viewModels.SwitchCourseRequest;
 import com.abacus.franchise.viewModels.UserViewModel;
@@ -65,8 +67,10 @@ public interface UsersService {
     public SuccessResponse getAllQuestionByStudent(String studentId);
 
     public SuccessResponse submitExam(SubmitExamRequest examRequest);
+    
+    public SuccessResponse getStudentAttemptResult(String studentId,String assignExamId,ExamType examType);
 
-   
+    public SuccessResponse getAllPracticeQuestionByCourse(String courseId,int limit);
 
 
 }

@@ -14,12 +14,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.abacus.franchise.dto.AttemptResultProjection;
 import com.abacus.franchise.dto.BasicUserDetail;
 import com.abacus.franchise.dto.CourseDetail;
 import com.abacus.franchise.dto.CourseKitDTO;
 import com.abacus.franchise.dto.CredentialDetail;
 import com.abacus.franchise.dto.ExamDetail;
 import com.abacus.franchise.dto.ExamDetailProjection;
+import com.abacus.franchise.dto.ExamResultDTO;
 import com.abacus.franchise.dto.KitRequestAddressDTO;
 import com.abacus.franchise.dto.KitRequestsDetail;
 import com.abacus.franchise.dto.ProductDetail;
@@ -33,6 +35,7 @@ import com.abacus.franchise.dto.UserAddressDetail;
 import com.abacus.franchise.dto.UserDetail;
 import com.abacus.franchise.enums.ExamMode;
 import com.abacus.franchise.enums.ExamStatus;
+import com.abacus.franchise.enums.ExamType;
 import com.abacus.franchise.enums.Roles;
 import com.abacus.franchise.exception.ResourceNotFoundException;
 import com.abacus.franchise.model.Address;
@@ -1076,22 +1079,24 @@ public class UsersServiceImpl implements UsersService {
 		
 		int countMarks = 0;
 		
+		Integer examAttemptByQuestionIdAndStudentId = studentAnswerRepository.getExamAttemptByQuestionIdAndStudentId(examRequest.getStudentId().toString(),examRequest.getAssignExamId().toString());
+
+		int examAttempt = 1;
+		
+		if(examAttemptByQuestionIdAndStudentId != null) {
+			examAttempt = examAttemptByQuestionIdAndStudentId + 1;
+		}
 		
 		for(QuestionsAnswerRequest request: examRequest.getQuestionsAnswerRequest()) {
-			Integer examAttemptByQuestionIdAndStudentId = studentAnswerRepository.getExamAttemptByQuestionIdAndStudentId(examRequest.getStudentId().toString(),request.getQuestionId().toString());
 			
 			StudentAnswer answer = new StudentAnswer();
 
-			if(examAttemptByQuestionIdAndStudentId == null) {
-				answer.setExamAttempt(1);
-			}else {
-				answer.setExamAttempt(examAttemptByQuestionIdAndStudentId+1);
-			}
-			
-			answer.setAssignExamId(examRequest.getAssignExamId());	
+			answer.setExamAttempt(examAttempt);
+            answer.setAssignExamId(examRequest.getAssignExamId());	
             answer.setQuestionId(request.getQuestionId());
 			answer.setChosenAnswer(request.getChosenAnswer());			
 			answer.setStudentId(examRequest.getStudentId());
+			answer.setExamType(examRequest.getExamType());;
 			String correctAnswerByQuestionId = questionRepository.getCorrectAnswerByQuestionId(request.getQuestionId().toString());
 		    
 			if(correctAnswerByQuestionId.equalsIgnoreCase(request.getChosenAnswer())) {
@@ -1104,7 +1109,7 @@ public class UsersServiceImpl implements UsersService {
 		}
 		
 		List<StudentAnswer> saveAll = studentAnswerRepository.saveAll(answers);
-		int updateMarksByExamId = assignExamRepository.updateMarksByExamId(countMarks,examRequest.getAssignExamId().toString(),examRequest.getStartTime(),examRequest.getEndTime());
+		int updateMarksByExamId = assignExamRepository.updateMarksByExamId(countMarks,examRequest.getAssignExamId().toString(),examRequest.getStartTime(),examRequest.getEndTime(),examAttempt);
 		
 		if(saveAll.isEmpty() && updateMarksByExamId == 0) {
 			response.examNotSend();
@@ -1117,5 +1122,55 @@ public class UsersServiceImpl implements UsersService {
 		response.examSendSuccessfully(examResultDTO);
 		return response;
 		
+	}
+
+	@Override
+	public SuccessResponse getStudentAttemptResult(String studentId,String assignExamId,ExamType examType) {
+		SuccessResponse response = new SuccessResponse();
+
+		UUID checkFranchiseIdIsExistOrNot = usersRepository
+				.checkUserIsExistOrNotByIdOrStatus(studentId.toString(),List.of("STUDENT"));
+
+		if (checkFranchiseIdIsExistOrNot == null) {
+			response.studentNotFound();
+			return response;
+		}
+		
+		
+		List<AttemptResultProjection> attemptWiseResult = studentAnswerRepository.getAttemptWiseResult(studentId,assignExamId,examType.toString());
+		
+		if(attemptWiseResult.isEmpty()) {
+			response.resultNotFound();
+			return response;
+		}
+		
+		response.resultFoundSuccessfully(attemptWiseResult);
+		return response;
+		
+		
+	}
+
+	@Override
+	public SuccessResponse getAllPracticeQuestionByCourse(String courseId, int limit) {
+		SuccessResponse response = new SuccessResponse();
+		
+		UUID checkCourseIdIsExistOrNot = courseRepository
+				.checkCourseIdIsExistOrNot(courseId);
+
+		if (checkCourseIdIsExistOrNot == null) {
+			response.courseNotFound("");
+			return response;
+		}
+		
+		 List<QuestionProjection> randomQuestionsByCourseId = questionRepository.getRandomQuestionsByCourseId(courseId, limit);
+		 
+		 if(randomQuestionsByCourseId.isEmpty()) {
+			 response.questionNotFound();
+			 return response;
+		 }
+		 
+		 response.questionFound(randomQuestionsByCourseId);
+		 return response;
+		 
 	}
 }

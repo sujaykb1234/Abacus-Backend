@@ -88,7 +88,7 @@ public interface ExamRepository extends JpaRepository<Exam, UUID> {
 		   q.question_text AS questionText,
 		   q.question_link AS questionLink,
 		   q.option_a AS optionA,
-		   q.option_b AS optionB,
+		   q.option_b AS optionB,	
 		   q.option_c AS optionC,
 		   q.option_d AS optionD
 		FROM assign_exam_student aes 

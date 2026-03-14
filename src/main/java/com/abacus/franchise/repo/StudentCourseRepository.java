@@ -53,7 +53,8 @@ public interface StudentCourseRepository extends JpaRepository<StudentCourse, UU
 			ae.exam_status,
 			ae.submit_date,
 			ae.start_date,
-			ae.exam_attempt     
+			ae.exam_attempt, 
+			ae.assign_exam_id    
 		FROM student_course sc
 			JOIN course c ON c.course_id = sc.course_id AND c.is_active = 1
 			JOIN exam e ON e.course_id = sc.course_id AND e.is_active = 1

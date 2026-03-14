@@ -1,14 +1,21 @@
 package com.abacus.franchise.model;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
+import com.abacus.franchise.enums.ExamType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,6 +52,10 @@ public class StudentAnswer {
 
     @Column(name = "exam_attempt")
     private int examAttempt;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "exam_type")
+    private ExamType examType;
 
     @Column(name = "chosen_answer", length = 1)
     private String chosenAnswer;
@@ -52,4 +63,23 @@ public class StudentAnswer {
     @Column(name = "is_correct")
     private Boolean isCorrect = false;
 
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "created_by", length = 36)
+    private UUID createdBy;
+
+    @Column(name = "updated_by")
+    private UUID updatedBy;
+
+    @PrePersist
+    void onCreate() {
+        createdAt = updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

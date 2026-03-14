@@ -19,4 +19,6 @@ public interface StudentCourseExamProjection {
     java.time.LocalDateTime getSubmitDate();
     java.time.LocalDateTime getStartDate();
     Integer getExamAttempt();
+    String getAssignExamId();
+
 }
